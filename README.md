@@ -2,6 +2,8 @@
 
 A state-of-the-art website for America First, a nonpartisan civic education organization committed to restoring logical reasoning, fairness, and principled decision-making in American civic life.
 
+> **👨‍💻 Engineers**: See [ENGINEERING_README.md](./ENGINEERING_README.md) for comprehensive technical documentation, architecture details, and development guidelines.
+
 ## 🇺🇸 Features
 
 ### Public Features
