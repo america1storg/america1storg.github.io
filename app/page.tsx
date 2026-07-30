@@ -13,7 +13,7 @@ export default function Home() {
 
       const container = document.getElementById('three-container');
       const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x06060f);
+      scene.background = new THREE.Color(0x020208);
 
       const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 200);
       camera.position.set(0, 3, 14);
@@ -31,63 +31,64 @@ export default function Home() {
       container.appendChild(renderer.domElement);
 
       // ─── LIGHTS ───────────────────────────────────────────
-      const ambient = new THREE.AmbientLight(0x1a1a2e, 0.6);
+      const ambient = new THREE.AmbientLight(0x0a0a1a, 0.4);
       scene.add(ambient);
 
-      const keyLight = new THREE.DirectionalLight(0xffeedd, 2.5);
+      const keyLight = new THREE.DirectionalLight(0xffeedd, 2.8);
       keyLight.position.set(6, 12, 8);
       keyLight.castShadow = true;
-      keyLight.shadow.mapSize.width = 1024;
-      keyLight.shadow.mapSize.height = 1024;
+      keyLight.shadow.mapSize.width = 2048;
+      keyLight.shadow.mapSize.height = 2048;
       scene.add(keyLight);
 
-      const fillLight = new THREE.DirectionalLight(0x3b82f6, 0.9);
+      const fillLight = new THREE.DirectionalLight(0x2563eb, 1.2);
       fillLight.position.set(-6, 2, 6);
       scene.add(fillLight);
 
-      const rimLight = new THREE.DirectionalLight(0xef4444, 0.6);
+      const rimLight = new THREE.DirectionalLight(0xdc2626, 0.8);
       rimLight.position.set(0, -4, -10);
       scene.add(rimLight);
 
-      const hemi = new THREE.HemisphereLight(0x3b82f6, 0x0a0a1a, 0.8);
+      const hemi = new THREE.HemisphereLight(0x1e40af, 0x050508, 1.0);
       scene.add(hemi);
 
       // ─── GROUND ─────────────────────────────────
-      const groundGeom = new THREE.PlaneGeometry(40, 40);
+      const groundGeom = new THREE.PlaneGeometry(50, 50);
       const groundMat = new THREE.MeshStandardMaterial({
-          color: 0x0a0a14,
+          color: 0x030308,
           roughness: 1,
           metalness: 0,
           transparent: true,
-          opacity: 0.6,
+          opacity: 0.7,
       });
       const ground = new THREE.Mesh(groundGeom, groundMat);
       ground.rotation.x = -Math.PI / 2;
-      ground.position.y = -1.8;
+      ground.position.y = -2.0;
       ground.receiveShadow = true;
       scene.add(ground);
 
-      // ─── THE FLAG ──────────────────────────────
-      const flagWidth = 5.6;
-      const flagHeight = 3.2;
-      const flagSegW = 48;
-      const flagSegH = 28;
+      // ─── THE AMERICAN FLAG (BIGGER) ──────────────────────────────
+      const flagWidth = 8.0;  // BIGGER
+      const flagHeight = 4.6;  // BIGGER
+      const flagSegW = 60;
+      const flagSegH = 35;
       const flagGeom = new THREE.PlaneGeometry(flagWidth, flagHeight, flagSegW, flagSegH);
       const flagMat = new THREE.MeshPhysicalMaterial({
           color: 0xffffff,
           side: THREE.DoubleSide,
-          roughness: 0.3,
+          roughness: 0.4,
           metalness: 0.0,
-          clearcoat: 0.05,
-          transparent: true,
-          opacity: 0.95,
-          emissive: 0x222244,
-          emissiveIntensity: 0.05,
+          clearcoat: 0.1,
+          transparent: false,
+          emissive: 0x0a0a1a,
+          emissiveIntensity: 0.02,
       });
       const flag = new THREE.Mesh(flagGeom, flagMat);
-      flag.position.set(0, 2.2, -2.5);
-      flag.rotation.x = -0.08;
-      flag.rotation.y = 0.1;
+      flag.position.set(0, 2.5, -3.0);
+      flag.rotation.x = -0.1;
+      flag.rotation.y = 0.12;
+      flag.castShadow = true;
+      flag.receiveShadow = true;
       scene.add(flag);
 
       const posAttr = flagGeom.attributes.position;
@@ -96,33 +97,49 @@ export default function Home() {
 
       function createFlagTexture() {
           const canvas = document.createElement('canvas');
-          canvas.width = 800;
-          canvas.height = 460;
+          canvas.width = 1000;
+          canvas.height = 580;
           const ctx = canvas.getContext('2d');
 
+          // RICHER, DARKER COLORS
           const stripeH = canvas.height / 13;
           for (let i = 0; i < 13; i++) {
-              ctx.fillStyle = i % 2 === 0 ? '#ef4444' : '#ffffff';
+              ctx.fillStyle = i % 2 === 0 ? '#b91c1c' : '#ffffff';  // Darker red
               ctx.fillRect(0, i * stripeH, canvas.width, stripeH + 0.5);
           }
-          const cantonW = canvas.width * 0.42;
+          const cantonW = canvas.width * 0.4;
           const cantonH = canvas.height * (7 / 13);
-          ctx.fillStyle = '#1e3a8a';
+          ctx.fillStyle = '#1e3a8a';  // Darker blue
           ctx.fillRect(0, 0, cantonW, cantonH);
 
-          const cols = 10;
+          // 50 stars
+          const cols = 6;
           const rows = 5;
-          const starSpacingX = cantonW / (cols + 1);
-          const starSpacingY = cantonH / (rows + 1);
+          const starSpacingX = cantonW / (cols + 1.5);
+          const starSpacingY = cantonH / (rows + 1.5);
           ctx.fillStyle = '#ffffff';
-          for (let r = 0; r < rows; r++) {
-              for (let c = 0; c < cols; c++) {
-                  const offsetX = r % 2 === 0 ? 0 : starSpacingX / 2;
-                  const x = starSpacingX + c * starSpacingX + offsetX;
-                  const y = starSpacingY + r * starSpacingY;
+
+          // Row pattern: 6-5-6-5-6-5-6-5-6
+          let starRow = 0;
+          for (let r = 0; r < 9; r++) {
+              const starsInRow = r % 2 === 0 ? 6 : 5;
+              const offsetX = r % 2 === 0 ? 0 : starSpacingX * 0.5;
+              for (let c = 0; c < starsInRow; c++) {
+                  const x = starSpacingX * 0.8 + c * starSpacingX + offsetX;
+                  const y = starSpacingY * 0.8 + r * (starSpacingY * 0.55);
+
+                  // Draw 5-pointed star
+                  ctx.save();
+                  ctx.translate(x, y);
                   ctx.beginPath();
-                  ctx.arc(x, y, 3.2, 0, Math.PI * 2);
+                  for (let i = 0; i < 5; i++) {
+                      const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+                      const radius = 4.5;
+                      ctx.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+                  }
+                  ctx.closePath();
                   ctx.fill();
+                  ctx.restore();
               }
           }
           return new THREE.CanvasTexture(canvas);
@@ -131,148 +148,41 @@ export default function Home() {
       flag.material.map = flagTexture;
       flag.material.needsUpdate = true;
 
-      // ─── CONSTITUTION BOOK ──────────────────────────────
-      const bookGroup = new THREE.Group();
-      bookGroup.position.set(-2.8, 0.6, 0.5);
-      scene.add(bookGroup);
-
-      const pageGeom = new THREE.BoxGeometry(1.2, 0.06, 0.9);
-      const pageMat = new THREE.MeshPhysicalMaterial({
-          color: 0xf5f0e8,
-          roughness: 0.7,
-          metalness: 0.0,
-          emissive: 0x332211,
-          emissiveIntensity: 0.02,
-      });
-      for (let i = 0; i < 6; i++) {
-          const page = new THREE.Mesh(pageGeom, pageMat);
-          page.position.y = i * 0.04;
-          page.scale.x = 1 - i * 0.02;
-          page.scale.z = 1 - i * 0.02;
-          bookGroup.add(page);
-      }
-      const coverMat = new THREE.MeshPhysicalMaterial({
-          color: 0x1e3a5f,
-          roughness: 0.5,
-          metalness: 0.1,
-          emissive: 0x0a1a2f,
-          emissiveIntensity: 0.1,
-      });
-      const coverGeom = new THREE.BoxGeometry(1.35, 0.08, 1.05);
-      const cover = new THREE.Mesh(coverGeom, coverMat);
-      cover.position.y = -0.08;
-      bookGroup.add(cover);
-      const spineMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, emissive: 0xd4af37, emissiveIntensity: 0.1 });
-      const spine = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.3, 0.7), spineMat);
-      spine.position.set(0.68, 0.1, 0);
-      bookGroup.add(spine);
-
-      // ─── PILLARS ──────────────────────────────
-      const pillarMat = new THREE.MeshPhysicalMaterial({
-          color: 0x8899bb,
-          roughness: 0.2,
-          metalness: 0.6,
-          clearcoat: 0.2,
-          emissive: 0x224466,
-          emissiveIntensity: 0.05,
-      });
-      const pillarPositions = [[-1.2, -0.6, 2.8], [1.2, -0.6, 2.8], [0, -0.6, 3.6]];
-      const pillars = [];
-      for (const pos of pillarPositions) {
-          const pillarGeom = new THREE.CylinderGeometry(0.25, 0.3, 1.2, 12);
-          const pillar = new THREE.Mesh(pillarGeom, pillarMat);
-          pillar.position.set(pos[0], pos[1] + 0.6, pos[2]);
-          pillar.castShadow = true;
-          pillar.receiveShadow = true;
-          scene.add(pillar);
-          pillars.push(pillar);
-
-          const capGeom = new THREE.CylinderGeometry(0.35, 0.25, 0.1, 12);
-          const cap = new THREE.Mesh(capGeom, pillarMat);
-          cap.position.set(pos[0], pos[1] + 1.2 + 0.05, pos[2]);
-          scene.add(cap);
-          pillars.push(cap);
-      }
-
-      // ─── 3D STARS ──────────────────────────────
-      const starGroup = new THREE.Group();
-      scene.add(starGroup);
-
-      function createStar3D() {
-          const shape = new THREE.Shape();
-          const outerR = 0.12;
-          const innerR = 0.05;
-          const points = 5;
-          for (let i = 0; i < points * 2; i++) {
-              const r = i % 2 === 0 ? outerR : innerR;
-              const angle = (i / (points * 2)) * Math.PI * 2 - Math.PI / 2;
-              if (i === 0) shape.moveTo(r * Math.cos(angle), r * Math.sin(angle));
-              else shape.lineTo(r * Math.cos(angle), r * Math.sin(angle));
-          }
-          shape.closePath();
-          const extrudeSettings = { depth: 0.03, bevelEnabled: true, bevelThickness: 0.01, bevelSize: 0.005 };
-          const geom = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-          const mat = new THREE.MeshPhysicalMaterial({
-              color: 0xffdd44,
-              emissive: 0xffaa22,
-              emissiveIntensity: 0.4,
-              metalness: 0.2,
-              roughness: 0.3,
-          });
-          const mesh = new THREE.Mesh(geom, mat);
-          mesh.castShadow = true;
-          return mesh;
-      }
-
-      const starData = [];
-      for (let i = 0; i < 85; i++) {
-          const star = createStar3D();
-          const radius = 1.6 + Math.random() * 5.5;
-          const theta = Math.random() * Math.PI * 2;
-          const phi = Math.acos(2 * Math.random() - 1);
-          star.position.set(
-              radius * Math.sin(phi) * Math.cos(theta),
-              radius * Math.cos(phi) * 0.8 + 1.2,
-              radius * Math.sin(phi) * Math.sin(theta) - 1
-          );
-          star.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
-          const scale = 0.4 + Math.random() * 1.0;
-          star.scale.setScalar(scale);
-          starGroup.add(star);
-          starData.push({
-              mesh: star,
-              basePos: star.position.clone(),
-              baseRot: star.rotation.clone(),
-              speed: 0.2 + Math.random() * 0.4,
-              phase: Math.random() * Math.PI * 2,
-              radius: radius,
-              scale: scale,
-          });
-      }
-
-      // ─── PARTICLES ──────────────────────────────
-      const particleCount = 1200;
+      // ─── ATMOSPHERIC PARTICLES (SUBTLE) ──────────────────────────────
+      const particleCount = 800;
       const partGeom = new THREE.BufferGeometry();
       const partPos = new Float32Array(particleCount * 3);
       const partColors = new Float32Array(particleCount * 3);
       for (let i = 0; i < particleCount; i++) {
-          const r = 3 + Math.random() * 12;
+          const r = 4 + Math.random() * 14;
           const theta = Math.random() * Math.PI * 2;
           const phi = Math.acos(2 * Math.random() - 1);
           partPos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-          partPos[i * 3 + 1] = r * Math.cos(phi) * 0.8 + 0.5;
-          partPos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta) - 1;
+          partPos[i * 3 + 1] = r * Math.cos(phi) * 0.7 + 1.0;
+          partPos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta) - 2;
+
+          // Darker patriotic colors
           const c = Math.random();
-          if (c < 0.33) { partColors[i * 3] = 0.9; partColors[i * 3 + 1] = 0.2; partColors[i * 3 + 2] = 0.2; }
-          else if (c < 0.66) { partColors[i * 3] = 0.2; partColors[i * 3 + 1] = 0.5; partColors[i * 3 + 2] = 0.9; }
-          else { partColors[i * 3] = 0.9; partColors[i * 3 + 1] = 0.9; partColors[i * 3 + 2] = 0.9; }
+          if (c < 0.35) {
+              partColors[i * 3] = 0.7;     // Darker red
+              partColors[i * 3 + 1] = 0.1;
+              partColors[i * 3 + 2] = 0.1;
+          } else if (c < 0.7) {
+              partColors[i * 3] = 0.1;
+              partColors[i * 3 + 1] = 0.3;  // Darker blue
+              partColors[i * 3 + 2] = 0.7;
+          } else {
+              partColors[i * 3] = 0.6;     // Dimmer white
+              partColors[i * 3 + 1] = 0.6;
+              partColors[i * 3 + 2] = 0.6;
+          }
       }
       partGeom.setAttribute('position', new THREE.BufferAttribute(partPos, 3));
       partGeom.setAttribute('color', new THREE.BufferAttribute(partColors, 3));
       const partMat = new THREE.PointsMaterial({
-          size: 0.06,
+          size: 0.05,
           transparent: true,
-          opacity: 0.5,
+          opacity: 0.4,
           vertexColors: true,
           blending: THREE.AdditiveBlending,
           sizeAttenuation: true,
@@ -299,26 +209,26 @@ export default function Home() {
 
           scrollProgress += (targetProgress - scrollProgress) * 0.06;
 
-          const camX = scrollProgress * 1.2;
-          const camY = 2.6 + scrollProgress * 1.8;
-          const camZ = 12 - scrollProgress * 7.0;
+          const camX = scrollProgress * 1.4;
+          const camY = 2.8 + scrollProgress * 2.0;
+          const camZ = 12 - scrollProgress * 8.0;
           camera.position.lerp(new THREE.Vector3(camX, camY, camZ), 0.04);
-          camera.lookAt(0, 0.6 + scrollProgress * 0.8, -0.5);
+          camera.lookAt(0, 1.0 + scrollProgress * 1.0, -1.0);
 
-          // FLAG WAVE
+          // FLAG WAVE (MORE DRAMATIC)
           const positions = flagGeom.attributes.position.array;
-          const time = elapsed * 0.9;
+          const time = elapsed * 1.0;
           for (let i = 0; i < flagVerts; i++) {
               const i3 = i * 3;
               const ox = origPos[i3];
               const oy = origPos[i3 + 1];
               const oz = origPos[i3 + 2];
 
-              const wx = Math.sin(ox * 2.2 + time * 0.8) * 0.12;
-              const wy = Math.sin(ox * 1.6 + oy * 1.2 + time * 0.6) * 0.08;
-              const wz = Math.sin(ox * 1.4 + oy * 1.8 + time * 0.7) * 0.18;
+              const wx = Math.sin(ox * 2.0 + time * 0.9) * 0.15;
+              const wy = Math.sin(ox * 1.5 + oy * 1.3 + time * 0.7) * 0.10;
+              const wz = Math.sin(ox * 1.3 + oy * 2.0 + time * 0.8) * 0.22;
 
-              const scrollWave = 1 + scrollProgress * 0.8;
+              const scrollWave = 1 + scrollProgress * 1.0;
               positions[i3] = ox + wx * scrollWave;
               positions[i3 + 1] = oy + wy * scrollWave;
               positions[i3 + 2] = oz + wz * scrollWave;
@@ -326,36 +236,13 @@ export default function Home() {
           flagGeom.attributes.position.needsUpdate = true;
           flagGeom.computeVertexNormals();
 
-          flag.position.y = 2.2 + scrollProgress * 0.6;
-          flag.rotation.z = Math.sin(elapsed * 0.1) * 0.02;
-          flag.rotation.y = 0.1 + scrollProgress * 0.25;
+          flag.position.y = 2.5 + scrollProgress * 0.8;
+          flag.rotation.z = Math.sin(elapsed * 0.12) * 0.03;
+          flag.rotation.y = 0.12 + scrollProgress * 0.3;
 
-          bookGroup.position.x = -2.8 + scrollProgress * 1.6;
-          bookGroup.position.y = 0.6 + scrollProgress * 0.4;
-          bookGroup.rotation.y = scrollProgress * 0.4;
-          bookGroup.rotation.x = Math.sin(elapsed * 0.3) * 0.03;
-
-          for (let i = 0; i < pillars.length; i++) {
-              const p = pillars[i];
-              const baseY = 0.6;
-              p.position.y = baseY + scrollProgress * 0.3 + Math.sin(elapsed * 0.2 + i) * 0.02;
-          }
-
-          starGroup.rotation.y += dt * 0.03;
-          starGroup.rotation.x = Math.sin(elapsed * 0.01) * 0.02 + scrollProgress * 0.06;
-          for (const d of starData) {
-              const wave = Math.sin(elapsed * d.speed + d.phase) * 0.08;
-              d.mesh.position.x = d.basePos.x + wave * 0.5;
-              d.mesh.position.y = d.basePos.y + wave * 0.3 + scrollProgress * 0.2;
-              d.mesh.rotation.x = d.baseRot.x + elapsed * 0.2;
-              d.mesh.rotation.y = d.baseRot.y + elapsed * 0.3;
-              d.mesh.rotation.z = d.baseRot.z + elapsed * 0.1;
-              const twinkle = 0.6 + 0.4 * Math.sin(elapsed * 1.2 + d.phase);
-              d.mesh.material.emissiveIntensity = 0.2 + 0.6 * twinkle;
-          }
-
-          particles.rotation.y += dt * 0.005;
-          particles.rotation.x = Math.sin(elapsed * 0.003) * 0.02;
+          // PARTICLES
+          particles.rotation.y += dt * 0.008;
+          particles.rotation.x = Math.sin(elapsed * 0.004) * 0.03;
 
           renderer.render(scene, camera);
           requestAnimationFrame(animate);
@@ -384,7 +271,7 @@ export default function Home() {
 
         body {
           font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-          background: #06060f;
+          background: #020208;
           color: #fff;
           overflow-x: hidden;
           margin: 0;
@@ -442,7 +329,7 @@ export default function Home() {
       <div className="scroll-wrap">
         {/* Navigation */}
         <nav className="fixed top-0 left-0 right-0 z-50 pointer-events-auto" style={{
-          background: 'rgba(6, 6, 15, 0.8)',
+          background: 'rgba(2, 2, 8, 0.85)',
           backdropFilter: 'blur(12px)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.04)'
         }}>
