@@ -2,7 +2,19 @@
 
 A state-of-the-art website for America First, a nonpartisan civic education organization committed to restoring logical reasoning, fairness, and principled decision-making in American civic life.
 
-> **👨‍💻 Engineers**: See [ENGINEERING_README.md](./ENGINEERING_README.md) for comprehensive technical documentation, architecture details, and development guidelines.
+---
+
+## 📚 Documentation Navigation
+
+**Choose your path:**
+
+- 🚀 **[GETTING_STARTED.md](./GETTING_STARTED.md)** - New engineer? Start here! (15-minute setup)
+- 👨‍💻 **[ENGINEERING_README.md](./ENGINEERING_README.md)** - Complete technical documentation & architecture
+- ⚡ **[QUICKSTART.md](./QUICKSTART.md)** - Fast local setup guide (5 minutes)
+- 🌐 **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Deploy to Vercel (step-by-step)
+- 📊 **[PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md)** - Features, stats, and roadmap
+
+---
 
 ## 🇺🇸 Features
 
