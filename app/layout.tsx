@@ -16,6 +16,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "America First - Civic Education Organization",
   description: "Nonpartisan civic education committed to restoring logical reasoning, fairness, and principled decision-making in American civic life.",
+  icons: {
+    icon: '/logo-icon.png',
+    apple: '/logo-icon.png',
+  },
 };
 
 export default function RootLayout({

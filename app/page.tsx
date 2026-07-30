@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRef } from 'react';
 
 export default function Home() {
@@ -24,8 +25,15 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-blue-900/90 backdrop-blur-sm text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="text-2xl font-bold">
-              America First
+            <Link href="/" className="flex items-center gap-3">
+              <Image
+                src="/logo-icon.png"
+                alt="America First Logo"
+                width={40}
+                height={40}
+                className="w-10 h-10"
+              />
+              <span className="text-2xl font-bold">America First</span>
             </Link>
             <div className="flex gap-6 items-center">
               <Link href="/articles" className="hover:text-gray-200 transition-colors">
@@ -85,9 +93,16 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
           >
-            <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-red-200 to-blue-200">
-              America First
-            </h1>
+            <div className="mb-8 flex justify-center">
+              <Image
+                src="/logo-full-transparent.png"
+                alt="America First"
+                width={400}
+                height={200}
+                className="w-auto h-32 md:h-48"
+                priority
+              />
+            </div>
             <p className="text-2xl md:text-3xl mb-4 font-semibold text-gray-100">
               Civic Education • Constitutional Principles • Truth & Data
             </p>
@@ -260,7 +275,16 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
-              <h3 className="text-2xl font-bold mb-4">America First</h3>
+              <div className="flex items-center gap-3 mb-4">
+                <Image
+                  src="/logo-icon.png"
+                  alt="America First"
+                  width={40}
+                  height={40}
+                  className="w-10 h-10"
+                />
+                <h3 className="text-2xl font-bold">America First</h3>
+              </div>
               <p className="text-gray-400">
                 Nonpartisan civic education for informed citizenship
               </p>

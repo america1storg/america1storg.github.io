@@ -2,6 +2,7 @@
 
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 export default function AdminLayout({
@@ -27,11 +28,18 @@ export default function AdminLayout({
       <nav className="bg-blue-900 text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/" className="text-xl font-bold">
-                America First
+            <div className="flex items-center gap-3">
+              <Link href="/" className="flex items-center gap-2">
+                <Image
+                  src="/logo-icon.png"
+                  alt="America First"
+                  width={32}
+                  height={32}
+                  className="w-8 h-8"
+                />
+                <span className="text-xl font-bold">America First</span>
               </Link>
-              <span className="ml-4 text-sm text-blue-200">Admin Panel</span>
+              <span className="ml-2 text-sm text-blue-200">Admin Panel</span>
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm">{session?.user?.email}</span>

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function About() {
   return (
@@ -6,7 +7,14 @@ export default function About() {
       {/* Header */}
       <header className="bg-gradient-to-r from-blue-900 to-red-900 text-white py-16">
         <div className="max-w-4xl mx-auto px-4">
-          <Link href="/" className="text-sm hover:underline mb-4 inline-block">
+          <Link href="/" className="flex items-center gap-2 text-sm hover:underline mb-6 inline-flex">
+            <Image
+              src="/logo-icon.png"
+              alt="America First"
+              width={24}
+              height={24}
+              className="w-6 h-6"
+            />
             ← Back to Home
           </Link>
           <h1 className="text-5xl font-bold mb-4">About America First</h1>

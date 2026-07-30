@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
 interface Article {
@@ -45,7 +46,14 @@ export default async function ArticlePage({
       {/* Header */}
       <header className="bg-gradient-to-r from-blue-900 to-red-900 text-white py-12">
         <div className="max-w-4xl mx-auto px-4">
-          <Link href="/articles" className="text-sm hover:underline mb-4 inline-block">
+          <Link href="/articles" className="flex items-center gap-2 text-sm hover:underline mb-4 inline-flex">
+            <Image
+              src="/logo-icon.png"
+              alt="America First"
+              width={24}
+              height={24}
+              className="w-6 h-6"
+            />
             ← Back to Articles
           </Link>
         </div>
