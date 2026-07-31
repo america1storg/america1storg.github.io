@@ -1,17 +1,10 @@
 import { NextAuthOptions } from 'next-auth';
 import EmailProvider from 'next-auth/providers/email';
 import { sql } from '@vercel/postgres';
-import PostgresAdapter from '@auth/pg-adapter';
-import { Pool } from 'pg';
-
-// Create Postgres connection pool for Neon
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
-  ssl: { rejectUnauthorized: false },
-});
+import { EmailAdapter } from './email-adapter';
 
 export const authOptions: NextAuthOptions = {
-  adapter: PostgresAdapter(pool) as any,
+  adapter: EmailAdapter as any,
   providers: [
     EmailProvider({
       server: process.env.EMAIL_SERVER,
@@ -46,9 +39,9 @@ export const authOptions: NextAuthOptions = {
         return false;
       }
     },
-    async session({ session, user }) {
-      // user object from adapter contains database user info
-      if (session?.user && user?.email) {
+    async jwt({ token, user }) {
+      // Add user info to JWT when signing in
+      if (user?.email) {
         try {
           const result = await sql`
             SELECT id, email, name, is_super_admin FROM users
@@ -57,14 +50,24 @@ export const authOptions: NextAuthOptions = {
 
           if (result.rows.length > 0) {
             const dbUser = result.rows[0];
-            session.user.id = dbUser.id;
-            session.user.email = dbUser.email;
-            session.user.name = dbUser.name || null;
-            session.user.isSuperAdmin = dbUser.is_super_admin;
+            token.id = dbUser.id;
+            token.email = dbUser.email;
+            token.name = dbUser.name;
+            token.isSuperAdmin = dbUser.is_super_admin;
           }
         } catch (error) {
-          console.error('Error fetching user session data:', error);
+          console.error('Error fetching user data:', error);
         }
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      // Add token data to session
+      if (token && session.user) {
+        session.user.id = token.id as number;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
+        session.user.isSuperAdmin = token.isSuperAdmin as boolean;
       }
       return session;
     },
@@ -73,6 +76,9 @@ export const authOptions: NextAuthOptions = {
     signIn: '/auth/signin',
     verifyRequest: '/auth/verify',
     error: '/auth/error',
+  },
+  session: {
+    strategy: 'jwt', // Use JWT instead of database sessions
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
