@@ -49,17 +49,17 @@ export default function Home() {
       rimLight.position.set(0, -4, -10);
       scene.add(rimLight);
 
-      const hemi = new THREE.HemisphereLight(0x1e40af, 0x050508, 1.0);
+      const hemi = new THREE.HemisphereLight(0x1e40af, 0x020208, 0.8);  // Ground color matches background
       scene.add(hemi);
 
-      // ─── GROUND ─────────────────────────────────
+      // ─── GROUND (MATCH BACKGROUND) ─────────────────────────────────
       const groundGeom = new THREE.PlaneGeometry(50, 50);
       const groundMat = new THREE.MeshStandardMaterial({
-          color: 0x030308,
+          color: 0x020208,  // SAME AS BACKGROUND
           roughness: 1,
           metalness: 0,
           transparent: true,
-          opacity: 0.7,
+          opacity: 0.9,  // More opaque to hide any difference
       });
       const ground = new THREE.Mesh(groundGeom, groundMat);
       ground.rotation.x = -Math.PI / 2;
