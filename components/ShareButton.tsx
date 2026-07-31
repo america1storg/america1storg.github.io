@@ -74,10 +74,9 @@ export function ShareButton({ url, title, description }: ShareButtonProps) {
               {/* Twitter/X */}
               <button
                 onClick={() => handleShare('twitter')}
-                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all text-left"
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all text-left hover:bg-opacity-10"
                 style={{
                   color: isDark ? '#fff' : '#000',
-                  hover: { background: 'rgba(29, 155, 240, 0.1)' }
                 }}
               >
                 <div className="w-5 h-5 flex items-center justify-center">
