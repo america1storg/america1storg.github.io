@@ -54,6 +54,13 @@ export async function initializeDatabase() {
       )
     `;
 
+    // Add emailVerified and image columns if they don't exist (for existing tables)
+    await sql`
+      ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS "emailVerified" TIMESTAMPTZ,
+      ADD COLUMN IF NOT EXISTS image TEXT
+    `;
+
     // Create articles table
     await sql`
       CREATE TABLE IF NOT EXISTS articles (
