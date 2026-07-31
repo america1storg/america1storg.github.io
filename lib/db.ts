@@ -31,7 +31,7 @@ export async function initializeDatabase() {
         title VARCHAR(500) NOT NULL,
         content TEXT NOT NULL,
         excerpt TEXT,
-        cover_image VARCHAR(1000),
+        cover_image TEXT,
         author_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
         status VARCHAR(20) DEFAULT 'draft' CHECK (status IN ('draft', 'published')),
         published_at TIMESTAMP WITH TIME ZONE,
