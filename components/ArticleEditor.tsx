@@ -158,7 +158,7 @@ export default function ArticleEditor({
               e.stopPropagation();
               setCoverImage('');
             }}
-            className="absolute top-4 right-4 bg-white px-4 py-2 rounded-lg shadow hover:bg-gray-100"
+            className="absolute top-4 right-4 bg-white px-6 py-3 rounded-lg shadow-lg hover:bg-gray-100 font-bold text-black text-base border-2 border-gray-300"
           >
             Remove cover
           </button>
@@ -309,21 +309,21 @@ export default function ArticleEditor({
 
       {/* Action Buttons */}
       <div className="px-8 py-6 border-t bg-white flex justify-between items-center rounded-b-lg">
-        <p className="text-sm text-gray-500">
+        <p className="text-base text-gray-700 font-semibold">
           {title ? `Title: ${title.length} characters` : 'Add a title to continue'}
         </p>
         <div className="flex gap-3">
           <button
             onClick={() => handleSave('draft')}
             disabled={isSaving || !title}
-            className="px-6 py-2.5 border-2 border-gray-300 rounded-full font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-8 py-3 border-3 border-gray-400 rounded-full font-bold text-black text-base hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white shadow-md"
           >
             {isSaving ? 'Saving...' : 'Save as Draft'}
           </button>
           <button
             onClick={() => handleSave('published')}
             disabled={isSaving || !title}
-            className="px-6 py-2.5 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            className="px-8 py-3 bg-blue-600 text-white rounded-full font-bold text-base hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
           >
             {isSaving ? 'Publishing...' : 'Publish Now'}
           </button>
