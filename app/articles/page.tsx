@@ -13,8 +13,13 @@ async function getArticles(): Promise<Article[]> {
   try {
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
     const response = await fetch(`${baseUrl}/api/articles`, {
-      cache: 'no-store',
+      next: { revalidate: 60 }, // Cache for 60 seconds
     });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch articles');
+    }
+
     const data = await response.json();
     return data.articles || [];
   } catch (error) {
