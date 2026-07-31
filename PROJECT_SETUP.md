@@ -189,11 +189,11 @@ Same editor as new article, pre-filled with existing content.
 
 ### Home (`/`)
 - **3D animated flag** (Three.js)
-- Floating particles (red, white, blue)
+- Floating particles (red, white, blue) - size: 0.015, very subtle
 - Scroll-based camera movement
 - Background: `#00164D` (navy blue) in dark mode
 - Sections: Hero, Mission, Stance, Principles, Closing
-- Floating pill navigation bar
+- Floating pill navigation bar (centered, rounded-full)
 
 ### Articles (`/articles`)
 - Card grid (3 columns on desktop)
@@ -201,23 +201,32 @@ Same editor as new article, pre-filled with existing content.
 - Hover effects (translate up, image scale)
 - Shows only published articles
 - Skeleton loading states
+- **Share button** on each card (bottom-left)
+- Optimized with ISR caching (60s revalidation)
 
 ### Article Detail (`/articles/[id]`)
 - Full-width cover image at top
 - Title, author, publish date
 - Rich text content (HTML rendered)
 - Back to articles link
+- **Share button** next to author/date
+- Open Graph meta tags for social media
+- Twitter Card support
+- Pre-rendered with `generateStaticParams`
 
 ### About (`/about`)
 - Mission statement
 - Organization principles
 - Core values
+- Skeleton loading state
 
 ### Theme Toggle
 - Floating pill switch (gradient background)
-- Dark mode: Blue gradient with moon icon
-- Light mode: Orange-red gradient with sun icon
+- Dark mode: Blue gradient (`#60A5FA` to `#3B82F6`) with moon 🌙
+- Light mode: Orange-red gradient (`#FB923C` to `#F87171`) with sun ☀️
+- Smooth sliding animation (duration-300)
 - Persists across sessions
+- Gradient shadows matching theme
 
 ---
 
@@ -349,6 +358,7 @@ components/
 ├── ArticleClient.tsx          # Client-side article display
 ├── ArticleEditor.tsx          # Tiptap rich text editor
 ├── ArticlesClient.tsx         # Client-side articles grid
+├── ShareButton.tsx            # Social media share popup
 ├── Footer.tsx
 ├── Navigation.tsx             # Floating pill navbar
 ├── ThemeProvider.tsx          # Dark/light mode context
@@ -360,9 +370,10 @@ lib/
 └── db.ts                      # Database init script
 
 public/
-├── logo-transparent.png       # AFAmerica1st_no_background
-├── logo-icon.png
-└── logo-full-transparent.png
+├── logo-transparent.png       # AFAmerica1st_no_background (used in navbar)
+├── logo-icon.png              # Old logo
+├── logo-full-transparent.png  # Full logo variant
+└── file.svg, globe.svg, etc.  # Next.js default assets
 ```
 
 ---
@@ -385,11 +396,18 @@ public/
 - Simple file upload flow
 - Works with free Neon Postgres
 - **Caveat:** Large images increase database size
+- **Note:** Requires TEXT column (not VARCHAR) for full base64 strings
 
 ### Why Neon Instead of Vercel Postgres?
 - User couldn't find Vercel Postgres in marketplace
 - Neon is free, serverless, and integrates seamlessly
 - Auto-adds env vars to Vercel
+
+### Why Loading Skeletons?
+- Instant visual feedback (perceived performance)
+- Better UX than blank screens or spinners
+- Matches final layout (reduces layout shift)
+- Theme-aware (dark/light mode)
 
 ---
 
@@ -421,13 +439,41 @@ public/
 
 ## Performance Optimizations
 
-1. **Caching:** 60-second revalidation on article fetches
-2. **Static Generation:** `generateStaticParams` pre-renders article pages
-3. **Loading Skeletons:** Instant visual feedback on all pages
+1. **ISR Caching:** 60-second revalidation on article fetches (`next: { revalidate: 60 }`)
+2. **Static Generation:** `generateStaticParams` pre-renders article pages at build time
+3. **Loading Skeletons:** Instant visual feedback on all pages (articles, article detail, admin, about)
 4. **Image Optimization:** Next.js `<Image>` component for logo
-5. **Three.js:** Optimized particle count (800 particles at 0.015 size)
+5. **Three.js:** Optimized particle count (800 particles at 0.015 size, opacity 0.3)
+6. **Code Splitting:** Next.js automatic code splitting per route
+7. **Client Components:** Only interactive components use 'use client' directive
 
 ---
+
+## Recent Updates (July 31, 2026)
+
+✅ **Social Media Sharing**
+- Share button component with X, Facebook, LinkedIn
+- Copy link functionality
+- Open Graph meta tags for article previews
+- Twitter Card support (summary_large_image)
+- Cover images appear in social media shares
+
+✅ **UI/UX Improvements**
+- Floating pill navigation bar (centered, rounded-full)
+- Gradient pill theme toggle with smooth animations
+- Loading skeletons on all pages
+- Transparent logo (AFAmerica1st_no_background)
+- Modern card-based article grids
+
+✅ **Performance**
+- ISR caching (60s revalidation)
+- `generateStaticParams` for article pre-rendering
+- Optimized Three.js particles (smaller, more subtle)
+- Background color changed to navy blue (#00164D)
+
+✅ **Database**
+- Cover image column migrated from VARCHAR(1000) to TEXT
+- Base64 image support (up to ~1MB per image)
 
 ## Future Enhancements (Suggestions)
 
@@ -436,13 +482,14 @@ public/
 - [ ] Add comments system
 - [ ] Switch to external image storage (S3/Cloudinary) for better performance
 - [ ] Add analytics (Vercel Analytics or Google Analytics)
-- [ ] Add SEO metadata (og:image, twitter cards)
 - [ ] Add sitemap generation
 - [ ] Add RSS feed
 - [ ] Add article preview before publishing
 - [ ] Add markdown support as alternative to HTML editor
 - [ ] Add user roles (admin, editor, viewer)
 - [ ] Add article scheduling (publish at future date)
+- [ ] Add article view counter
+- [ ] Add related articles section
 
 ---
 
@@ -477,14 +524,30 @@ npm run dev
 ---
 
 ## Last Updated
-July 31, 2026
+July 31, 2026 (Evening)
 
 ## Project Status
-✅ **Production Ready**
-- Authentication working
-- Article CRUD working
-- Cover images persistent
-- Loading skeletons on all pages
-- Theme toggle working
-- 3D homepage optimized
-- Transparent logo in navbar
+✅ **Production Ready & Actively Enhanced**
+- ✅ Authentication working (Gmail magic links)
+- ✅ Article CRUD with cover images
+- ✅ Cover images persistent (TEXT column)
+- ✅ Loading skeletons on all pages
+- ✅ Social media sharing (X, Facebook, LinkedIn)
+- ✅ Open Graph meta tags
+- ✅ Theme toggle (gradient pill)
+- ✅ 3D homepage optimized (navy blue background)
+- ✅ Transparent logo in floating navbar
+- ✅ ISR caching for fast page loads
+- ✅ Card-based article grids with share buttons
+
+## Known Working Features
+- Magic link authentication via Gmail SMTP
+- Article creation with cover images and rich text
+- Draft/publish workflow
+- Article editing with persistent cover images
+- Social sharing with cover image previews
+- Dark/light theme with persistence
+- Loading skeletons across all routes
+- Responsive design (mobile, tablet, desktop)
+- Three.js 3D flag animation
+- Admin dashboard and article management

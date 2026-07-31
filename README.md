@@ -19,32 +19,40 @@ A state-of-the-art website for America First, a nonpartisan civic education orga
 ## 🇺🇸 Features
 
 ### Public Features
-- **3D Parallax Homepage**: Stunning landing page with animated stars and smooth scroll effects
-- **Articles Platform**: LinkedIn-style article reading experience
+- **3D Animated Homepage**: Interactive Three.js flag animation with floating particles
+- **Articles Platform**: Card-based grid layout with cover images
+- **Social Media Sharing**: Share articles on X, Facebook, LinkedIn with Open Graph support
+- **Loading Skeletons**: Fast, responsive loading states on all pages
+- **Dark/Light Mode**: Beautiful gradient pill toggle with theme persistence
 - **Responsive Design**: Works beautifully on desktop, tablet, and mobile
-- **Patriotic Theme**: American colors (red, white, and blue) throughout
+- **Modern Navigation**: Floating pill navbar with transparent logo
 
 ### Admin Features
-- **Secure Authentication**: Email magic link authentication with NextAuth.js
-- **Article Management**: Create, edit, draft, and publish articles
+- **Secure Authentication**: Email magic link authentication via Gmail SMTP
+- **Article Management**: Create, edit, draft, and publish articles with card grid view
 - **Rich Text Editor**: LinkedIn-style WYSIWYG editor powered by Tiptap
   - Bold, italic, headings, lists, quotes
-  - Images with alt text
-  - Links
-  - Horizontal rules
-- **User Management**: Super admin can grant access to other admins
+  - Cover image upload (file picker or URL)
+  - Content images with alt text
+  - Hyperlinks and code blocks
+  - Horizontal dividers
+  - Real-time active state tracking
+- **Image Handling**: Base64 encoding with TEXT column support
+- **User Management**: Super admin access control
 - **Dashboard**: Real-time statistics and quick actions
 
 ## 🚀 Tech Stack (100% Free)
 
-- **Framework**: Next.js 14 (App Router)
+- **Framework**: Next.js 16.2.12 (App Router, Turbopack)
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion
-- **Database**: Vercel Postgres (Free tier)
-- **Authentication**: NextAuth.js
-- **Editor**: Tiptap
+- **Styling**: Tailwind CSS + inline styles
+- **3D Graphics**: Three.js (homepage flag animation)
+- **Database**: Neon Postgres (serverless, free tier)
+- **Authentication**: NextAuth.js v5 with JWT sessions
+- **Email**: Gmail SMTP for magic links
+- **Editor**: Tiptap (rich text)
 - **Hosting**: Vercel (Free tier)
+- **Performance**: ISR caching (60s revalidation)
 
 ## 📋 Prerequisites
 
@@ -191,19 +199,29 @@ Scroll animations powered by Framer Motion. Edit `app/page.tsx` to customize par
 
 ### "Database connection failed"
 - Verify all POSTGRES_* environment variables are set correctly
-- Check Vercel Postgres dashboard for database status
+- Check Neon Postgres dashboard for database status
 - Run `/api/init-db` to initialize tables
 
 ### "Authentication not working"
 - Ensure NEXTAUTH_URL matches your domain exactly
 - Verify NEXTAUTH_SECRET is generated and set
-- Check that user email exists in the users table
+- Check Gmail App Password is correct in EMAIL_SERVER
+- Verify user email exists in the users table
+
+### "Cover images not saving"
+- Run `/api/migrate-cover-image` to change column from VARCHAR to TEXT
+- Base64 images require TEXT column type
 
 ### "Build errors"
 - Clear `.next` folder: `rm -rf .next`
 - Delete node_modules: `rm -rf node_modules`
 - Reinstall: `npm install`
 - Rebuild: `npm run build`
+
+### "Articles loading slowly"
+- Already optimized with 60-second ISR caching
+- `generateStaticParams` pre-renders pages at build time
+- Loading skeletons provide instant feedback
 
 ## 📄 License
 
