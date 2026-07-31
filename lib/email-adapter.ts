@@ -3,7 +3,7 @@ import type { Adapter, AdapterUser } from 'next-auth/adapters';
 
 export function EmailAdapter(): Adapter {
   return {
-    async createVerificationToken(params) {
+    async createVerificationToken(params: { identifier: string; expires: Date; token: string }) {
       const { identifier, expires, token } = params;
       await sql`
         INSERT INTO verification_token (identifier, expires, token)
@@ -12,7 +12,7 @@ export function EmailAdapter(): Adapter {
       return { identifier, expires, token };
     },
 
-    async useVerificationToken(params) {
+    async useVerificationToken(params: { identifier: string; token: string }) {
       try {
         const result = await sql`
           DELETE FROM verification_token
@@ -34,7 +34,7 @@ export function EmailAdapter(): Adapter {
       }
     },
 
-    async getUserByEmail(email) {
+    async getUserByEmail(email: string) {
       const result = await sql`
         SELECT id, email, name FROM users WHERE email = ${email}
       `;
@@ -51,7 +51,7 @@ export function EmailAdapter(): Adapter {
       } as AdapterUser;
     },
 
-    async createUser(user) {
+    async createUser(user: Omit<AdapterUser, 'id'>) {
       // For email login, user should already exist in our users table
       const existing = await sql`
         SELECT id, email, name FROM users WHERE email = ${user.email}
@@ -72,7 +72,7 @@ export function EmailAdapter(): Adapter {
       throw new Error('User not authorized');
     },
 
-    async getUser(id) {
+    async getUser(id: string) {
       const result = await sql`
         SELECT id, email, name FROM users WHERE id = ${parseInt(id)}
       `;
@@ -89,7 +89,7 @@ export function EmailAdapter(): Adapter {
       } as AdapterUser;
     },
 
-    async updateUser(user) {
+    async updateUser(user: Partial<AdapterUser> & Pick<AdapterUser, 'id'>) {
       const result = await sql`
         UPDATE users
         SET name = ${user.name || null}
