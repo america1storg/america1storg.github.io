@@ -49,23 +49,11 @@ export default function Home() {
       rimLight.position.set(0, -4, -10);
       scene.add(rimLight);
 
-      const hemi = new THREE.HemisphereLight(0x1e40af, 0x020208, 0.8);  // Ground color matches background
+      const hemi = new THREE.HemisphereLight(0x1e40af, 0x000000, 0.6);  // Very dark ground, lower intensity
       scene.add(hemi);
 
-      // ─── GROUND (MATCH BACKGROUND) ─────────────────────────────────
-      const groundGeom = new THREE.PlaneGeometry(50, 50);
-      const groundMat = new THREE.MeshStandardMaterial({
-          color: 0x020208,  // SAME AS BACKGROUND
-          roughness: 1,
-          metalness: 0,
-          transparent: true,
-          opacity: 0.9,  // More opaque to hide any difference
-      });
-      const ground = new THREE.Mesh(groundGeom, groundMat);
-      ground.rotation.x = -Math.PI / 2;
-      ground.position.y = -2.0;
-      ground.receiveShadow = true;
-      scene.add(ground);
+      // ─── NO GROUND PLANE (removes lighter bottom section) ─────────────────────────────────
+      // Ground removed to maintain uniform dark background
 
       // ─── THE AMERICAN FLAG (BIGGER) ──────────────────────────────
       const flagWidth = 8.0;  // BIGGER
