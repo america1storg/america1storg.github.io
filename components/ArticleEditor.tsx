@@ -144,37 +144,37 @@ export default function ArticleEditor({
       </div>
 
       {/* Toolbar */}
-      <div className="flex flex-wrap gap-1 px-8 py-3 border-b bg-white">
+      <div className="flex flex-wrap gap-2 px-8 py-4 border-b bg-gray-50">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`px-3 py-1.5 rounded transition-colors border font-semibold ${
+          className={`px-4 py-2 rounded font-bold text-base transition-colors ${
             editor.isActive('bold')
-              ? 'bg-gray-200 border-gray-300'
-              : 'border-gray-200 hover:bg-gray-50'
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
           }`}
           title="Bold"
         >
-          <strong>B</strong>
+          <strong className="text-base">B</strong>
         </button>
 
         <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`px-3 py-1.5 rounded transition-colors border ${
+          className={`px-4 py-2 rounded text-base transition-colors ${
             editor.isActive('italic')
-              ? 'bg-gray-200 border-gray-300'
-              : 'border-gray-200 hover:bg-gray-50'
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
           }`}
           title="Italic"
         >
-          <em>I</em>
+          <em className="text-base">I</em>
         </button>
 
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={`px-3 py-1.5 rounded transition-colors border ${
+          className={`px-4 py-2 rounded font-semibold text-base transition-colors ${
             editor.isActive('heading', { level: 2 })
-              ? 'bg-gray-200 border-gray-300'
-              : 'border-gray-200 hover:bg-gray-50'
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
           }`}
           title="Heading 2"
         >
@@ -183,10 +183,10 @@ export default function ArticleEditor({
 
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          className={`px-3 py-1.5 rounded transition-colors border ${
+          className={`px-4 py-2 rounded font-semibold text-base transition-colors ${
             editor.isActive('heading', { level: 3 })
-              ? 'bg-gray-200 border-gray-300'
-              : 'border-gray-200 hover:bg-gray-50'
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
           }`}
           title="Heading 3"
         >
@@ -195,78 +195,78 @@ export default function ArticleEditor({
 
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`px-3 py-1.5 rounded transition-colors border ${
+          className={`px-4 py-2 rounded text-base transition-colors ${
             editor.isActive('bulletList')
-              ? 'bg-gray-200 border-gray-300'
-              : 'border-gray-200 hover:bg-gray-50'
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
           }`}
           title="Bullet List"
         >
-          • List
+          <span className="text-base">• List</span>
         </button>
 
         <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={`px-3 py-1.5 rounded transition-colors border ${
+          className={`px-4 py-2 rounded text-base transition-colors ${
             editor.isActive('orderedList')
-              ? 'bg-gray-200 border-gray-300'
-              : 'border-gray-200 hover:bg-gray-50'
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
           }`}
           title="Numbered List"
         >
-          1. List
+          <span className="text-base">1. List</span>
         </button>
 
         <button
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={`px-3 py-1.5 rounded transition-colors border ${
+          className={`px-4 py-2 rounded text-base transition-colors ${
             editor.isActive('blockquote')
-              ? 'bg-gray-200 border-gray-300'
-              : 'border-gray-200 hover:bg-gray-50'
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
           }`}
           title="Quote"
         >
-          &ldquo; Quote
+          <span className="text-base">&ldquo; Quote</span>
         </button>
 
         <button
           onClick={setLink}
-          className={`px-3 py-1.5 rounded transition-colors border ${
+          className={`px-4 py-2 rounded text-base transition-colors ${
             editor.isActive('link')
-              ? 'bg-gray-200 border-gray-300'
-              : 'border-gray-200 hover:bg-gray-50'
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
           }`}
           title="Add Link"
         >
-          🔗 Link
+          <span className="text-base">🔗 Link</span>
         </button>
 
         <button
           onClick={() => setShowImageModal(true)}
-          className="px-3 py-1.5 rounded border border-gray-200 hover:bg-gray-50 transition-colors"
+          className="px-4 py-2 rounded text-base bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 transition-colors"
           title="Insert Image"
         >
-          🖼️ Image
+          <span className="text-base">🖼️ Image</span>
         </button>
 
         <button
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          className={`px-3 py-1.5 rounded transition-colors border ${
+          className={`px-4 py-2 rounded text-base transition-colors ${
             editor.isActive('codeBlock')
-              ? 'bg-gray-200 border-gray-300'
-              : 'border-gray-200 hover:bg-gray-50'
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
           }`}
           title="Code Block"
         >
-          {'<>'} Code
+          <span className="text-base">{'<>'} Code</span>
         </button>
 
         <button
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
-          className="px-3 py-1.5 rounded border border-gray-200 hover:bg-gray-50 transition-colors"
+          className="px-4 py-2 rounded text-base bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 transition-colors"
           title="Horizontal Divider"
         >
-          ― Divider
+          <span className="text-base">― Divider</span>
         </button>
       </div>
 
