@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useTheme } from './ThemeProvider';
 import { Navigation } from './Navigation';
 import { Footer } from './Footer';
+import { ShareButton } from './ShareButton';
 
 interface Article {
   id: number;
@@ -112,7 +113,14 @@ export function ArticlesClient({ articles }: { articles: Article[] }) {
                         })}
                       </time>
                     </div>
-                    <div>
+                    <div className="flex items-center justify-between">
+                      <div onClick={(e) => e.preventDefault()}>
+                        <ShareButton
+                          url={`https://america1stusa.vercel.app/articles/${article.id}`}
+                          title={article.title}
+                          description={article.excerpt}
+                        />
+                      </div>
                       <span className="text-blue-400 font-semibold group-hover:underline uppercase text-sm tracking-wide">
                         Read more →
                       </span>

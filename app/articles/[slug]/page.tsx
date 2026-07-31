@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { ArticleClient } from '@/components/ArticleClient';
+import type { Metadata } from 'next';
 
 interface Article {
   id: number;
@@ -50,6 +51,54 @@ export async function generateStaticParams() {
     console.error('Error generating static params:', error);
     return [];
   }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const article = await getArticle(slug);
+
+  if (!article) {
+    return {
+      title: 'Article Not Found',
+    };
+  }
+
+  const excerpt = article.content.replace(/<[^>]*>/g, '').substring(0, 160);
+  const baseUrl = process.env.NEXTAUTH_URL || 'https://america1stusa.vercel.app';
+
+  return {
+    title: `${article.title} | America First`,
+    description: excerpt,
+    openGraph: {
+      title: article.title,
+      description: excerpt,
+      url: `${baseUrl}/articles/${article.id}`,
+      siteName: 'America First',
+      images: article.cover_image
+        ? [
+            {
+              url: article.cover_image,
+              width: 1200,
+              height: 630,
+              alt: article.title,
+            },
+          ]
+        : [],
+      type: 'article',
+      publishedTime: article.published_at,
+      authors: [article.author_name || 'America First Team'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: excerpt,
+      images: article.cover_image ? [article.cover_image] : [],
+    },
+  };
 }
 
 export default async function ArticlePage({

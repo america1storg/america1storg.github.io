@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useTheme } from './ThemeProvider';
 import { Navigation } from './Navigation';
 import { Footer } from './Footer';
+import { ShareButton } from './ShareButton';
 
 interface Article {
   id: number;
@@ -52,18 +53,25 @@ export function ArticleClient({ article }: { article: Article }) {
             {article.title}
           </h1>
 
-          <div className="flex items-center gap-4 pb-8 mb-8 border-b" style={{ borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}>
-            <span className="text-lg font-medium" style={{ color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)' }}>
-              {article.author_name || 'America First Team'}
-            </span>
-            <span style={{ color: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)' }}>·</span>
-            <time className="text-lg" style={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>
-              {new Date(article.published_at).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </time>
+          <div className="flex items-center justify-between pb-8 mb-8 border-b" style={{ borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}>
+            <div className="flex items-center gap-4">
+              <span className="text-lg font-medium" style={{ color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)' }}>
+                {article.author_name || 'America First Team'}
+              </span>
+              <span style={{ color: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)' }}>·</span>
+              <time className="text-lg" style={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>
+                {new Date(article.published_at).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </time>
+            </div>
+            <ShareButton
+              url={`https://america1stusa.vercel.app/articles/${article.id}`}
+              title={article.title}
+              description={article.content.replace(/<[^>]*>/g, '').substring(0, 160)}
+            />
           </div>
 
           <div
