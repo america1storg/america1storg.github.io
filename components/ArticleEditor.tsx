@@ -27,6 +27,8 @@ export default function ArticleEditor({
   const [imageUrl, setImageUrl] = useState('');
   const [imageAlt, setImageAlt] = useState('');
 
+  const [editorKey, setEditorKey] = useState(0);
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -51,6 +53,14 @@ export default function ArticleEditor({
         class:
           'prose prose-lg max-w-none focus:outline-none min-h-[500px] px-8 py-6 text-gray-900',
       },
+    },
+    onUpdate: () => {
+      // Force toolbar to re-render when content changes
+      setEditorKey(prev => prev + 1);
+    },
+    onSelectionUpdate: () => {
+      // Force toolbar to re-render when selection changes
+      setEditorKey(prev => prev + 1);
     },
   });
 
@@ -144,7 +154,7 @@ export default function ArticleEditor({
       </div>
 
       {/* Toolbar */}
-      <div className="flex flex-wrap gap-2 px-8 py-4 border-b bg-gray-50">
+      <div className="flex flex-wrap gap-2 px-8 py-4 border-b bg-gray-50" key={editorKey}>
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={`px-4 py-2 rounded font-bold text-base transition-colors ${
@@ -299,28 +309,28 @@ export default function ArticleEditor({
       {/* Cover Image Modal */}
       {showCoverModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4">Add Cover Image</h3>
+          <div className="bg-white p-8 rounded-lg max-w-md w-full shadow-2xl">
+            <h3 className="text-2xl font-bold mb-6 text-gray-900">Add Cover Image</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-base font-semibold mb-2 text-gray-900">
                   Image URL
                 </label>
                 <input
                   type="url"
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 text-base"
                   placeholder="https://example.com/cover.jpg"
                 />
               </div>
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-3 mt-6">
                 <button
                   onClick={() => {
                     setShowCoverModal(false);
                     setImageUrl('');
                   }}
-                  className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+                  className="px-6 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-100 font-semibold text-gray-900"
                 >
                   Cancel
                 </button>
@@ -333,7 +343,7 @@ export default function ArticleEditor({
                     }
                   }}
                   disabled={!imageUrl}
-                  className="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 disabled:opacity-50"
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
                 >
                   Add Cover
                 </button>
@@ -346,48 +356,48 @@ export default function ArticleEditor({
       {/* Image Modal */}
       {showImageModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4">Insert Image</h3>
+          <div className="bg-white p-8 rounded-lg max-w-md w-full shadow-2xl">
+            <h3 className="text-2xl font-bold mb-6 text-gray-900">Insert Image</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-base font-semibold mb-2 text-gray-900">
                   Image URL
                 </label>
                 <input
                   type="url"
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 text-base"
                   placeholder="https://example.com/image.jpg"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-base font-semibold mb-2 text-gray-900">
                   Alt Text (Optional)
                 </label>
                 <input
                   type="text"
                   value={imageAlt}
                   onChange={(e) => setImageAlt(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 text-base"
                   placeholder="Description of the image"
                 />
               </div>
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-3 mt-6">
                 <button
                   onClick={() => {
                     setShowImageModal(false);
                     setImageUrl('');
                     setImageAlt('');
                   }}
-                  className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+                  className="px-6 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-100 font-semibold text-gray-900"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={addImage}
                   disabled={!imageUrl}
-                  className="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 disabled:opacity-50"
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
                 >
                   Insert
                 </button>
