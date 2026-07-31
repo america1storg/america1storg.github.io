@@ -8,6 +8,7 @@ interface Article {
   id: number;
   title: string;
   excerpt: string;
+  cover_image: string | null;
   status: 'draft' | 'published';
   created_at: string;
   published_at: string | null;
@@ -121,54 +122,76 @@ export default function ArticlesList() {
             </Link>
           </div>
         ) : (
-          <div className="divide-y divide-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
             {filteredArticles.map((article) => (
-              <div key={article.id} className="p-6 hover:bg-gray-50 transition-colors">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-xl font-semibold text-gray-900">
-                        {article.title}
-                      </h3>
-                      <span
-                        className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                          article.status === 'published'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}
-                      >
-                        {article.status}
-                      </span>
-                    </div>
-                    {article.excerpt && (
-                      <p className="text-gray-600 mb-3">{article.excerpt}</p>
-                    )}
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <span>
-                        By {article.author_name || 'Unknown'}
-                      </span>
-                      <span>•</span>
-                      <span>
-                        {article.status === 'published' && article.published_at
-                          ? `Published ${new Date(
-                              article.published_at
-                            ).toLocaleDateString()}`
-                          : `Created ${new Date(
-                              article.created_at
-                            ).toLocaleDateString()}`}
+              <div key={article.id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+                {/* Cover Image */}
+                {article.cover_image ? (
+                  <div className="relative h-48 bg-gray-200">
+                    <img
+                      src={article.cover_image}
+                      alt={article.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-2 left-2">
+                      <span className="px-2 py-1 text-xs font-bold rounded bg-white text-gray-900 shadow-md uppercase">
+                        Article
                       </span>
                     </div>
                   </div>
-                  <div className="flex gap-2 ml-4">
+                ) : (
+                  <div className="h-48 bg-gradient-to-br from-blue-900 to-blue-700 flex items-center justify-center">
+                    <div className="absolute top-2 left-2">
+                      <span className="px-2 py-1 text-xs font-bold rounded bg-white text-gray-900 shadow-md uppercase">
+                        Article
+                      </span>
+                    </div>
+                    <span className="text-white text-6xl">📄</span>
+                  </div>
+                )}
+
+                {/* Content */}
+                <div className="p-5">
+                  <div className="flex items-center gap-2 mb-3">
+                    <h3 className="text-lg font-bold text-gray-900 line-clamp-2 flex-1">
+                      {article.title}
+                    </h3>
+                    <span
+                      className={`px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap ${
+                        article.status === 'published'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-yellow-100 text-yellow-800'
+                      }`}
+                    >
+                      {article.status}
+                    </span>
+                  </div>
+
+                  {article.excerpt && (
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{article.excerpt}</p>
+                  )}
+
+                  <div className="text-xs text-gray-500 mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold">By {article.author_name || 'Unknown'}</span>
+                    </div>
+                    <div>
+                      {article.status === 'published' && article.published_at
+                        ? `Published ${new Date(article.published_at).toLocaleDateString()}`
+                        : `Created ${new Date(article.created_at).toLocaleDateString()}`}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
                     <button
                       onClick={() => router.push(`/admin/articles/edit/${article.id}`)}
-                      className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                      className="flex-1 px-4 py-2 text-sm font-semibold text-blue-600 hover:bg-blue-50 rounded transition-colors border border-blue-200"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(article.id, article.title)}
-                      className="px-4 py-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                      className="flex-1 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 rounded transition-colors border border-red-200"
                     >
                       Delete
                     </button>
