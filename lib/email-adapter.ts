@@ -1,5 +1,5 @@
 import { sql } from '@vercel/postgres';
-import type { Adapter } from 'next-auth/adapters';
+import type { Adapter, AdapterUser } from 'next-auth/adapters';
 
 export function EmailAdapter(): Adapter {
   return {
@@ -44,11 +44,11 @@ export function EmailAdapter(): Adapter {
       const user = result.rows[0];
       return {
         id: user.id.toString(),
-        email: user.email,
-        name: user.name,
+        email: user.email!,
+        name: user.name || null,
         emailVerified: null,
         image: null,
-      };
+      } as AdapterUser;
     },
 
     async createUser(user) {
@@ -61,11 +61,11 @@ export function EmailAdapter(): Adapter {
         const dbUser = existing.rows[0];
         return {
           id: dbUser.id.toString(),
-          email: dbUser.email,
-          name: dbUser.name,
+          email: dbUser.email!,
+          name: dbUser.name || null,
           emailVerified: new Date(),
           image: null,
-        };
+        } as AdapterUser;
       }
 
       // This shouldn't happen for admin users
@@ -82,11 +82,11 @@ export function EmailAdapter(): Adapter {
       const user = result.rows[0];
       return {
         id: user.id.toString(),
-        email: user.email,
-        name: user.name,
+        email: user.email!,
+        name: user.name || null,
         emailVerified: null,
         image: null,
-      };
+      } as AdapterUser;
     },
 
     async updateUser(user) {
@@ -102,11 +102,11 @@ export function EmailAdapter(): Adapter {
       const dbUser = result.rows[0];
       return {
         id: dbUser.id.toString(),
-        email: dbUser.email,
-        name: dbUser.name,
-        emailVerified: null,
-        image: null,
-      };
+        email: dbUser.email!,
+        name: dbUser.name || null,
+        emailVerified: user.emailVerified || null,
+        image: user.image || null,
+      } as AdapterUser;
     },
 
     async linkAccount() {
