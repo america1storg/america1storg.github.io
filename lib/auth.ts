@@ -4,7 +4,7 @@ import { sql } from '@vercel/postgres';
 import { EmailAdapter } from './email-adapter';
 
 export const authOptions: NextAuthOptions = {
-  adapter: EmailAdapter as any,
+  adapter: EmailAdapter(),
   providers: [
     EmailProvider({
       server: process.env.EMAIL_SERVER,
