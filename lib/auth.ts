@@ -29,8 +29,8 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile, email: emailData }) {
-      if (!user.email) return false;
+    async signIn({ user }) {
+      if (!user?.email) return false;
 
       // Check if user is in our admins table
       try {
@@ -46,21 +46,21 @@ export const authOptions: NextAuthOptions = {
         return false;
       }
     },
-    async session({ session, token }) {
-      if (session.user && token.email) {
-        // Add user data to session
+    async session({ session, user }) {
+      // user object from adapter contains database user info
+      if (session?.user && user?.email) {
         try {
           const result = await sql`
             SELECT id, email, name, is_super_admin FROM users
-            WHERE email = ${token.email}
+            WHERE email = ${user.email}
           `;
 
           if (result.rows.length > 0) {
-            const user = result.rows[0];
-            session.user.id = user.id;
-            session.user.email = user.email;
-            session.user.name = user.name;
-            session.user.isSuperAdmin = user.is_super_admin;
+            const dbUser = result.rows[0];
+            session.user.id = dbUser.id;
+            session.user.email = dbUser.email;
+            session.user.name = dbUser.name || null;
+            session.user.isSuperAdmin = dbUser.is_super_admin;
           }
         } catch (error) {
           console.error('Error fetching user session data:', error);
