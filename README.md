@@ -21,6 +21,8 @@ A state-of-the-art website for America First, a nonpartisan civic education orga
 ### Public Features
 - **3D Animated Homepage**: Interactive Three.js flag animation with floating particles
 - **Articles Platform**: Card-based grid layout with cover images
+- **SEO-Friendly URLs**: Descriptive article URLs (e.g., `/articles/title-slug-123`)
+- **Improved Typography**: Balanced title/body hierarchy, proper paragraph spacing
 - **Social Media Sharing**: Share articles on X, Facebook, LinkedIn with Open Graph support
 - **Loading Skeletons**: Fast, responsive loading states on all pages
 - **Dark/Light Mode**: Beautiful gradient pill toggle with theme persistence
@@ -176,10 +178,19 @@ Regular admins can:
 
 1. Sign in to admin panel
 2. Click "New Article" or go to `/admin/articles/new`
-3. Write your article using the rich text editor
-4. Add images by clicking the image button
-5. Save as draft or publish immediately
-6. Edit published articles anytime
+3. Add a cover image (optional)
+4. Write your article using the rich text editor
+   - Blank lines between paragraphs are preserved
+   - Use toolbar for formatting (bold, headings, lists, etc.)
+5. Add images by clicking the image button
+6. Save as draft or publish immediately
+7. Published articles get SEO-friendly URLs automatically
+8. Edit published articles anytime
+
+**Typography Guidelines:**
+- Titles automatically size responsively (never too large)
+- Paragraph spacing preserved from editor
+- Body text optimized for readability (1.125rem, 1.75 line-height)
 
 ## 🎨 Customization
 
@@ -222,6 +233,11 @@ Scroll animations powered by Framer Motion. Edit `app/page.tsx` to customize par
 - Already optimized with 60-second ISR caching
 - `generateStaticParams` pre-renders pages at build time
 - Loading skeletons provide instant feedback
+
+### "Need to migrate existing articles to use slugs"
+- Run `/api/migrate-slugs` once after deployment
+- Generates SEO-friendly URLs for all existing articles
+- Old URLs continue to work (backward compatible)
 
 ## 📄 License
 

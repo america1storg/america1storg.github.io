@@ -59,6 +59,7 @@ CREATE TABLE articles (
   content TEXT NOT NULL,
   excerpt TEXT,
   cover_image TEXT,  -- Base64-encoded images
+  slug VARCHAR(200) UNIQUE,  -- SEO-friendly URL slug
   author_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
   status VARCHAR(20) DEFAULT 'draft' CHECK (status IN ('draft', 'published')),
   published_at TIMESTAMP WITH TIME ZONE,
@@ -67,7 +68,9 @@ CREATE TABLE articles (
 );
 ```
 
-**Note:** `cover_image` was changed from `VARCHAR(1000)` to `TEXT` to support base64-encoded images (~50KB+).
+**Notes:** 
+- `cover_image` changed from `VARCHAR(1000)` to `TEXT` to support base64-encoded images (~50KB+)
+- `slug` added for SEO-friendly URLs (format: `title-slug-{id}`)
 
 #### `article_images`
 ```sql
@@ -204,15 +207,21 @@ Same editor as new article, pre-filled with existing content.
 - **Share button** on each card (bottom-left)
 - Optimized with ISR caching (60s revalidation)
 
-### Article Detail (`/articles/[id]`)
+### Article Detail (`/articles/[slug]`)
+- **SEO-friendly URLs:** `/articles/title-slug-123` instead of `/articles/123`
 - Full-width cover image at top
+- **Balanced typography:**
+  - Title: 2xl/3xl/4xl (responsive, not overwhelming)
+  - Body: 1.125rem with 1.75 line-height
+  - Proper paragraph spacing (1.5em between paragraphs)
 - Title, author, publish date
-- Rich text content (HTML rendered)
+- Rich text content (HTML rendered with preserved formatting)
 - Back to articles link
 - **Share button** next to author/date
 - Open Graph meta tags for social media
 - Twitter Card support
 - Pre-rendered with `generateStaticParams`
+- **Backward compatible:** Old `/articles/123` URLs still work
 
 ### About (`/about`)
 - Mission statement
@@ -271,6 +280,12 @@ Delete article (authenticated only).
 ### `GET /api/migrate-cover-image`
 One-time migration to change `cover_image` column from `VARCHAR(1000)` to `TEXT`.
 
+### `GET /api/migrate-slugs`
+One-time migration to:
+- Add `slug` column to articles table
+- Generate slugs for all existing articles
+- Format: `{title-slug}-{id}` (e.g., `america-first-economic-policy-123`)
+
 ---
 
 ## Database Migrations
@@ -291,6 +306,16 @@ If articles lose cover images, run:
 `https://america1stusa.vercel.app/api/migrate-cover-image`
 
 This changes `articles.cover_image` from `VARCHAR(1000)` to `TEXT`.
+
+### Add Slugs to Existing Articles
+After deployment, run once:
+
+`https://america1stusa.vercel.app/api/migrate-slugs`
+
+This:
+1. Adds `slug` column to articles table (if not exists)
+2. Generates SEO-friendly slugs for all existing articles
+3. Format: `title-kebab-case-{id}`
 
 ---
 
@@ -367,7 +392,8 @@ components/
 lib/
 ├── auth.ts                    # NextAuth config
 ├── email-adapter.ts           # Custom email adapter
-└── db.ts                      # Database init script
+├── db.ts                      # Database init script
+└── slug.ts                    # URL slug generation utilities
 
 public/
 ├── logo-transparent.png       # AFAmerica1st_no_background (used in navbar)
@@ -451,6 +477,20 @@ public/
 
 ## Recent Updates (July 31, 2026)
 
+✅ **Typography & Readability (Latest)**
+- Reduced article title size for better balance (text-3xl/4xl instead of text-6xl)
+- Improved paragraph spacing (1.5em between paragraphs)
+- Larger body text (1.125rem with 1.75 line-height)
+- Preserved blank lines and formatting from editor
+- Responsive typography across all devices
+
+✅ **SEO-Friendly URLs (Latest)**
+- Article URLs now use slugs: `/articles/title-slug-123`
+- Auto-generated from article titles
+- Backward compatible with old `/articles/123` URLs
+- Unique slug generation with ID suffix
+- Migration API: `/api/migrate-slugs`
+
 ✅ **Social Media Sharing**
 - Share button component with X, Facebook, LinkedIn
 - Copy link functionality
@@ -474,6 +514,7 @@ public/
 ✅ **Database**
 - Cover image column migrated from VARCHAR(1000) to TEXT
 - Base64 image support (up to ~1MB per image)
+- Slug column added (VARCHAR 200, UNIQUE)
 
 ## Future Enhancements (Suggestions)
 
