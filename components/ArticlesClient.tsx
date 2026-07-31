@@ -13,6 +13,7 @@ interface Article {
   cover_image: string | null;
   published_at: string;
   author_name: string | null;
+  slug?: string;
 }
 
 export function ArticlesClient({ articles }: { articles: Article[] }) {
@@ -49,7 +50,7 @@ export function ArticlesClient({ articles }: { articles: Article[] }) {
             {articles.map((article) => (
               <Link
                 key={article.id}
-                href={`/articles/${article.id}`}
+                href={`/articles/${article.slug || article.id}`}
                 className="group"
               >
                 <article
@@ -116,7 +117,7 @@ export function ArticlesClient({ articles }: { articles: Article[] }) {
                     <div className="flex items-center justify-between">
                       <div onClick={(e) => e.preventDefault()}>
                         <ShareButton
-                          url={`https://america1stusa.vercel.app/articles/${article.id}`}
+                          url={`https://america1stusa.vercel.app/articles/${article.slug || article.id}`}
                           title={article.title}
                           description={article.excerpt}
                         />

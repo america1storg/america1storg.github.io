@@ -13,6 +13,7 @@ interface Article {
   cover_image: string | null;
   published_at: string;
   author_name: string | null;
+  slug?: string;
 }
 
 export function ArticleClient({ article }: { article: Article }) {
@@ -49,7 +50,7 @@ export function ArticleClient({ article }: { article: Article }) {
             </div>
           )}
 
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-8 leading-tight" style={{ color: isDark ? '#fff' : '#000' }}>
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 leading-snug" style={{ color: isDark ? '#fff' : '#000' }}>
             {article.title}
           </h1>
 
@@ -68,19 +69,84 @@ export function ArticleClient({ article }: { article: Article }) {
               </time>
             </div>
             <ShareButton
-              url={`https://america1stusa.vercel.app/articles/${article.id}`}
+              url={`https://america1stusa.vercel.app/articles/${article.slug || article.id}`}
               title={article.title}
               description={article.content.replace(/<[^>]*>/g, '').substring(0, 160)}
             />
           </div>
 
           <div
-            className="prose prose-lg max-w-none"
+            className="prose prose-lg max-w-none article-content"
             style={{
               color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)',
+              fontSize: '1.125rem',
+              lineHeight: '1.75',
             }}
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
+          <style jsx global>{`
+            .article-content p {
+              margin-bottom: 1.5em;
+              line-height: 1.75;
+            }
+            .article-content p:last-child {
+              margin-bottom: 0;
+            }
+            .article-content h2 {
+              font-size: 1.75rem;
+              font-weight: 700;
+              margin-top: 2em;
+              margin-bottom: 1em;
+              line-height: 1.3;
+            }
+            .article-content h3 {
+              font-size: 1.5rem;
+              font-weight: 600;
+              margin-top: 1.75em;
+              margin-bottom: 0.75em;
+              line-height: 1.4;
+            }
+            .article-content ul, .article-content ol {
+              margin-bottom: 1.5em;
+              padding-left: 1.5em;
+            }
+            .article-content li {
+              margin-bottom: 0.5em;
+            }
+            .article-content blockquote {
+              border-left: 4px solid rgba(59, 130, 246, 0.5);
+              padding-left: 1.5em;
+              margin: 1.5em 0;
+              font-style: italic;
+              opacity: 0.9;
+            }
+            .article-content a {
+              color: #3b82f6;
+              text-decoration: underline;
+            }
+            .article-content a:hover {
+              color: #2563eb;
+            }
+            .article-content code {
+              background: rgba(0, 0, 0, 0.1);
+              padding: 0.2em 0.4em;
+              border-radius: 0.25em;
+              font-size: 0.9em;
+            }
+            .article-content pre {
+              background: rgba(0, 0, 0, 0.05);
+              padding: 1em;
+              border-radius: 0.5em;
+              overflow-x: auto;
+              margin: 1.5em 0;
+            }
+            .article-content img {
+              max-width: 100%;
+              height: auto;
+              border-radius: 0.5em;
+              margin: 1.5em 0;
+            }
+          `}</style>
         </div>
 
         {/* Back to Articles */}

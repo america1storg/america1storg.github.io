@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { ArticleClient } from '@/components/ArticleClient';
 import type { Metadata } from 'next';
+import { getIdFromSlug } from '@/lib/slug';
 
 interface Article {
   id: number;
@@ -9,47 +10,54 @@ interface Article {
   cover_image: string | null;
   published_at: string;
   author_name: string | null;
+  slug: string;
 }
 
-async function getArticle(id: string): Promise<Article | null> {
+async function getArticle(slug: string): Promise<Article | null> {
   try {
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/articles/${id}`, {
-      next: { revalidate: 60 }, // Cache for 60 seconds
+
+    // Try to get article by slug first
+    let response = await fetch(`${baseUrl}/api/articles?slug=${slug}`, {
+      next: { revalidate: 60 },
     });
 
-    if (!response.ok) {
-      return null;
+    if (response.ok) {
+      const data = await response.json();
+      if (data.article) {
+        return data.article;
+      }
     }
 
-    const data = await response.json();
-    return data.article;
+    // Fallback: try to extract ID from slug for backward compatibility
+    const id = getIdFromSlug(slug);
+    if (id) {
+      response = await fetch(`${baseUrl}/api/articles/${id}`, {
+        next: { revalidate: 60 },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.article;
+      }
+    }
+
+    // Final fallback: check if slug is actually just an ID (old URLs)
+    if (/^\d+$/.test(slug)) {
+      response = await fetch(`${baseUrl}/api/articles/${slug}`, {
+        next: { revalidate: 60 },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.article;
+      }
+    }
+
+    return null;
   } catch (error) {
     console.error('Error fetching article:', error);
     return null;
-  }
-}
-
-export async function generateStaticParams() {
-  try {
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/articles`, {
-      next: { revalidate: 3600 }, // Revalidate article list every hour
-    });
-
-    if (!response.ok) {
-      return [];
-    }
-
-    const data = await response.json();
-    const articles = data.articles || [];
-
-    return articles.map((article: { id: number }) => ({
-      slug: article.id.toString(),
-    }));
-  } catch (error) {
-    console.error('Error generating static params:', error);
-    return [];
   }
 }
 
@@ -76,7 +84,7 @@ export async function generateMetadata({
     openGraph: {
       title: article.title,
       description: excerpt,
-      url: `${baseUrl}/articles/${article.id}`,
+      url: `${baseUrl}/articles/${article.slug || article.id}`,
       siteName: 'America First',
       images: article.cover_image
         ? [
@@ -99,6 +107,29 @@ export async function generateMetadata({
       images: article.cover_image ? [article.cover_image] : [],
     },
   };
+}
+
+export async function generateStaticParams() {
+  try {
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/articles`, {
+      next: { revalidate: 3600 },
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const data = await response.json();
+    const articles = data.articles || [];
+
+    return articles.map((article: { id: number; slug?: string }) => ({
+      slug: article.slug || article.id.toString(),
+    }));
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return [];
+  }
 }
 
 export default async function ArticlePage({

@@ -2,12 +2,30 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@vercel/postgres';
+import { generateSlug } from '@/lib/slug';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
+    const slug = searchParams.get('slug');
     const session = await getServerSession(authOptions);
+
+    // If slug is provided, return single article
+    if (slug) {
+      const result = await sql`
+        SELECT a.*, u.name as author_name
+        FROM articles a
+        LEFT JOIN users u ON a.author_id = u.id
+        WHERE a.slug = ${slug}
+      `;
+
+      if (result.rows.length === 0) {
+        return NextResponse.json({ article: null }, { status: 404 });
+      }
+
+      return NextResponse.json({ article: result.rows[0] });
+    }
 
     let query;
     if (session?.user) {
@@ -71,6 +89,7 @@ export async function POST(request: NextRequest) {
     const tempDiv = content.replace(/<[^>]*>/g, '');
     const excerpt = tempDiv.substring(0, 200) + (tempDiv.length > 200 ? '...' : '');
 
+    // Insert article first to get ID
     const result = await sql`
       INSERT INTO articles (title, content, excerpt, cover_image, status, author_id, published_at)
       VALUES (
@@ -85,7 +104,19 @@ export async function POST(request: NextRequest) {
       RETURNING *
     `;
 
-    return NextResponse.json({ article: result.rows[0] });
+    const article = result.rows[0];
+
+    // Generate and update slug
+    const slug = generateSlug(article.title, article.id);
+    await sql`
+      UPDATE articles
+      SET slug = ${slug}
+      WHERE id = ${article.id}
+    `;
+
+    article.slug = slug;
+
+    return NextResponse.json({ article });
   } catch (error) {
     console.error('Error creating article:', error);
     return NextResponse.json(
