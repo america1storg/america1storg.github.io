@@ -1,0 +1,490 @@
+# America First Website - Project Setup & Documentation
+
+## Overview
+A Next.js 16 civic education website with authentication, article management, and a 3D interactive homepage.
+
+**Live Site:** https://america1stusa.vercel.app  
+**Repository:** https://github.com/america1storg/america1storg.github.io
+
+---
+
+## Tech Stack
+
+- **Framework:** Next.js 16.2.12 (App Router, Turbopack)
+- **Language:** TypeScript
+- **Database:** Neon Postgres (serverless, free tier)
+- **Authentication:** NextAuth.js v5 with magic links (Gmail SMTP)
+- **Deployment:** Vercel
+- **Styling:** Tailwind CSS + inline styles
+- **3D Graphics:** Three.js (homepage flag animation)
+- **Rich Text Editor:** Tiptap (LinkedIn-style article editor)
+
+---
+
+## Database Schema
+
+### Tables
+
+#### `users`
+```sql
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  name VARCHAR(255),
+  is_super_admin BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+**Super Admin:** americafirstusateam@gmail.com
+
+#### `verification_token`
+```sql
+CREATE TABLE verification_token (
+  identifier TEXT NOT NULL,
+  expires TIMESTAMPTZ NOT NULL,
+  token TEXT NOT NULL,
+  PRIMARY KEY (identifier, token)
+);
+```
+
+Used for magic link email authentication.
+
+#### `articles`
+```sql
+CREATE TABLE articles (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(500) NOT NULL,
+  content TEXT NOT NULL,
+  excerpt TEXT,
+  cover_image TEXT,  -- Base64-encoded images
+  author_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  status VARCHAR(20) DEFAULT 'draft' CHECK (status IN ('draft', 'published')),
+  published_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+**Note:** `cover_image` was changed from `VARCHAR(1000)` to `TEXT` to support base64-encoded images (~50KB+).
+
+#### `article_images`
+```sql
+CREATE TABLE article_images (
+  id SERIAL PRIMARY KEY,
+  article_id INTEGER REFERENCES articles(id) ON DELETE CASCADE,
+  image_url VARCHAR(1000) NOT NULL,
+  alt_text VARCHAR(500),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+---
+
+## Environment Variables
+
+### Required in Vercel
+
+```env
+# Neon Postgres (auto-added by Vercel integration)
+POSTGRES_URL="postgresql://..."
+POSTGRES_PRISMA_URL="postgresql://..."
+POSTGRES_URL_NO_SSL="postgresql://..."
+POSTGRES_URL_NON_POOLING="postgresql://..."
+POSTGRES_USER="default"
+POSTGRES_HOST="..."
+POSTGRES_PASSWORD="..."
+POSTGRES_DATABASE="verceldb"
+
+# NextAuth
+NEXTAUTH_URL="https://america1stusa.vercel.app"
+NEXTAUTH_SECRET="<generate-with-openssl-rand-base64-32>"
+
+# Gmail SMTP for Magic Links
+EMAIL_SERVER="smtp://americafirstusateam@gmail.com:<app-password>@smtp.gmail.com:587"
+EMAIL_FROM="America First <americafirstusateam@gmail.com>"
+```
+
+### Gmail App Password Setup
+1. Go to Google Account → Security → 2-Step Verification
+2. Scroll to "App passwords"
+3. Generate password for "Mail"
+4. Use format: `smtp://EMAIL:APP_PASSWORD@smtp.gmail.com:587`
+
+---
+
+## Authentication System
+
+### Flow
+1. User enters email at `/admin` or `/admin/articles/new`
+2. NextAuth sends magic link via Gmail SMTP
+3. User clicks link → creates JWT session (no database sessions)
+4. Custom email adapter checks if user exists in `users` table
+5. Only users in `users` table can sign in
+
+### Files
+- **`lib/auth.ts`** - NextAuth configuration with JWT strategy
+- **`lib/email-adapter.ts`** - Custom adapter implementing only needed methods
+- **`app/api/auth/[...nextauth]/route.ts`** - NextAuth API handler
+
+### Key Points
+- **JWT sessions** (not database sessions) - no `sessions` or `accounts` tables needed
+- Only users in `users` table can authenticate
+- Magic links expire based on `verification_token.expires`
+
+---
+
+## Admin Panel
+
+### Access
+**URL:** `/admin`
+
+**Authentication Required:** Yes (magic link)
+
+### Features
+
+#### Dashboard (`/admin`)
+- Overview stats
+- Quick links to article management
+
+#### Articles Management (`/admin/articles`)
+- **Grid view** with cover images
+- Filter tabs: All / Published / Drafts
+- Actions: Edit, Delete
+- Card-based layout with:
+  - Cover image (or gradient placeholder)
+  - Title, excerpt, status badge
+  - Author, publish/create date
+  - Edit/Delete buttons
+
+#### New Article (`/admin/articles/new`)
+LinkedIn-style rich text editor with:
+- **Cover image upload** (file picker or URL)
+- **Title input**
+- **Toolbar:**
+  - Bold, Italic
+  - H2, H3 headings
+  - Bullet/numbered lists
+  - Blockquote
+  - Hyperlinks
+  - Image insertion (file upload or URL)
+  - Code blocks
+  - Horizontal dividers
+- **Active state tracking** (buttons highlight when active)
+- **Save as Draft** or **Publish Now**
+
+#### Edit Article (`/admin/articles/edit/[id]`)
+Same editor as new article, pre-filled with existing content.
+
+### Important Notes
+- **Cover images:** Stored as base64 in database (no external file storage)
+- **Image uploads:** Converted to base64 with FileReader API
+- **Excerpt:** Auto-generated from first 200 chars of content (HTML stripped)
+- **Published date:** Set on first publish, preserved on updates
+
+---
+
+## Public Pages
+
+### Home (`/`)
+- **3D animated flag** (Three.js)
+- Floating particles (red, white, blue)
+- Scroll-based camera movement
+- Background: `#00164D` (navy blue) in dark mode
+- Sections: Hero, Mission, Stance, Principles, Closing
+- Floating pill navigation bar
+
+### Articles (`/articles`)
+- Card grid (3 columns on desktop)
+- Cover images with "ARTICLE" badge
+- Hover effects (translate up, image scale)
+- Shows only published articles
+- Skeleton loading states
+
+### Article Detail (`/articles/[id]`)
+- Full-width cover image at top
+- Title, author, publish date
+- Rich text content (HTML rendered)
+- Back to articles link
+
+### About (`/about`)
+- Mission statement
+- Organization principles
+- Core values
+
+### Theme Toggle
+- Floating pill switch (gradient background)
+- Dark mode: Blue gradient with moon icon
+- Light mode: Orange-red gradient with sun icon
+- Persists across sessions
+
+---
+
+## API Routes
+
+### `GET /api/articles`
+Returns all articles (authenticated: all, public: published only).
+
+### `POST /api/articles`
+Create new article (authenticated only).
+
+**Body:**
+```json
+{
+  "title": "string",
+  "content": "string (HTML)",
+  "cover_image": "string (base64 or URL)",
+  "status": "draft | published",
+  "author_id": "number"
+}
+```
+
+### `GET /api/articles/[id]`
+Get single article by ID.
+
+### `PUT /api/articles/[id]`
+Update article (authenticated only).
+
+**Body:**
+```json
+{
+  "title": "string",
+  "content": "string (HTML)",
+  "cover_image": "string (base64 or URL)",
+  "status": "draft | published"
+}
+```
+
+### `DELETE /api/articles/[id]`
+Delete article (authenticated only).
+
+### `GET /api/migrate-cover-image`
+One-time migration to change `cover_image` column from `VARCHAR(1000)` to `TEXT`.
+
+---
+
+## Database Migrations
+
+### Initial Setup
+Run once on first deployment:
+
+```bash
+# Access from Vercel Functions or local with POSTGRES_URL
+npm run db:init
+```
+
+Or visit: `https://america1stusa.vercel.app/api/init-db`
+
+### Cover Image Column Fix
+If articles lose cover images, run:
+
+`https://america1stusa.vercel.app/api/migrate-cover-image`
+
+This changes `articles.cover_image` from `VARCHAR(1000)` to `TEXT`.
+
+---
+
+## Deployment (Vercel)
+
+### First-Time Setup
+
+1. **Connect GitHub repo** to Vercel
+2. **Add Neon Postgres:**
+   - Dashboard → Storage → Create Database → Neon
+   - Auto-adds `POSTGRES_*` env vars
+3. **Add env vars** (see Environment Variables section)
+4. **Deploy** (auto-triggers on push to `main`)
+5. **Initialize database:**
+   - Visit `/api/init-db` after first deployment
+6. **Test authentication:**
+   - Go to `/admin` → enter `americafirstusateam@gmail.com`
+   - Check email for magic link
+
+### Subsequent Deploys
+Push to `main` branch → auto-deploys.
+
+### Build Commands
+```json
+{
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start"
+  }
+}
+```
+
+---
+
+## File Structure
+
+```
+app/
+├── admin/
+│   └── articles/
+│       ├── page.tsx          # Article list (grid view)
+│       ├── loading.tsx        # Skeleton
+│       ├── new/page.tsx       # Create article
+│       └── edit/[id]/page.tsx # Edit article
+├── articles/
+│   ├── page.tsx               # Public article list
+│   ├── loading.tsx            # Skeleton
+│   └── [slug]/
+│       ├── page.tsx           # Article detail
+│       └── loading.tsx        # Skeleton
+├── about/
+│   ├── page.tsx
+│   └── loading.tsx
+├── api/
+│   ├── auth/[...nextauth]/route.ts
+│   ├── articles/
+│   │   ├── route.ts           # GET, POST
+│   │   └── [id]/route.ts      # GET, PUT, DELETE
+│   ├── init-db/route.ts
+│   └── migrate-cover-image/route.ts
+└── page.tsx                   # Homepage (3D flag)
+
+components/
+├── ArticleClient.tsx          # Client-side article display
+├── ArticleEditor.tsx          # Tiptap rich text editor
+├── ArticlesClient.tsx         # Client-side articles grid
+├── Footer.tsx
+├── Navigation.tsx             # Floating pill navbar
+├── ThemeProvider.tsx          # Dark/light mode context
+└── ThemeToggle.tsx            # Gradient pill switch
+
+lib/
+├── auth.ts                    # NextAuth config
+├── email-adapter.ts           # Custom email adapter
+└── db.ts                      # Database init script
+
+public/
+├── logo-transparent.png       # AFAmerica1st_no_background
+├── logo-icon.png
+└── logo-full-transparent.png
+```
+
+---
+
+## Key Design Decisions
+
+### Why JWT Sessions?
+- Simpler than database sessions
+- No need for `sessions` or `accounts` tables
+- Scales better (stateless)
+- Magic links work without complex adapter
+
+### Why Custom Email Adapter?
+- `PostgresAdapter` required standard NextAuth schema
+- Our schema is custom (`users` table without `emailVerified`, etc.)
+- Only needed 6 methods: `createUser`, `getUser`, `getUserByEmail`, `updateUser`, `createVerificationToken`, `useVerificationToken`
+
+### Why Base64 Images?
+- No external storage (S3, Cloudinary) needed
+- Simple file upload flow
+- Works with free Neon Postgres
+- **Caveat:** Large images increase database size
+
+### Why Neon Instead of Vercel Postgres?
+- User couldn't find Vercel Postgres in marketplace
+- Neon is free, serverless, and integrates seamlessly
+- Auto-adds env vars to Vercel
+
+---
+
+## Common Issues & Solutions
+
+### Issue: Cover images not saving
+**Cause:** `VARCHAR(1000)` too small for base64 images  
+**Fix:** Visit `/api/migrate-cover-image` to change to `TEXT`
+
+### Issue: Magic link doesn't work
+**Cause:** Gmail App Password incorrect or EMAIL_SERVER malformed  
+**Fix:** Regenerate App Password, ensure format: `smtp://email:password@smtp.gmail.com:587`
+
+### Issue: "Column emailVerified does not exist"
+**Cause:** Using PostgresAdapter with custom schema  
+**Fix:** Already fixed - using custom `EmailAdapter()` instead
+
+### Issue: Build fails on TypeScript errors
+**Cause:** Missing type definitions (usually `cover_image` in interfaces)  
+**Fix:** Add `cover_image: string | null` to all Article interfaces
+
+### Issue: Articles page loads slowly
+**Fix:** Already optimized with:
+- `next: { revalidate: 60 }` caching
+- `generateStaticParams` for pre-rendering
+- Loading skeletons for perceived performance
+
+---
+
+## Performance Optimizations
+
+1. **Caching:** 60-second revalidation on article fetches
+2. **Static Generation:** `generateStaticParams` pre-renders article pages
+3. **Loading Skeletons:** Instant visual feedback on all pages
+4. **Image Optimization:** Next.js `<Image>` component for logo
+5. **Three.js:** Optimized particle count (800 particles at 0.015 size)
+
+---
+
+## Future Enhancements (Suggestions)
+
+- [ ] Add search functionality for articles
+- [ ] Add categories/tags for articles
+- [ ] Add comments system
+- [ ] Switch to external image storage (S3/Cloudinary) for better performance
+- [ ] Add analytics (Vercel Analytics or Google Analytics)
+- [ ] Add SEO metadata (og:image, twitter cards)
+- [ ] Add sitemap generation
+- [ ] Add RSS feed
+- [ ] Add article preview before publishing
+- [ ] Add markdown support as alternative to HTML editor
+- [ ] Add user roles (admin, editor, viewer)
+- [ ] Add article scheduling (publish at future date)
+
+---
+
+## Troubleshooting Commands
+
+```bash
+# Check build locally
+npm run build
+
+# Check TypeScript errors
+npx tsc --noEmit
+
+# View Vercel deployment logs
+vercel logs <deployment-url>
+
+# Reinitialize database (destructive!)
+# Visit: https://america1stusa.vercel.app/api/init-db
+
+# Test authentication locally
+npm run dev
+# Visit: http://localhost:3000/admin
+```
+
+---
+
+## Contact & Admin Access
+
+**Super Admin Email:** americafirstusateam@gmail.com  
+**GitHub:** https://github.com/america1storg  
+**Deployed Site:** https://america1stusa.vercel.app
+
+---
+
+## Last Updated
+July 31, 2026
+
+## Project Status
+✅ **Production Ready**
+- Authentication working
+- Article CRUD working
+- Cover images persistent
+- Loading skeletons on all pages
+- Theme toggle working
+- 3D homepage optimized
+- Transparent logo in navbar
