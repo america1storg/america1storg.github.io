@@ -9,6 +9,7 @@ interface Article {
   id: number;
   title: string;
   content: string;
+  cover_image: string | null;
   published_at: string;
   author_name: string | null;
 }
@@ -36,6 +37,17 @@ export function ArticleClient({ article }: { article: Article }) {
             border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.08)'
           }}
         >
+          {/* Cover Image */}
+          {article.cover_image && (
+            <div className="mb-8 -mt-12 -mx-12 rounded-t-3xl overflow-hidden">
+              <img
+                src={article.cover_image}
+                alt={article.title}
+                className="w-full h-64 object-cover"
+              />
+            </div>
+          )}
+
           <h1 className="text-5xl md:text-6xl font-extrabold mb-8 leading-tight" style={{ color: isDark ? '#fff' : '#000' }}>
             {article.title}
           </h1>

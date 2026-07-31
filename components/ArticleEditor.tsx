@@ -10,18 +10,20 @@ import { useState } from 'react';
 interface ArticleEditorProps {
   initialContent?: string;
   initialTitle?: string;
-  onSave: (title: string, content: string, status: 'draft' | 'published') => Promise<void>;
+  initialCoverImage?: string;
+  onSave: (title: string, content: string, coverImage: string, status: 'draft' | 'published') => Promise<void>;
   isSaving: boolean;
 }
 
 export default function ArticleEditor({
   initialContent = '',
   initialTitle = '',
+  initialCoverImage = '',
   onSave,
   isSaving,
 }: ArticleEditorProps) {
   const [title, setTitle] = useState(initialTitle);
-  const [coverImage, setCoverImage] = useState('');
+  const [coverImage, setCoverImage] = useState(initialCoverImage);
   const [showImageModal, setShowImageModal] = useState(false);
   const [showCoverModal, setShowCoverModal] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
@@ -107,7 +109,7 @@ export default function ArticleEditor({
   const handleSave = async (status: 'draft' | 'published') => {
     if (!editor) return;
     const content = editor.getHTML();
-    await onSave(title, content, status);
+    await onSave(title, content, coverImage, status);
   };
 
   if (!editor) {

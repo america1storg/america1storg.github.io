@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const { title, content, status, author_id } = await request.json();
+    const { title, content, cover_image, status, author_id } = await request.json();
 
     if (!title || !content) {
       return NextResponse.json(
@@ -72,11 +72,12 @@ export async function POST(request: NextRequest) {
     const excerpt = tempDiv.substring(0, 200) + (tempDiv.length > 200 ? '...' : '');
 
     const result = await sql`
-      INSERT INTO articles (title, content, excerpt, status, author_id, published_at)
+      INSERT INTO articles (title, content, excerpt, cover_image, status, author_id, published_at)
       VALUES (
         ${title},
         ${content},
         ${excerpt},
+        ${cover_image || null},
         ${status},
         ${author_id},
         ${status === 'published' ? new Date().toISOString() : null}

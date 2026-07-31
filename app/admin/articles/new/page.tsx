@@ -13,6 +13,7 @@ export default function NewArticle() {
   const handleSave = async (
     title: string,
     content: string,
+    coverImage: string,
     status: 'draft' | 'published'
   ) => {
     if (!session?.user) {
@@ -29,6 +30,7 @@ export default function NewArticle() {
         body: JSON.stringify({
           title,
           content,
+          cover_image: coverImage,
           status,
           author_id: session.user.id,
         }),
