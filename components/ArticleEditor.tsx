@@ -64,6 +64,30 @@ export default function ArticleEditor({
     },
   });
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, isCover: boolean = false) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check if it's an image
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Convert to base64
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      if (isCover) {
+        setCoverImage(base64String);
+        setShowCoverModal(false);
+      } else {
+        setImageUrl(base64String);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   const addImage = () => {
     if (imageUrl && editor) {
       editor.chain().focus().setImage({ src: imageUrl, alt: imageAlt }).run();
@@ -312,6 +336,27 @@ export default function ArticleEditor({
           <div className="bg-white p-8 rounded-xl max-w-lg w-full shadow-2xl border-4 border-gray-200">
             <h3 className="text-3xl font-extrabold mb-8 text-black">Add Cover Image</h3>
             <div className="space-y-6">
+              {/* Upload from Computer */}
+              <div>
+                <label className="block text-lg font-bold mb-3 text-black">
+                  Upload from Computer
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleFileUpload(e, true)}
+                  className="w-full px-5 py-4 border-4 border-gray-400 rounded-lg focus:outline-none focus:border-blue-600 text-black text-base font-medium bg-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer"
+                />
+              </div>
+
+              {/* OR Divider */}
+              <div className="flex items-center gap-4">
+                <div className="flex-1 border-t-2 border-gray-300"></div>
+                <span className="text-gray-500 font-bold">OR</span>
+                <div className="flex-1 border-t-2 border-gray-300"></div>
+              </div>
+
+              {/* Image URL */}
               <div>
                 <label className="block text-lg font-bold mb-3 text-black">
                   Image URL
@@ -322,9 +367,9 @@ export default function ArticleEditor({
                   onChange={(e) => setImageUrl(e.target.value)}
                   className="w-full px-5 py-4 border-4 border-gray-400 rounded-lg focus:outline-none focus:border-blue-600 text-black text-lg font-medium bg-white placeholder-gray-500"
                   placeholder="https://example.com/cover.jpg"
-                  autoFocus
                 />
               </div>
+
               <div className="flex justify-end gap-4 mt-8">
                 <button
                   onClick={() => {
@@ -360,6 +405,27 @@ export default function ArticleEditor({
           <div className="bg-white p-8 rounded-xl max-w-lg w-full shadow-2xl border-4 border-gray-200">
             <h3 className="text-3xl font-extrabold mb-8 text-black">Insert Image</h3>
             <div className="space-y-6">
+              {/* Upload from Computer */}
+              <div>
+                <label className="block text-lg font-bold mb-3 text-black">
+                  Upload from Computer
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleFileUpload(e, false)}
+                  className="w-full px-5 py-4 border-4 border-gray-400 rounded-lg focus:outline-none focus:border-blue-600 text-black text-base font-medium bg-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer"
+                />
+              </div>
+
+              {/* OR Divider */}
+              <div className="flex items-center gap-4">
+                <div className="flex-1 border-t-2 border-gray-300"></div>
+                <span className="text-gray-500 font-bold">OR</span>
+                <div className="flex-1 border-t-2 border-gray-300"></div>
+              </div>
+
+              {/* Image URL */}
               <div>
                 <label className="block text-lg font-bold mb-3 text-black">
                   Image URL
@@ -370,9 +436,10 @@ export default function ArticleEditor({
                   onChange={(e) => setImageUrl(e.target.value)}
                   className="w-full px-5 py-4 border-4 border-gray-400 rounded-lg focus:outline-none focus:border-blue-600 text-black text-lg font-medium bg-white placeholder-gray-500"
                   placeholder="https://example.com/image.jpg"
-                  autoFocus
                 />
               </div>
+
+              {/* Alt Text */}
               <div>
                 <label className="block text-lg font-bold mb-3 text-black">
                   Alt Text (Optional)
@@ -385,6 +452,7 @@ export default function ArticleEditor({
                   placeholder="Description of the image"
                 />
               </div>
+
               <div className="flex justify-end gap-4 mt-8">
                 <button
                   onClick={() => {
