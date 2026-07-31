@@ -21,7 +21,9 @@ export default function ArticleEditor({
   isSaving,
 }: ArticleEditorProps) {
   const [title, setTitle] = useState(initialTitle);
+  const [coverImage, setCoverImage] = useState('');
   const [showImageModal, setShowImageModal] = useState(false);
+  const [showCoverModal, setShowCoverModal] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [imageAlt, setImageAlt] = useState('');
 
@@ -40,14 +42,14 @@ export default function ArticleEditor({
         },
       }),
       Placeholder.configure({
-        placeholder: 'Start writing your article...',
+        placeholder: 'Write your article content here...',
       }),
     ],
     content: initialContent,
     editorProps: {
       attributes: {
         class:
-          'prose prose-lg max-w-none focus:outline-none min-h-[400px] p-6',
+          'prose prose-lg max-w-none focus:outline-none min-h-[500px] px-8 py-6',
       },
     },
   });
@@ -79,120 +81,173 @@ export default function ArticleEditor({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg">
+    <div className="bg-white rounded-lg shadow-lg max-w-5xl mx-auto">
+      {/* Cover Image Area */}
+      <div
+        className="relative h-64 bg-gray-100 rounded-t-lg flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+        onClick={() => setShowCoverModal(true)}
+        style={coverImage ? {
+          backgroundImage: `url(${coverImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        } : {}}
+      >
+        {!coverImage && (
+          <div className="text-center">
+            <div className="text-6xl mb-2">📷</div>
+            <p className="text-gray-600 font-medium">Add a cover image or video to your article</p>
+            <p className="text-sm text-gray-500 mt-1">Click to upload</p>
+          </div>
+        )}
+        {coverImage && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setCoverImage('');
+            }}
+            className="absolute top-4 right-4 bg-white px-4 py-2 rounded-lg shadow hover:bg-gray-100"
+          >
+            Remove cover
+          </button>
+        )}
+      </div>
+
       {/* Title Input */}
-      <div className="p-6 border-b">
+      <div className="p-8 border-b">
+        <h2 className="text-5xl font-bold text-gray-800 mb-4">Title</h2>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Article Title"
-          className="w-full text-4xl font-bold focus:outline-none"
+          placeholder="Write here. You can also include @mentions."
+          className="w-full text-2xl focus:outline-none text-gray-700"
         />
       </div>
 
       {/* Toolbar */}
-      <div className="flex flex-wrap gap-2 p-4 border-b bg-gray-50">
+      <div className="flex flex-wrap gap-1 px-8 py-3 border-b bg-white">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`px-3 py-1 rounded transition-colors ${
+          className={`px-3 py-1.5 rounded transition-colors border font-semibold ${
             editor.isActive('bold')
-              ? 'bg-blue-900 text-white'
-              : 'bg-white hover:bg-gray-100'
+              ? 'bg-gray-200 border-gray-300'
+              : 'border-gray-200 hover:bg-gray-50'
           }`}
+          title="Bold"
         >
           <strong>B</strong>
         </button>
 
         <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`px-3 py-1 rounded transition-colors ${
+          className={`px-3 py-1.5 rounded transition-colors border ${
             editor.isActive('italic')
-              ? 'bg-blue-900 text-white'
-              : 'bg-white hover:bg-gray-100'
+              ? 'bg-gray-200 border-gray-300'
+              : 'border-gray-200 hover:bg-gray-50'
           }`}
+          title="Italic"
         >
           <em>I</em>
         </button>
 
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={`px-3 py-1 rounded transition-colors ${
+          className={`px-3 py-1.5 rounded transition-colors border ${
             editor.isActive('heading', { level: 2 })
-              ? 'bg-blue-900 text-white'
-              : 'bg-white hover:bg-gray-100'
+              ? 'bg-gray-200 border-gray-300'
+              : 'border-gray-200 hover:bg-gray-50'
           }`}
+          title="Heading 2"
         >
           H2
         </button>
 
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          className={`px-3 py-1 rounded transition-colors ${
+          className={`px-3 py-1.5 rounded transition-colors border ${
             editor.isActive('heading', { level: 3 })
-              ? 'bg-blue-900 text-white'
-              : 'bg-white hover:bg-gray-100'
+              ? 'bg-gray-200 border-gray-300'
+              : 'border-gray-200 hover:bg-gray-50'
           }`}
+          title="Heading 3"
         >
           H3
         </button>
 
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`px-3 py-1 rounded transition-colors ${
+          className={`px-3 py-1.5 rounded transition-colors border ${
             editor.isActive('bulletList')
-              ? 'bg-blue-900 text-white'
-              : 'bg-white hover:bg-gray-100'
+              ? 'bg-gray-200 border-gray-300'
+              : 'border-gray-200 hover:bg-gray-50'
           }`}
+          title="Bullet List"
         >
           • List
         </button>
 
         <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={`px-3 py-1 rounded transition-colors ${
+          className={`px-3 py-1.5 rounded transition-colors border ${
             editor.isActive('orderedList')
-              ? 'bg-blue-900 text-white'
-              : 'bg-white hover:bg-gray-100'
+              ? 'bg-gray-200 border-gray-300'
+              : 'border-gray-200 hover:bg-gray-50'
           }`}
+          title="Numbered List"
         >
           1. List
         </button>
 
         <button
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={`px-3 py-1 rounded transition-colors ${
+          className={`px-3 py-1.5 rounded transition-colors border ${
             editor.isActive('blockquote')
-              ? 'bg-blue-900 text-white'
-              : 'bg-white hover:bg-gray-100'
+              ? 'bg-gray-200 border-gray-300'
+              : 'border-gray-200 hover:bg-gray-50'
           }`}
+          title="Quote"
         >
           &ldquo; Quote
         </button>
 
         <button
           onClick={setLink}
-          className={`px-3 py-1 rounded transition-colors ${
+          className={`px-3 py-1.5 rounded transition-colors border ${
             editor.isActive('link')
-              ? 'bg-blue-900 text-white'
-              : 'bg-white hover:bg-gray-100'
+              ? 'bg-gray-200 border-gray-300'
+              : 'border-gray-200 hover:bg-gray-50'
           }`}
+          title="Add Link"
         >
           🔗 Link
         </button>
 
         <button
           onClick={() => setShowImageModal(true)}
-          className="px-3 py-1 rounded bg-white hover:bg-gray-100 transition-colors"
+          className="px-3 py-1.5 rounded border border-gray-200 hover:bg-gray-50 transition-colors"
+          title="Insert Image"
         >
           🖼️ Image
         </button>
 
         <button
-          onClick={() => editor.chain().focus().setHorizontalRule().run()}
-          className="px-3 py-1 rounded bg-white hover:bg-gray-100 transition-colors"
+          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          className={`px-3 py-1.5 rounded transition-colors border ${
+            editor.isActive('codeBlock')
+              ? 'bg-gray-200 border-gray-300'
+              : 'border-gray-200 hover:bg-gray-50'
+          }`}
+          title="Code Block"
         >
-          ― HR
+          {'<>'} Code
+        </button>
+
+        <button
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          className="px-3 py-1.5 rounded border border-gray-200 hover:bg-gray-50 transition-colors"
+          title="Horizontal Divider"
+        >
+          ― Divider
         </button>
       </div>
 
@@ -200,22 +255,74 @@ export default function ArticleEditor({
       <EditorContent editor={editor} />
 
       {/* Action Buttons */}
-      <div className="p-6 border-t bg-gray-50 flex justify-end gap-4">
-        <button
-          onClick={() => handleSave('draft')}
-          disabled={isSaving || !title}
-          className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
-        >
-          {isSaving ? 'Saving...' : 'Save as Draft'}
-        </button>
-        <button
-          onClick={() => handleSave('published')}
-          disabled={isSaving || !title}
-          className="px-6 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors disabled:opacity-50"
-        >
-          {isSaving ? 'Publishing...' : 'Publish'}
-        </button>
+      <div className="px-8 py-6 border-t bg-white flex justify-between items-center rounded-b-lg">
+        <p className="text-sm text-gray-500">
+          {title ? `Title: ${title.length} characters` : 'Add a title to continue'}
+        </p>
+        <div className="flex gap-3">
+          <button
+            onClick={() => handleSave('draft')}
+            disabled={isSaving || !title}
+            className="px-6 py-2.5 border-2 border-gray-300 rounded-full font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSaving ? 'Saving...' : 'Save as Draft'}
+          </button>
+          <button
+            onClick={() => handleSave('published')}
+            disabled={isSaving || !title}
+            className="px-6 py-2.5 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+          >
+            {isSaving ? 'Publishing...' : 'Publish Now'}
+          </button>
+        </div>
       </div>
+
+      {/* Cover Image Modal */}
+      {showCoverModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full">
+            <h3 className="text-xl font-bold mb-4">Add Cover Image</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Image URL
+                </label>
+                <input
+                  type="url"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="https://example.com/cover.jpg"
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => {
+                    setShowCoverModal(false);
+                    setImageUrl('');
+                  }}
+                  className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    if (imageUrl) {
+                      setCoverImage(imageUrl);
+                      setImageUrl('');
+                      setShowCoverModal(false);
+                    }
+                  }}
+                  disabled={!imageUrl}
+                  className="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 disabled:opacity-50"
+                >
+                  Add Cover
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Image Modal */}
       {showImageModal && (
