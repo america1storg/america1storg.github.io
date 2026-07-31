@@ -49,7 +49,7 @@ export default function ArticleEditor({
     editorProps: {
       attributes: {
         class:
-          'prose prose-lg max-w-none focus:outline-none min-h-[500px] px-8 py-6',
+          'prose prose-lg max-w-none focus:outline-none min-h-[500px] px-8 py-6 text-gray-900',
       },
     },
   });
@@ -81,7 +81,26 @@ export default function ArticleEditor({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg max-w-5xl mx-auto">
+    <>
+      <style jsx global>{`
+        .ProseMirror {
+          color: #111827 !important;
+        }
+        .ProseMirror p {
+          color: #111827 !important;
+        }
+        .ProseMirror h1, .ProseMirror h2, .ProseMirror h3 {
+          color: #111827 !important;
+        }
+        .ProseMirror .is-editor-empty:first-child::before {
+          color: #9ca3af;
+          content: attr(data-placeholder);
+          float: left;
+          height: 0;
+          pointer-events: none;
+        }
+      `}</style>
+      <div className="bg-white rounded-lg shadow-lg max-w-5xl mx-auto">
       {/* Cover Image Area */}
       <div
         className="relative h-64 bg-gray-100 rounded-t-lg flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
@@ -113,14 +132,14 @@ export default function ArticleEditor({
       </div>
 
       {/* Title Input */}
-      <div className="p-8 border-b">
-        <h2 className="text-5xl font-bold text-gray-800 mb-4">Title</h2>
+      <div className="p-8 border-b bg-white">
+        <h2 className="text-4xl font-bold text-gray-800 mb-4">Title</h2>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Write here. You can also include @mentions."
-          className="w-full text-2xl focus:outline-none text-gray-700"
+          className="w-full text-xl focus:outline-none text-gray-900 placeholder-gray-400"
         />
       </div>
 
@@ -378,5 +397,6 @@ export default function ArticleEditor({
         </div>
       )}
     </div>
+    </>
   );
 }
