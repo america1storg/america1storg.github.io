@@ -61,7 +61,7 @@ export async function PUT(
     }
 
     const { id: articleId } = await params;
-    const { title, content, status } = await request.json();
+    const { title, content, cover_image, status } = await request.json();
 
     if (!title || !content) {
       return NextResponse.json(
@@ -88,6 +88,7 @@ export async function PUT(
         title = ${title},
         content = ${content},
         excerpt = ${excerpt},
+        cover_image = ${cover_image || null},
         status = ${status},
         published_at = ${shouldPublish ? new Date().toISOString() : currentArticle.rows[0]?.published_at || null},
         updated_at = CURRENT_TIMESTAMP

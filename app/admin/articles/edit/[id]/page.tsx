@@ -9,6 +9,7 @@ interface Article {
   id: number;
   title: string;
   content: string;
+  cover_image: string | null;
   status: 'draft' | 'published';
 }
 
@@ -47,6 +48,7 @@ export default function EditArticle() {
   const handleSave = async (
     title: string,
     content: string,
+    coverImage: string,
     status: 'draft' | 'published'
   ) => {
     if (!session?.user || !article) {
@@ -63,6 +65,7 @@ export default function EditArticle() {
         body: JSON.stringify({
           title,
           content,
+          cover_image: coverImage,
           status,
         }),
       });
@@ -112,6 +115,7 @@ export default function EditArticle() {
       <ArticleEditor
         initialTitle={article.title}
         initialContent={article.content}
+        initialCoverImage={article.cover_image || ''}
         onSave={handleSave}
         isSaving={isSaving}
       />
