@@ -21,7 +21,7 @@ export default function Home() {
       const container = document.getElementById('three-container');
       const scene = new THREE.Scene();
       const isDarkMode = document.body.classList.contains('dark');
-      scene.background = new THREE.Color(isDarkMode ? 0x020208 : 0xf8f9fa);
+      scene.background = new THREE.Color(isDarkMode ? 0x00164D : 0xf8f9fa);
 
       const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 200);
       camera.position.set(0, 3, 14);
@@ -180,9 +180,9 @@ export default function Home() {
       partGeom.setAttribute('position', new THREE.BufferAttribute(partPos, 3));
       partGeom.setAttribute('color', new THREE.BufferAttribute(partColors, 3));
       const partMat = new THREE.PointsMaterial({
-          size: 0.05,
+          size: 0.015,
           transparent: true,
-          opacity: 0.4,
+          opacity: 0.3,
           vertexColors: true,
           blending: THREE.AdditiveBlending,
           sizeAttenuation: true,
@@ -278,7 +278,7 @@ export default function Home() {
         }
 
         body.dark {
-          background: #020208;
+          background: #00164D;
           color: #fff;
         }
 
