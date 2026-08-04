@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@auth/pg-adapter": "^1.11.3",
+    "@emailjs/browser": "^4.4.1",
     "@tiptap/extension-image": "^3.29.2",
     "@tiptap/extension-link": "^3.29.2",
     "@tiptap/extension-placeholder": "^3.29.2",

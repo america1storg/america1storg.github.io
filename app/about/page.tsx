@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useTheme } from '@/components/ThemeProvider';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
+import { ContactForm } from '@/components/ContactForm';
 
 export const dynamic = 'force-dynamic';
 
@@ -118,15 +119,10 @@ export default function About() {
             }}
           >
             <h2 className="text-4xl font-bold mb-6" style={{ color: '#3b82f6' }}>Contact Us</h2>
-            <p className="text-xl" style={{ color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)' }}>
-              For inquiries, please contact us at:{' '}
-              <a
-                href="mailto:americafirstusateam@gmail.com"
-                className="text-blue-400 hover:underline font-semibold"
-              >
-                americafirstusateam@gmail.com
-              </a>
+            <p className="text-xl mb-8" style={{ color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)' }}>
+              Have a question or want to get in touch? Fill out the form below and we'll get back to you as soon as possible.
             </p>
+            <ContactForm />
           </section>
 
           {/* CTA */}
