@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTheme } from './ThemeProvider';
-import { ThemeToggle } from './ThemeToggle';
+import { ThemeToggleIcon } from './ThemeToggleIcon';
 
 export function Navigation() {
   const pathname = usePathname();
@@ -69,7 +69,7 @@ export function Navigation() {
             >
               Admin
             </Link>
-            <ThemeToggle />
+            <ThemeToggleIcon />
           </div>
         </div>
       </div>
