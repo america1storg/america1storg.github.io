@@ -72,10 +72,10 @@ export function ContactForm() {
     setStatus({ message: '', type: '' });
 
     try {
-      // Initialize EmailJS (you'll need to replace these with your actual values)
+      // Send email via EmailJS
       await emailjs.send(
-        'YOUR_SERVICE_ID',  // Replace with your EmailJS service ID
-        'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
+        'service_2rkux6u',
+        'template_rdl6fc4',
         {
           from_name: formData.name,
           from_email: formData.email,
@@ -83,7 +83,7 @@ export function ContactForm() {
           message: formData.message,
           to_email: 'americafirstusateam@gmail.com'
         },
-        'YOUR_PUBLIC_KEY' // Replace with your EmailJS public key
+        '_QiY0x4e6wRUDJ1cV'
       );
 
       setStatus({
