@@ -42,6 +42,7 @@ export function ShareButton({ url, title, description }: ShareButtonProps) {
           background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
           color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
           border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)',
+          cursor: 'pointer',
         }}
         aria-label="Share article"
       >
@@ -77,6 +78,7 @@ export function ShareButton({ url, title, description }: ShareButtonProps) {
                 className="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all text-left hover:bg-opacity-10"
                 style={{
                   color: isDark ? '#fff' : '#000',
+                  cursor: 'pointer',
                 }}
               >
                 <div className="w-5 h-5 flex items-center justify-center">
@@ -93,6 +95,7 @@ export function ShareButton({ url, title, description }: ShareButtonProps) {
                 className="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all text-left"
                 style={{
                   color: isDark ? '#fff' : '#000',
+                  cursor: 'pointer',
                 }}
               >
                 <div className="w-5 h-5 flex items-center justify-center" style={{ color: '#1877F2' }}>
@@ -109,6 +112,7 @@ export function ShareButton({ url, title, description }: ShareButtonProps) {
                 className="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all text-left"
                 style={{
                   color: isDark ? '#fff' : '#000',
+                  cursor: 'pointer',
                 }}
               >
                 <div className="w-5 h-5 flex items-center justify-center" style={{ color: '#0A66C2' }}>
@@ -127,6 +131,7 @@ export function ShareButton({ url, title, description }: ShareButtonProps) {
                 className="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all text-left"
                 style={{
                   color: isDark ? '#fff' : '#000',
+                  cursor: 'pointer',
                 }}
               >
                 <div className="w-5 h-5 flex items-center justify-center">
