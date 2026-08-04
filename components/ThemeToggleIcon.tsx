@@ -12,6 +12,7 @@ export function ThemeToggleIcon() {
       className="p-2 rounded-full transition-all duration-200 hover:opacity-70"
       style={{
         background: 'transparent',
+        cursor: 'pointer',
       }}
       aria-label="Toggle theme"
     >

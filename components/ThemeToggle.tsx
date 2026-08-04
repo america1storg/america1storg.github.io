@@ -22,6 +22,7 @@ export function ThemeToggle() {
         boxShadow: isDark
           ? '0 4px 12px rgba(59, 130, 246, 0.3)'
           : '0 4px 12px rgba(248, 113, 113, 0.3)',
+        cursor: 'pointer',
       }}
       aria-label="Toggle theme"
     >
