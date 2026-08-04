@@ -16,7 +16,7 @@ export function Navigation() {
     <nav
       className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 rounded-full shadow-2xl"
       style={{
-        background: isDark ? 'rgba(0, 0, 0, 0.75)' : 'rgba(255, 255, 255, 0.9)',
+        background: isDark ? 'rgba(2, 2, 8, 0.85)' : 'rgba(255, 255, 255, 0.9)',
         backdropFilter: 'blur(20px)',
         border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)',
         color: isDark ? '#fff' : '#000',
