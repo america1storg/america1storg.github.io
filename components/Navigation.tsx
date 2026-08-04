@@ -30,9 +30,9 @@ export function Navigation() {
             <Image
               src={isDark ? "/logo-dark.png" : "/logo-light.png"}
               alt="America First"
-              width={28}
-              height={28}
-              className="w-7 h-7"
+              width={40}
+              height={40}
+              className="w-10 h-10"
             />
             <span className="text-lg font-bold" style={{ color: isDark ? '#fff' : '#000' }}>
               America First
