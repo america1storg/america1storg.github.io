@@ -27,7 +27,13 @@ export function Navigation() {
       <div className="px-6">
         <div className="flex justify-between items-center h-14 gap-8">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo-transparent.png" alt="America First" width={28} height={28} className="w-7 h-7" />
+            <Image
+              src={isDark ? "/logo-dark.png" : "/logo-light.png"}
+              alt="America First"
+              width={28}
+              height={28}
+              className="w-7 h-7"
+            />
             <span className="text-lg font-bold" style={{ color: isDark ? '#fff' : '#000' }}>
               America First
             </span>
