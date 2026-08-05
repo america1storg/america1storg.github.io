@@ -24,24 +24,24 @@ export function Navigation() {
         maxWidth: '95vw',
       }}
     >
-      <div className="px-6">
-        <div className="flex justify-between items-center h-14 gap-8">
-          <Link href="/" className="flex items-center gap-3">
+      <div className="px-4 md:px-6">
+        <div className="flex justify-between items-center h-14 gap-2 md:gap-8">
+          <Link href="/" className="flex items-center gap-2 md:gap-3 shrink-0">
             <Image
               src={isDark ? "/logo-dark.png" : "/logo-light.png"}
               alt="America First"
               width={40}
               height={40}
-              className="w-10 h-10"
+              className="w-8 h-8 md:w-10 md:h-10"
             />
-            <span className="text-lg font-bold" style={{ color: isDark ? '#fff' : '#000' }}>
+            <span className="text-base md:text-lg font-bold whitespace-nowrap" style={{ color: isDark ? '#fff' : '#000' }}>
               America First
             </span>
           </Link>
-          <div className="flex gap-6 items-center">
+          <div className="flex gap-3 md:gap-6 items-center">
             <Link
               href="/articles"
-              className="transition-colors text-sm font-medium hover:opacity-80"
+              className="transition-colors text-xs md:text-sm font-medium hover:opacity-80 whitespace-nowrap"
               style={{
                 color: pathname === '/articles' || pathname?.startsWith('/articles/')
                   ? '#3b82f6'
@@ -52,7 +52,7 @@ export function Navigation() {
             </Link>
             <Link
               href="/resources"
-              className="transition-colors text-sm font-medium hover:opacity-80"
+              className="transition-colors text-xs md:text-sm font-medium hover:opacity-80 whitespace-nowrap"
               style={{
                 color: pathname === '/resources' ? '#3b82f6' : isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
               }}
@@ -61,7 +61,7 @@ export function Navigation() {
             </Link>
             <Link
               href="/about"
-              className="transition-colors text-sm font-medium hover:opacity-80"
+              className="transition-colors text-xs md:text-sm font-medium hover:opacity-80 whitespace-nowrap"
               style={{
                 color: pathname === '/about' ? '#3b82f6' : isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
               }}
