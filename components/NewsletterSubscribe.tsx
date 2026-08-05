@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useTheme } from './ThemeProvider';
 
 interface NewsletterSubscribeProps {
@@ -139,7 +140,10 @@ export function NewsletterSubscribe({ variant = 'card', className = '' }: Newsle
       )}
 
       <p className="text-xs mt-4 text-center" style={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>
-        We respect your privacy. Unsubscribe at any time.
+        We respect your privacy. Unsubscribe at any time.{' '}
+        <Link href="/privacy" className="underline hover:no-underline">
+          Privacy Policy
+        </Link>
       </p>
     </div>
   );
