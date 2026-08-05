@@ -38,6 +38,21 @@ export function ArticlesClient({ articles }: { articles: Article[] }) {
         </p>
       </header>
 
+      {/* Disclaimer */}
+      <div className="px-[6vw] max-w-[1400px] mx-auto pb-8">
+        <div
+          className="p-4 rounded-xl text-center text-xs"
+          style={{
+            background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)',
+            border: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.05)',
+            color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          Content reflects the views of America First on how current events align with America-First principles.
+          It is for educational and advocacy purposes and does not constitute legal or tax advice.
+        </div>
+      </div>
+
       {/* Articles Grid */}
       <main className="px-[6vw] max-w-[1400px] mx-auto pb-24">
         {articles.length === 0 ? (

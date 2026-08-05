@@ -43,11 +43,15 @@ export default function About() {
             }}
           >
             <h2 className="text-4xl font-bold mb-6" style={{ color: '#3b82f6' }}>Our Mission</h2>
-            <p className="text-xl leading-relaxed" style={{ color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)' }}>
-              America First is a nonpartisan civic education organization in formation,
+            <p className="text-xl leading-relaxed mb-6" style={{ color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)' }}>
+              America First is an independent civic education and advocacy organization in formation,
               committed to restoring logical reasoning, fairness, and principled
-              decision-making in American civic life. We do not support any political
-              party—we support truth, data, analysis, and the Constitution.
+              decision-making in American civic life from an America-First perspective.
+            </p>
+            <p className="text-xl leading-relaxed" style={{ color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)' }}>
+              We are not affiliated with any candidate, campaign, or political party. We evaluate all leaders,
+              policies, and parties based on America-First principles, logic, and the rule of law. We do not support
+              any political party—we support truth, data, analysis, and the Constitution.
             </p>
           </section>
 
@@ -96,9 +100,9 @@ export default function About() {
               {[
                 { title: 'Truth & Data', desc: 'Every position must be backed by facts, evidence, and rigorous analysis' },
                 { title: 'Constitutional Principles', desc: 'The Constitution is the foundation of American governance and civic life' },
-                { title: 'Nonpartisan Approach', desc: 'We support principles, not parties; logic, not tribalism' },
+                { title: 'Independent Evaluation', desc: 'We evaluate all leaders and parties based on principles, not partisanship' },
                 { title: 'National Interest', desc: 'America\'s prosperity, security, and values come first' },
-                { title: 'Civic Responsibility', desc: 'Informed citizenship is the bedrock of democracy' }
+                { title: 'Civic Education & Advocacy', desc: 'Informed citizenship and principled advocacy for America-First policies' }
               ].map((value) => (
                 <li key={value.title} className="flex gap-4 items-start">
                   <span style={{ color: '#ef4444' }} className="text-2xl font-bold mt-1">•</span>

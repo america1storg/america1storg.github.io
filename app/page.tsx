@@ -354,7 +354,7 @@ export default function Home() {
             className="text-xs tracking-[0.4em] uppercase font-medium mb-4"
             style={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}
           >
-            Nonpartisan · Civic Education
+            Independent · Civic Education & Advocacy · In Formation
           </p>
           <h1
             className="text-6xl md:text-9xl font-extrabold leading-[1.0] tracking-tight mb-6"
@@ -370,9 +370,9 @@ export default function Home() {
               textShadow: isDark ? '0 0 40px rgba(0, 0, 0, 0.9)' : '0 0 40px rgba(255, 255, 255, 0.9)',
             }}
           >
-            A <strong style={{ color: isDark ? '#fff' : '#000' }} className="font-semibold">nonpartisan</strong> civic education organization committed to
+            An <strong style={{ color: isDark ? '#fff' : '#000' }} className="font-semibold">independent</strong> civic education and advocacy organization committed to
             restoring <strong style={{ color: isDark ? '#fff' : '#000' }} className="font-semibold">logical reasoning</strong>, <strong style={{ color: isDark ? '#fff' : '#000' }} className="font-semibold">fairness</strong>,
-            and <strong style={{ color: isDark ? '#fff' : '#000' }} className="font-semibold">principled decision-making</strong>.
+            and <strong style={{ color: isDark ? '#fff' : '#000' }} className="font-semibold">principled decision-making</strong> from an America-First perspective.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-8">
             <Link
