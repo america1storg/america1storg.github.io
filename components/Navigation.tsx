@@ -51,6 +51,15 @@ export function Navigation() {
               Articles
             </Link>
             <Link
+              href="/resources"
+              className="transition-colors text-sm font-medium hover:opacity-80"
+              style={{
+                color: pathname === '/resources' ? '#3b82f6' : isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+              }}
+            >
+              Resources
+            </Link>
+            <Link
               href="/about"
               className="transition-colors text-sm font-medium hover:opacity-80"
               style={{
@@ -58,16 +67,6 @@ export function Navigation() {
               }}
             >
               About
-            </Link>
-            <Link
-              href="/admin"
-              className="px-5 py-2 rounded-full hover:opacity-90 transition-all text-sm font-semibold"
-              style={{
-                background: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)',
-                color: isDark ? '#000' : '#fff',
-              }}
-            >
-              Admin
             </Link>
             <ThemeToggleIcon />
           </div>
