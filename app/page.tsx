@@ -6,6 +6,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { SocialLinks } from '@/components/SocialLinks';
+import { NewsletterSubscribe } from '@/components/NewsletterSubscribe';
 
 // Removed force-dynamic - homepage is now static with client-side theme only
 
@@ -487,6 +488,11 @@ export default function Home() {
           <p className="text-base mt-8" style={{ color: isDark ? 'rgba(255, 255, 255, 0.45)' : 'rgba(0, 0, 0, 0.45)' }}>
             Nonpartisan · Civic Education · In Formation
           </p>
+
+          {/* Newsletter Subscription */}
+          <div className="mt-16 max-w-[500px]">
+            <NewsletterSubscribe variant="card" />
+          </div>
         </section>
 
         {/* Footer */}

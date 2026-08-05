@@ -6,6 +6,7 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { ContactForm } from '@/components/ContactForm';
 import { SocialLinks } from '@/components/SocialLinks';
+import { NewsletterSubscribe } from '@/components/NewsletterSubscribe';
 
 // Removed force-dynamic - about page is now static with client-side theme only
 
@@ -124,6 +125,11 @@ export default function About() {
               Have a question or want to get in touch? Fill out the form below and we'll get back to you as soon as possible.
             </p>
             <ContactForm />
+          </section>
+
+          {/* Newsletter Subscription */}
+          <section>
+            <NewsletterSubscribe variant="card" />
           </section>
 
           {/* Social Media Section */}
