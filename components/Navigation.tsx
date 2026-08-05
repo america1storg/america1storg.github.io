@@ -28,7 +28,7 @@ export function Navigation() {
           maxWidth: '95vw',
         }}
       >
-        <div className="px-6">
+        <div className="pl-6 pr-12">
           <div className="flex justify-between items-center h-14 gap-8">
             <Link href="/" className="flex items-center gap-3 shrink-0">
               <Image
@@ -64,6 +64,15 @@ export function Navigation() {
                 Resources
               </Link>
               <Link
+                href="/get-involved"
+                className="transition-colors text-sm font-medium hover:opacity-80"
+                style={{
+                  color: pathname === '/get-involved' ? '#3b82f6' : isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                }}
+              >
+                Volunteer
+              </Link>
+              <Link
                 href="/about"
                 className="transition-colors text-sm font-medium hover:opacity-80"
                 style={{
@@ -71,6 +80,28 @@ export function Navigation() {
                 }}
               >
                 About
+              </Link>
+              <Link
+                href="/search"
+                className="transition-colors hover:opacity-80"
+                title="Search"
+                style={{
+                  color: pathname === '/search' ? '#3b82f6' : isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                }}
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.35-4.35" />
+                </svg>
               </Link>
               <ThemeToggleIcon />
             </div>
@@ -135,6 +166,32 @@ export function Navigation() {
           {mobileMenuOpen && (
             <div className="pb-4 pt-2 space-y-2">
               <Link
+                href="/search"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium"
+                style={{
+                  background: pathname === '/search'
+                    ? isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.1)'
+                    : 'transparent',
+                  color: pathname === '/search' ? '#3b82f6' : isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                }}
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.35-4.35" />
+                </svg>
+                Search
+              </Link>
+              <Link
                 href="/articles"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-4 py-3 rounded-lg transition-all font-medium"
@@ -161,6 +218,19 @@ export function Navigation() {
                 }}
               >
                 Resources
+              </Link>
+              <Link
+                href="/get-involved"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-3 rounded-lg transition-all font-medium"
+                style={{
+                  background: pathname === '/get-involved'
+                    ? isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.1)'
+                    : 'transparent',
+                  color: pathname === '/get-involved' ? '#3b82f6' : isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                }}
+              >
+                Volunteer
               </Link>
               <Link
                 href="/about"

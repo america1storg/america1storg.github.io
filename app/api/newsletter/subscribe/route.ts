@@ -1,12 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { newsletterRateLimiter } from '@/lib/rate-limit';
+import { sanitizeEmail } from '@/lib/sanitize';
 
 export async function POST(request: NextRequest) {
+  // Rate limiting check
+  const rateLimitResult = newsletterRateLimiter.check(request);
+  if (rateLimitResult.limited) {
+    return NextResponse.json(
+      { error: 'Too many subscription attempts. Please try again later.' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString(),
+        },
+      }
+    );
+  }
+
   try {
     const { email } = await request.json();
 
-    if (!email || !email.includes('@')) {
+    // Sanitize and validate email
+    const { valid, sanitized } = sanitizeEmail(email);
+
+    if (!valid) {
       return NextResponse.json(
-        { error: 'Valid email is required' },
+        { error: 'Valid email address is required' },
         { status: 400 }
       );
     }
@@ -21,7 +40,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Add contact to Brevo
+    // Add contact to Brevo (use sanitized email)
     const response = await fetch('https://api.brevo.com/v3/contacts', {
       method: 'POST',
       headers: {
@@ -30,7 +49,7 @@ export async function POST(request: NextRequest) {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        email: email,
+        email: sanitized,
         listIds: [parseInt(process.env.BREVO_LIST_ID || '0')],
         updateEnabled: true,
         attributes: {

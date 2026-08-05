@@ -17,18 +17,39 @@ interface Resource {
 
 const resources: Resource[] = [
   {
-    title: 'Join Advisory Boards',
-    url: 'https://www.jointab.us/find-your-seat',
-    description: "There's an empty government seat near you. Many positions are filled by appointment, not election. Find open seats in your area and learn how to apply. Takes minutes to start—just enter your ZIP code.",
-    image: 'https://www.google.com/s2/favicons?domain=jointab.us&sz=256',
-    category: 'Civic Engagement',
-  },
-  {
     title: 'The White House',
     url: 'https://www.whitehouse.gov/',
     description: 'Official information from the presidency. Presidential statements, policy initiatives, executive actions, and administration updates.',
     image: 'https://www.google.com/s2/favicons?domain=whitehouse.gov&sz=256',
     category: 'Executive',
+  },
+  {
+    title: 'Guides.vote',
+    url: 'https://guides.vote/',
+    description: 'Nonpartisan candidate guide with researched comparisons and credible sourcing. Side-by-side candidate comparisons with verified facts and citations.',
+    image: 'https://www.google.com/s2/favicons?domain=guides.vote&sz=256',
+    category: 'Elections',
+  },
+  {
+    title: 'GovTrack',
+    url: 'https://www.govtrack.us/congress/bills/',
+    description: 'Good for federal bill tracking, voting records, and legislative history. Track Congress with clear visualizations and email alerts for bills you care about.',
+    image: 'https://www.google.com/s2/favicons?domain=govtrack.us&sz=256',
+    category: 'Legislative',
+  },
+  {
+    title: 'Congress.gov',
+    url: 'https://www.congress.gov/',
+    description: 'Official federal bill site; best for bill status, sponsors, and legislative text. The authoritative source for all congressional legislation and records.',
+    image: 'https://www.google.com/s2/favicons?domain=congress.gov&sz=256',
+    category: 'Legislative',
+  },
+  {
+    title: 'Vote Smart',
+    url: 'https://www.votesmart.org/',
+    description: 'Best for candidates, voting records, issue positions, public comments, and factual profiles. Nonpartisan research on elected officials and candidates across America.',
+    image: 'https://www.google.com/s2/favicons?domain=votesmart.org&sz=256',
+    category: 'Elections',
   },
   {
     title: 'National Constitution Center',

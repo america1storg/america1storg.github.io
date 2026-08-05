@@ -79,16 +79,20 @@ export async function generateMetadata({
   }
 
   const excerpt = article.content.replace(/<[^>]*>/g, '').substring(0, 160);
-  const baseUrl = process.env.NEXTAUTH_URL || 'https://america1stusa.vercel.app';
+  const baseUrl = 'https://america1st.org';
 
   return {
-    title: `${article.title} | America First`,
+    title: article.title,
     description: excerpt,
+    authors: article.author_name ? [{ name: article.author_name }] : undefined,
     openGraph: {
+      type: 'article',
       title: article.title,
       description: excerpt,
       url: `${baseUrl}/articles/${article.slug || article.id}`,
       siteName: 'America First',
+      publishedTime: article.published_at,
+      authors: article.author_name ? [article.author_name] : ['America First Team'],
       images: article.cover_image
         ? [
             {
@@ -99,9 +103,6 @@ export async function generateMetadata({
             },
           ]
         : [],
-      type: 'article',
-      publishedTime: article.published_at,
-      authors: [article.author_name || 'America First Team'],
     },
     twitter: {
       card: 'summary_large_image',

@@ -4,7 +4,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 
-export default function ResourcesLoading() {
+export default function GetInvolvedLoading() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
@@ -29,15 +29,50 @@ export default function ResourcesLoading() {
           style={{ background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}
         />
         <div
-          className="h-16 w-full max-w-[650px] rounded animate-pulse"
+          className="h-16 w-full max-w-[750px] rounded animate-pulse"
           style={{ background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}
         />
       </header>
 
+      {/* CTA Cards Skeleton */}
+      <section className="px-[6vw] max-w-[1400px] mx-auto pb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[1, 2].map((i) => (
+            <div
+              key={i}
+              className="rounded-2xl p-8 animate-pulse"
+              style={{
+                background: isDark
+                  ? 'rgba(255, 255, 255, 0.05)'
+                  : 'rgba(0, 0, 0, 0.05)',
+                border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)',
+              }}
+            >
+              <div
+                className="w-12 h-12 rounded mb-4"
+                style={{ background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}
+              />
+              <div
+                className="h-8 w-3/4 rounded mb-3"
+                style={{ background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}
+              />
+              <div
+                className="h-20 w-full rounded"
+                style={{ background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Grid Skeleton */}
       <main className="px-[6vw] max-w-[1400px] mx-auto pb-24">
+        <div
+          className="h-12 w-96 max-w-full rounded mb-8 animate-pulse"
+          style={{ background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}
+        />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+          {[1, 2, 3, 4, 5].map((i) => (
             <div
               key={i}
               className="rounded-2xl overflow-hidden animate-pulse"

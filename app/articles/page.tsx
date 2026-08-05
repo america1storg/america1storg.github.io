@@ -1,4 +1,14 @@
+import { Metadata } from 'next';
 import { ArticlesClient } from '@/components/ArticlesClient';
+
+export const metadata: Metadata = {
+  title: "Articles",
+  description: "Read articles on civic education, American values, and principled decision-making. Stay informed on issues affecting our nation.",
+  openGraph: {
+    title: "Articles | America First",
+    description: "Read articles on civic education, American values, and principled decision-making.",
+  },
+};
 
 interface Article {
   id: number;

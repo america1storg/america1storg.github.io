@@ -475,7 +475,7 @@ export default function Home() {
         </section>
 
         {/* Closing */}
-        <section className="min-h-[120vh] flex flex-col justify-center px-[6vw] max-w-[1400px] mx-auto">
+        <section className="min-h-[120vh] flex flex-col justify-center px-[6vw] max-w-[1400px] mx-auto pb-32">
           <p className="text-xs tracking-[0.4em] uppercase font-medium mb-4" style={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>Join the Mission</p>
           <h2 className="text-5xl md:text-7xl font-extrabold leading-[1.0] tracking-tight" style={{ textShadow: isDark ? '0 0 80px rgba(0, 0, 0, 0.8)' : '0 0 80px rgba(255, 255, 255, 0.8)', color: isDark ? '#fff' : '#000' }}>
             Loyalty to <span style={{ color: '#3b82f6' }}>America</span><br />
