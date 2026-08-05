@@ -13,13 +13,16 @@ interface Article {
   slug: string;
 }
 
+// Revalidate once per day instead of every 60 seconds
+export const revalidate = 86400; // 24 hours
+
 async function getArticle(slug: string): Promise<Article | null> {
   try {
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
 
     // Try to get article by slug first
     let response = await fetch(`${baseUrl}/api/articles?slug=${slug}`, {
-      next: { revalidate: 60 },
+      cache: 'force-cache', // Use static cache, rely on page-level revalidation
     });
 
     if (response.ok) {
@@ -33,7 +36,7 @@ async function getArticle(slug: string): Promise<Article | null> {
     const id = getIdFromSlug(slug);
     if (id) {
       response = await fetch(`${baseUrl}/api/articles/${id}`, {
-        next: { revalidate: 60 },
+        cache: 'force-cache',
       });
 
       if (response.ok) {
@@ -45,7 +48,7 @@ async function getArticle(slug: string): Promise<Article | null> {
     // Final fallback: check if slug is actually just an ID (old URLs)
     if (/^\d+$/.test(slug)) {
       response = await fetch(`${baseUrl}/api/articles/${slug}`, {
-        next: { revalidate: 60 },
+        cache: 'force-cache',
       });
 
       if (response.ok) {
@@ -113,7 +116,7 @@ export async function generateStaticParams() {
   try {
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
     const response = await fetch(`${baseUrl}/api/articles`, {
-      next: { revalidate: 3600 },
+      cache: 'force-cache', // Static generation, no revalidation during build
     });
 
     if (!response.ok) {

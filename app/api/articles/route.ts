@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@vercel/postgres';
 import { generateSlug } from '@/lib/slug';
+import { revalidatePath } from 'next/cache';
 
 export async function GET(request: NextRequest) {
   try {
@@ -115,6 +116,12 @@ export async function POST(request: NextRequest) {
     `;
 
     article.slug = slug;
+
+    // On-demand revalidation: only regenerate when content changes
+    if (status === 'published') {
+      revalidatePath('/articles');
+      revalidatePath(`/articles/${slug}`);
+    }
 
     return NextResponse.json({ article });
   } catch (error) {

@@ -9,11 +9,14 @@ interface Article {
   author_name: string | null;
 }
 
+// Revalidate once per day instead of every 60 seconds
+export const revalidate = 86400; // 24 hours
+
 async function getArticles(): Promise<Article[]> {
   try {
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
     const response = await fetch(`${baseUrl}/api/articles`, {
-      next: { revalidate: 60 }, // Cache for 60 seconds
+      cache: 'force-cache', // Use static cache, rely on page-level revalidation
     });
 
     if (!response.ok) {

@@ -6,7 +6,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 
-export const dynamic = 'force-dynamic';
+// Removed force-dynamic - homepage is now static with client-side theme only
 
 export default function Home() {
   const { theme } = useTheme();

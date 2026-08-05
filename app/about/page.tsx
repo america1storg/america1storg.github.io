@@ -6,7 +6,7 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { ContactForm } from '@/components/ContactForm';
 
-export const dynamic = 'force-dynamic';
+// Removed force-dynamic - about page is now static with client-side theme only
 
 export default function About() {
   const { theme } = useTheme();

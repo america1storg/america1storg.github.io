@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@vercel/postgres';
+import { revalidatePath } from 'next/cache';
 
 export async function GET(
   request: NextRequest,
@@ -103,7 +104,15 @@ export async function PUT(
       );
     }
 
-    return NextResponse.json({ article: result.rows[0] });
+    const article = result.rows[0];
+
+    // On-demand revalidation: only regenerate when content changes
+    if (status === 'published') {
+      revalidatePath('/articles');
+      revalidatePath(`/articles/${article.slug || article.id}`);
+    }
+
+    return NextResponse.json({ article });
   } catch (error) {
     console.error('Error updating article:', error);
     return NextResponse.json(
@@ -126,9 +135,20 @@ export async function DELETE(
 
     const { id: articleId } = await params;
 
+    // Get article slug before deletion for revalidation
+    const article = await sql`
+      SELECT slug FROM articles WHERE id = ${articleId}
+    `;
+
     await sql`
       DELETE FROM articles WHERE id = ${articleId}
     `;
+
+    // On-demand revalidation: regenerate after deletion
+    revalidatePath('/articles');
+    if (article.rows[0]?.slug) {
+      revalidatePath(`/articles/${article.rows[0].slug}`);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
