@@ -113,6 +113,7 @@ export default function About() {
 
           {/* Contact */}
           <section
+            id="contact"
             className="p-12 rounded-3xl"
             style={{
               background: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.04)',

@@ -255,20 +255,15 @@ export default function TermsOfUse() {
           }}
         >
           <h2 className="text-3xl font-bold mb-4" style={{ color: '#3b82f6' }}>Contact Us</h2>
-          <p className="text-lg leading-relaxed" style={{ color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)' }}>
-            If you have any questions about these Terms of Use, please contact us at:
+          <p className="text-lg leading-relaxed mb-4" style={{ color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)' }}>
+            If you have any questions about these Terms of Use, please get in touch with us.
           </p>
-          <p className="text-lg mt-4" style={{ color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)' }}>
-            <strong style={{ color: isDark ? '#fff' : '#000' }}>America First</strong><br />
-            Email:{' '}
-            <a
-              href="mailto:americafirstusateam@gmail.com"
-              className="underline hover:no-underline"
-              style={{ color: '#3b82f6' }}
-            >
-              americafirstusateam@gmail.com
-            </a>
-          </p>
+          <Link
+            href="/about#contact"
+            className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all hover:scale-105 font-semibold shadow-lg"
+          >
+            Contact Us
+          </Link>
         </section>
 
         {/* Back to Home */}
