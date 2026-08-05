@@ -23,7 +23,7 @@ export default function Home() {
       const container = document.getElementById('three-container');
       const scene = new THREE.Scene();
       const isDarkMode = document.body.classList.contains('dark');
-      scene.background = new THREE.Color(isDarkMode ? 0x00164D : 0xf8f9fa);
+      scene.background = new THREE.Color(isDarkMode ? 0x000a2e : 0xf8f9fa);
 
       const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 200);
       camera.position.set(0, 3, 14);
@@ -280,7 +280,7 @@ export default function Home() {
         }
 
         body.dark {
-          background: #00164D;
+          background: #000a2e;
           color: #fff;
         }
 
