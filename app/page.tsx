@@ -319,11 +319,11 @@ export default function Home() {
         }
 
         body.dark .scroll-hint {
-          color: rgba(255, 255, 255, 0.15);
+          color: rgba(255, 255, 255, 0.45);
         }
 
         body.light .scroll-hint {
-          color: rgba(0, 0, 0, 0.25);
+          color: rgba(0, 0, 0, 0.5);
         }
 
         @keyframes pulseFloat {
@@ -350,7 +350,7 @@ export default function Home() {
         <section className="min-h-screen flex flex-col justify-center px-[6vw] max-w-[1400px] mx-auto relative">
           <p
             className="text-xs tracking-[0.4em] uppercase font-medium mb-4"
-            style={{ color: isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.4)' }}
+            style={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}
           >
             Nonpartisan · Civic Education
           </p>
@@ -396,7 +396,7 @@ export default function Home() {
 
         {/* Mission */}
         <section className="min-h-[110vh] flex flex-col justify-center px-[6vw] max-w-[1400px] mx-auto">
-          <p className="text-xs tracking-[0.4em] uppercase font-medium mb-4" style={{ color: isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.4)' }}>Our Mission</p>
+          <p className="text-xs tracking-[0.4em] uppercase font-medium mb-4" style={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>Our Mission</p>
           <h2 className="text-5xl md:text-7xl font-extrabold leading-[1.0] tracking-tight" style={{ textShadow: isDark ? '0 0 80px rgba(0, 0, 0, 0.8)' : '0 0 80px rgba(255, 255, 255, 0.8)', color: isDark ? '#fff' : '#000' }}>
             Educate Americans on the<br />
             <span style={{ color: '#3b82f6' }}>principles</span> that make<br />
@@ -412,7 +412,7 @@ export default function Home() {
 
         {/* Stand */}
         <section className="min-h-[110vh] flex flex-col justify-center px-[6vw] max-w-[1400px] mx-auto">
-          <p className="text-xs tracking-[0.4em] uppercase font-medium mb-4" style={{ color: isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.4)' }}>Our Stance</p>
+          <p className="text-xs tracking-[0.4em] uppercase font-medium mb-4" style={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>Our Stance</p>
           <h2 className="text-5xl md:text-7xl font-extrabold leading-[1.0] tracking-tight" style={{ textShadow: isDark ? '0 0 80px rgba(0, 0, 0, 0.8)' : '0 0 80px rgba(255, 255, 255, 0.8)', color: isDark ? '#fff' : '#000' }}>
             America — its people,<br />
             its <span style={{ color: '#3b82f6' }}>future</span> —<br />
@@ -427,7 +427,7 @@ export default function Home() {
 
         {/* Principles */}
         <section className="min-h-[110vh] flex flex-col justify-center px-[6vw] max-w-[1400px] mx-auto">
-          <p className="text-xs tracking-[0.4em] uppercase font-medium mb-4" style={{ color: isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.4)' }}>Our Principles</p>
+          <p className="text-xs tracking-[0.4em] uppercase font-medium mb-4" style={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>Our Principles</p>
           <h2 className="text-5xl md:text-7xl font-extrabold leading-[1.0] tracking-tight mb-12" style={{ textShadow: isDark ? '0 0 80px rgba(0, 0, 0, 0.8)' : '0 0 80px rgba(255, 255, 255, 0.8)' }}>
             <span style={{ color: '#3b82f6' }}>Logic</span> · <span style={{ color: isDark ? '#fff' : '#000' }}>Fairness</span> · <span style={{ color: '#ef4444' }}>Loyalty</span>
           </h2>
@@ -449,7 +449,7 @@ export default function Home() {
               >
                 <div className="text-4xl mb-3">{item.icon}</div>
                 <h3 className="text-xl font-semibold mb-2" style={{ color: isDark ? '#fff' : '#000' }}>{item.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: isDark ? 'rgba(255, 255, 255, 0.55)' : 'rgba(0, 0, 0, 0.6)' }}>{item.desc}</p>
+                <p className="text-sm leading-relaxed" style={{ color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)' }}>{item.desc}</p>
               </div>
             ))}
           </div>
@@ -457,7 +457,7 @@ export default function Home() {
 
         {/* Closing */}
         <section className="min-h-[120vh] flex flex-col justify-center px-[6vw] max-w-[1400px] mx-auto">
-          <p className="text-xs tracking-[0.4em] uppercase font-medium mb-4" style={{ color: isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.4)' }}>Join the Mission</p>
+          <p className="text-xs tracking-[0.4em] uppercase font-medium mb-4" style={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>Join the Mission</p>
           <h2 className="text-5xl md:text-7xl font-extrabold leading-[1.0] tracking-tight" style={{ textShadow: isDark ? '0 0 80px rgba(0, 0, 0, 0.8)' : '0 0 80px rgba(255, 255, 255, 0.8)', color: isDark ? '#fff' : '#000' }}>
             Loyalty to <span style={{ color: '#3b82f6' }}>America</span><br />
             must come <span style={{ color: '#ef4444' }}>first</span>.
@@ -466,7 +466,7 @@ export default function Home() {
             For those who serve, lead, or aspire to represent this nation —
             <strong style={{ color: isDark ? '#fff' : '#000' }} className="font-semibold"> loyalty must be to America first</strong>.
           </p>
-          <p className="text-base mt-8" style={{ color: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.3)' }}>
+          <p className="text-base mt-8" style={{ color: isDark ? 'rgba(255, 255, 255, 0.45)' : 'rgba(0, 0, 0, 0.45)' }}>
             Nonpartisan · Civic Education · In Formation
           </p>
         </section>
