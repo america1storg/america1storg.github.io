@@ -132,11 +132,12 @@ export default function TermsOfUse() {
             border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.08)'
           }}
         >
-          <h2 className="text-3xl font-bold mb-4" style={{ color: '#3b82f6' }}>Analytics and Cookies</h2>
+          <h2 className="text-3xl font-bold mb-4" style={{ color: '#3b82f6' }}>Analytics</h2>
           <p className="text-lg leading-relaxed" style={{ color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)' }}>
-            We may use analytics tools and cookies to collect information about how you use our Site. This information
-            helps us improve our Site and services. By using our Site, you consent to the use of cookies and analytics
-            as described in our{' '}
+            We use Vercel Analytics to collect privacy-friendly, cookie-free analytics about how you use our Site. This includes
+            information such as page views, referrer sources, and general location data (country level). This information
+            helps us improve our Site and understand our audience. Vercel Analytics does not use cookies and does not collect
+            personally identifiable information. By using our Site, you consent to this analytics collection as described in our{' '}
             <Link href="/privacy" className="underline hover:no-underline" style={{ color: '#3b82f6' }}>
               Privacy Policy
             </Link>.

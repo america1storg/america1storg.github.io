@@ -66,8 +66,9 @@ export default function PrivacyPolicy() {
             <div>
               <h3 className="font-semibold mb-2" style={{ color: isDark ? '#fff' : '#000' }}>Analytics Data</h3>
               <p>
-                We may collect basic analytics information such as IP addresses, browser type, device information, and pages
-                visited to help us understand how visitors use our website and improve our services.
+                We use Vercel Analytics to collect privacy-friendly, cookie-free website analytics. This includes page views,
+                referrer sources, general location data (country level), device type, and browser information. Vercel Analytics
+                does not use cookies and does not collect personally identifiable information. No IP addresses are stored.
               </p>
             </div>
           </div>
