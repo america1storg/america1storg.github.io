@@ -16,7 +16,7 @@ export function Footer() {
       }}
     >
       <span>
-        © 2025 <strong style={{ color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.8)' }}>America First</strong>
+        © {new Date().getFullYear()} <strong style={{ color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.8)' }}>America First</strong>
       </span>
       <div className="flex items-center gap-4">
         <span>Truth · Data · Constitution</span>
