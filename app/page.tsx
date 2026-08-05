@@ -442,14 +442,19 @@ export default function Home() {
                 key={item.title}
                 className="p-7 rounded-3xl transition-all hover:-translate-y-2"
                 style={{
-                  background: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.04)',
-                  backdropFilter: 'blur(12px)',
-                  border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.08)',
+                  background: isDark
+                    ? 'linear-gradient(135deg, rgba(0, 10, 35, 0.85) 0%, rgba(0, 15, 50, 0.9) 100%)'
+                    : 'rgba(255, 255, 255, 0.85)',
+                  backdropFilter: 'blur(20px)',
+                  border: isDark ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(0, 0, 0, 0.1)',
+                  boxShadow: isDark
+                    ? '0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                    : '0 8px 32px rgba(0, 0, 0, 0.1)',
                 }}
               >
                 <div className="text-4xl mb-3">{item.icon}</div>
                 <h3 className="text-xl font-semibold mb-2" style={{ color: isDark ? '#fff' : '#000' }}>{item.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)' }}>{item.desc}</p>
+                <p className="text-sm leading-relaxed" style={{ color: isDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.75)' }}>{item.desc}</p>
               </div>
             ))}
           </div>
