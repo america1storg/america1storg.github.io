@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { useTheme } from '@/components/ThemeProvider';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
+import { SocialLinks } from '@/components/SocialLinks';
 
 // Removed force-dynamic - homepage is now static with client-side theme only
 
@@ -347,7 +348,7 @@ export default function Home() {
         <Navigation />
 
         {/* Hero */}
-        <section className="min-h-screen flex flex-col justify-center px-[6vw] max-w-[1400px] mx-auto relative">
+        <section className="min-h-screen flex flex-col justify-center px-[6vw] max-w-[1400px] mx-auto relative pt-32">
           <p
             className="text-xs tracking-[0.4em] uppercase font-medium mb-4"
             style={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}
@@ -362,7 +363,7 @@ export default function Home() {
             <span style={{ color: '#3b82f6' }}>First</span>
           </h1>
           <p
-            className="text-lg md:text-2xl max-w-[650px] mt-6 leading-relaxed"
+            className="text-lg md:text-2xl max-w-[650px] mt-4 leading-relaxed"
             style={{
               color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)',
               textShadow: isDark ? '0 0 40px rgba(0, 0, 0, 0.9)' : '0 0 40px rgba(255, 255, 255, 0.9)',
@@ -372,7 +373,7 @@ export default function Home() {
             restoring <strong style={{ color: isDark ? '#fff' : '#000' }} className="font-semibold">logical reasoning</strong>, <strong style={{ color: isDark ? '#fff' : '#000' }} className="font-semibold">fairness</strong>,
             and <strong style={{ color: isDark ? '#fff' : '#000' }} className="font-semibold">principled decision-making</strong>.
           </p>
-          <div className="flex gap-4 mt-12">
+          <div className="flex gap-4 mt-8">
             <Link
               href="/articles"
               className="px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all hover:scale-105 shadow-lg"
@@ -391,6 +392,18 @@ export default function Home() {
               Learn More
             </Link>
           </div>
+
+          {/* Social Media Links */}
+          <div className="mt-8 mb-20">
+            <p
+              className="text-xs tracking-[0.3em] uppercase font-medium mb-4"
+              style={{ color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)' }}
+            >
+              Follow Us
+            </p>
+            <SocialLinks size="lg" />
+          </div>
+
           <div className="scroll-hint">Scroll to explore</div>
         </section>
 

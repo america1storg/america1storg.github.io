@@ -5,6 +5,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { ContactForm } from '@/components/ContactForm';
+import { SocialLinks } from '@/components/SocialLinks';
 
 // Removed force-dynamic - about page is now static with client-side theme only
 
@@ -123,6 +124,24 @@ export default function About() {
               Have a question or want to get in touch? Fill out the form below and we'll get back to you as soon as possible.
             </p>
             <ContactForm />
+          </section>
+
+          {/* Social Media Section */}
+          <section
+            className="p-12 rounded-3xl text-center"
+            style={{
+              background: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.04)',
+              backdropFilter: 'blur(12px)',
+              border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.08)'
+            }}
+          >
+            <h2 className="text-4xl font-bold mb-4" style={{ color: '#3b82f6' }}>Connect With Us</h2>
+            <p className="text-lg mb-8" style={{ color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)' }}>
+              Follow us on social media to stay updated on our latest articles and civic education initiatives.
+            </p>
+            <div className="flex justify-center">
+              <SocialLinks size="lg" />
+            </div>
           </section>
 
           {/* CTA */}
