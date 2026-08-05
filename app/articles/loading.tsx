@@ -9,7 +9,7 @@ export default function ArticlesLoading() {
   const isDark = theme === 'dark';
 
   return (
-    <div className="min-h-screen" style={{ background: isDark ? '#020208' : '#f8f9fa', color: isDark ? '#fff' : '#000', fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="min-h-screen" style={{ background: isDark ? '#000a2e' : '#f8f9fa', color: isDark ? '#fff' : '#000', fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
       <Navigation />
 
       {/* Header Skeleton */}
