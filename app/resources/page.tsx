@@ -17,6 +17,20 @@ interface Resource {
 
 const resources: Resource[] = [
   {
+    title: 'Join Advisory Boards',
+    url: 'https://www.jointab.us/find-your-seat',
+    description: "There's an empty government seat near you. Many positions are filled by appointment, not election. Find open seats in your area and learn how to apply. Takes minutes to start—just enter your ZIP code.",
+    image: 'https://www.google.com/s2/favicons?domain=jointab.us&sz=256',
+    category: 'Civic Engagement',
+  },
+  {
+    title: 'The White House',
+    url: 'https://www.whitehouse.gov/',
+    description: 'Official information from the presidency. Presidential statements, policy initiatives, executive actions, and administration updates.',
+    image: 'https://www.google.com/s2/favicons?domain=whitehouse.gov&sz=256',
+    category: 'Executive',
+  },
+  {
     title: 'National Constitution Center',
     url: 'https://constitutioncenter.org/',
     description: 'Learn about, debate, and celebrate the greatest vision of human freedom in history—the U.S. Constitution. Interactive exhibits, educational resources, and constitutional debates.',
@@ -36,20 +50,6 @@ const resources: Resource[] = [
     description: 'Comprehensive tracking of candidates, ballot measures, and legislation across all 50 states. See who is running, what offices are on the ballot, and topic-based bill trackers.',
     image: 'https://www.google.com/s2/favicons?domain=ballotpedia.org&sz=256',
     category: 'Elections',
-  },
-  {
-    title: 'Joint Advisory Boards',
-    url: 'https://www.jointab.us/find-your-seat',
-    description: "There's an empty government seat near you. Many positions are filled by appointment, not election. Find open seats in your area and learn how to apply. Takes minutes to start—just enter your ZIP code.",
-    image: 'https://www.google.com/s2/favicons?domain=jointab.us&sz=256',
-    category: 'Civic Engagement',
-  },
-  {
-    title: 'The White House',
-    url: 'https://www.whitehouse.gov/',
-    description: 'Official information from the presidency. Presidential statements, policy initiatives, executive actions, and administration updates.',
-    image: 'https://www.google.com/s2/favicons?domain=whitehouse.gov&sz=256',
-    category: 'Executive',
   },
 ];
 
