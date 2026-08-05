@@ -33,7 +33,7 @@ export function NewsletterSubscribe({ variant = 'card', className = '' }: Newsle
 
       if (response.ok) {
         setStatus('success');
-        setMessage('Successfully subscribed! Check your email for confirmation.');
+        setMessage('Successfully subscribed! You\'ll receive our newsletter and updates.');
         setEmail('');
       } else {
         setStatus('error');
@@ -89,9 +89,10 @@ export function NewsletterSubscribe({ variant = 'card', className = '' }: Newsle
     <div
       className={`p-8 rounded-2xl ${className}`}
       style={{
-        background: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.04)',
-        backdropFilter: 'blur(12px)',
-        border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.08)',
+        background: isDark ? 'rgba(0, 10, 35, 0.7)' : 'rgba(0, 0, 0, 0.08)',
+        backdropFilter: 'blur(20px)',
+        border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.15)',
+        boxShadow: isDark ? '0 8px 32px rgba(0, 0, 0, 0.4)' : '0 8px 32px rgba(0, 0, 0, 0.1)',
       }}
     >
       <h3 className="text-2xl font-bold mb-2" style={{ color: '#3b82f6' }}>
