@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useTheme } from '@/components/ThemeProvider';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
@@ -19,35 +20,35 @@ const resources: Resource[] = [
     title: 'National Constitution Center',
     url: 'https://constitutioncenter.org/',
     description: 'Learn about, debate, and celebrate the greatest vision of human freedom in history—the U.S. Constitution. Interactive exhibits, educational resources, and constitutional debates.',
-    image: '/resources/constitution-center.jpg',
+    image: 'https://www.google.com/s2/favicons?domain=constitutioncenter.org&sz=256',
     category: 'Education',
   },
   {
     title: 'Senate Floor Activity',
     url: 'https://www.senate.gov/legislative/LIS/floor_activity/floor_activity.htm',
     description: 'Track real-time Senate legislative action. See what bills are being debated, voted on, and moving through the legislative process right now.',
-    image: '/resources/senate.jpg',
+    image: 'https://www.google.com/s2/favicons?domain=senate.gov&sz=256',
     category: 'Legislative',
   },
   {
     title: 'Ballotpedia Legislation Trackers',
     url: 'https://ballotpedia.org/Legislation_Trackers',
     description: 'Comprehensive tracking of candidates, ballot measures, and legislation across all 50 states. See who is running, what offices are on the ballot, and topic-based bill trackers.',
-    image: '/resources/ballotpedia.jpg',
+    image: 'https://www.google.com/s2/favicons?domain=ballotpedia.org&sz=256',
     category: 'Elections',
   },
   {
     title: 'Joint Advisory Boards',
     url: 'https://www.jointab.us/find-your-seat',
     description: "There's an empty government seat near you. Many positions are filled by appointment, not election. Find open seats in your area and learn how to apply. Takes minutes to start—just enter your ZIP code.",
-    image: '/resources/jointab.jpg',
+    image: 'https://www.google.com/s2/favicons?domain=jointab.us&sz=256',
     category: 'Civic Engagement',
   },
   {
     title: 'The White House',
     url: 'https://www.whitehouse.gov/',
     description: 'Official information from the presidency. Presidential statements, policy initiatives, executive actions, and administration updates.',
-    image: '/resources/whitehouse.jpg',
+    image: 'https://www.google.com/s2/favicons?domain=whitehouse.gov&sz=256',
     category: 'Executive',
   },
 ];
@@ -129,7 +130,7 @@ export default function ResourcesPage() {
                 cursor: 'pointer',
               }}
             >
-              {/* Image Placeholder */}
+              {/* Favicon Image */}
               <div
                 className="h-48 flex items-center justify-center"
                 style={{
@@ -138,6 +139,23 @@ export default function ResourcesPage() {
                     : 'linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%)',
                 }}
               >
+                {resource.image ? (
+                  <Image
+                    src={resource.image}
+                    alt={`${resource.title} logo`}
+                    width={96}
+                    height={96}
+                    className="w-24 h-24 object-contain"
+                    unoptimized
+                    onError={(e) => {
+                      // Fallback to icon if favicon fails to load
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const svg = target.nextElementSibling as HTMLElement;
+                      if (svg) svg.style.display = 'block';
+                    }}
+                  />
+                ) : null}
                 <svg
                   width="64"
                   height="64"
@@ -147,7 +165,10 @@ export default function ResourcesPage() {
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  style={{ color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.3)' }}
+                  style={{
+                    color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.3)',
+                    display: resource.image ? 'none' : 'block'
+                  }}
                 >
                   <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                   <polyline points="15 3 21 3 21 9" />
