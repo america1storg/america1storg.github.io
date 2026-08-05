@@ -148,7 +148,7 @@ export default function About() {
           <div className="text-center pt-8">
             <Link
               href="/articles"
-              className="inline-block px-10 py-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all hover:scale-105 font-bold text-xl shadow-lg"
+              className="inline-block px-6 py-3 sm:px-8 sm:py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all hover:scale-105 font-semibold text-base sm:text-lg shadow-lg"
             >
               Read Our Articles →
             </Link>

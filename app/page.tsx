@@ -373,16 +373,16 @@ export default function Home() {
             restoring <strong style={{ color: isDark ? '#fff' : '#000' }} className="font-semibold">logical reasoning</strong>, <strong style={{ color: isDark ? '#fff' : '#000' }} className="font-semibold">fairness</strong>,
             and <strong style={{ color: isDark ? '#fff' : '#000' }} className="font-semibold">principled decision-making</strong>.
           </p>
-          <div className="flex gap-4 mt-8">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-8">
             <Link
               href="/articles"
-              className="px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all hover:scale-105 shadow-lg"
+              className="px-6 py-3 sm:px-7 sm:py-3.5 bg-blue-600 text-white rounded-lg font-semibold text-base sm:text-lg hover:bg-blue-700 transition-all hover:scale-105 shadow-lg text-center"
             >
               Read Articles
             </Link>
             <Link
               href="/about"
-              className="px-8 py-4 backdrop-blur-sm rounded-lg font-semibold text-lg hover:scale-105 transition-all"
+              className="px-6 py-3 sm:px-7 sm:py-3.5 backdrop-blur-sm rounded-lg font-semibold text-base sm:text-lg hover:scale-105 transition-all text-center"
               style={{
                 background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
                 color: isDark ? '#fff' : '#000',
