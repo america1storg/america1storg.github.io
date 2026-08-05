@@ -16,9 +16,9 @@ export function Navigation() {
 
   return (
     <>
-      {/* Desktop & Tablet Navbar */}
+      {/* Desktop Navbar */}
       <nav
-        className="hidden sm:flex fixed top-4 left-1/2 transform -translate-x-1/2 z-50 rounded-full shadow-2xl"
+        className="hidden lg:flex fixed top-4 left-1/2 transform -translate-x-1/2 z-50 rounded-full shadow-2xl"
         style={{
           background: isDark ? 'rgba(0, 10, 35, 0.9)' : 'rgba(255, 255, 255, 0.9)',
           backdropFilter: 'blur(20px)',
@@ -78,9 +78,9 @@ export function Navigation() {
         </div>
       </nav>
 
-      {/* Mobile Navbar */}
+      {/* Mobile & Tablet Navbar */}
       <nav
-        className="sm:hidden fixed top-4 left-4 right-4 z-50 rounded-2xl shadow-2xl"
+        className="lg:hidden fixed top-4 left-4 right-4 z-50 rounded-2xl shadow-2xl"
         style={{
           background: isDark ? 'rgba(0, 10, 35, 0.95)' : 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(20px)',
