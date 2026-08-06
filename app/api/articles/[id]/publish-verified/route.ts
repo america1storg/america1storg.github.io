@@ -51,10 +51,32 @@ export async function POST(
 
     const article = result.rows[0];
 
-    // Trigger revalidation
-    revalidatePath('/articles');
-    if (article.slug) {
-      revalidatePath(`/articles/${article.slug}`);
+    // Trigger aggressive revalidation for immediate visibility
+    try {
+      // Revalidate the articles list page
+      revalidatePath('/articles');
+
+      // Revalidate the specific article page
+      if (article.slug) {
+        revalidatePath(`/articles/${article.slug}`);
+      }
+
+      // Also try to warm the cache by fetching the article
+      // This helps ensure ISR generates the new page immediately
+      const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+
+      // Fire and forget - warm the cache in background
+      fetch(`${baseUrl}/articles/${article.slug}`, {
+        cache: 'no-store',
+      }).catch(err => console.log('Cache warming failed:', err));
+
+      fetch(`${baseUrl}/articles`, {
+        cache: 'no-store',
+      }).catch(err => console.log('Cache warming failed:', err));
+
+    } catch (revalidationError) {
+      console.error('Revalidation error:', revalidationError);
+      // Don't fail the request if revalidation fails
     }
 
     return NextResponse.json({
