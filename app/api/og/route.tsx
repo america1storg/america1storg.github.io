@@ -12,8 +12,8 @@ export async function GET() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, #000a2e 0%, #1e3a8a 100%)',
-          fontFamily: 'system-ui, sans-serif',
+          background: 'linear-gradient(135deg, #0a1e42 0%, #1e3a8a 50%, #2563eb 100%)',
+          fontFamily: 'system-ui, -apple-system, sans-serif',
         }}
       >
         <div
@@ -22,73 +22,52 @@ export async function GET() {
             flexDirection: 'column',
             alignItems: 'center',
             textAlign: 'center',
-            padding: '60px',
           }}
         >
-          {/* Large "A" emblem to represent America First */}
+          {/* Star emblem */}
           <div
             style={{
-              width: '280px',
-              height: '280px',
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.95)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: '48px',
-              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
-              border: '8px solid rgba(220, 38, 38, 0.6)',
+              fontSize: 180,
+              marginBottom: '30px',
+              filter: 'drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3))',
             }}
           >
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div
-                style={{
-                  fontSize: 140,
-                  fontWeight: 900,
-                  background: 'linear-gradient(135deg, #000a2e 0%, #1e3a8a 100%)',
-                  backgroundClip: 'text',
-                  color: 'transparent',
-                  lineHeight: 1,
-                  letterSpacing: '-0.05em',
-                  marginBottom: '-20px',
-                }}
-              >
-                A
-              </div>
-              <div
-                style={{
-                  fontSize: 32,
-                  fontWeight: 700,
-                  color: '#dc2626',
-                  letterSpacing: '0.1em',
-                }}
-              >
-                FIRST
-              </div>
-            </div>
+            ⭐
           </div>
 
           {/* Title */}
           <h1
             style={{
-              fontSize: 72,
+              fontSize: 88,
               fontWeight: 900,
               color: 'white',
               margin: 0,
-              marginBottom: '16px',
-              letterSpacing: '-0.02em',
+              marginBottom: '20px',
+              letterSpacing: '-0.03em',
+              textShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
             }}
           >
             AMERICA FIRST
           </h1>
 
+          {/* Divider */}
+          <div
+            style={{
+              width: '400px',
+              height: '4px',
+              background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent)',
+              marginBottom: '20px',
+            }}
+          />
+
           {/* Subtitle */}
           <p
             style={{
-              fontSize: 36,
+              fontSize: 42,
               fontWeight: 600,
-              color: 'rgba(255, 255, 255, 0.85)',
+              color: 'rgba(255, 255, 255, 0.95)',
               margin: 0,
+              letterSpacing: '0.02em',
             }}
           >
             Civic Education & Advocacy
