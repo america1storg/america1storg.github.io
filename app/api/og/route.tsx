@@ -3,6 +3,9 @@ import { ImageResponse } from 'next/og';
 export const runtime = 'edge';
 
 export async function GET() {
+  // Fetch the logo
+  const logoUrl = new URL('/logo-dark.png', 'https://america1stusa.vercel.app').toString();
+
   return new ImageResponse(
     (
       <div
@@ -26,22 +29,22 @@ export async function GET() {
             textAlign: 'center',
           }}
         >
-          <h1
+          {/* Logo Image */}
+          <img
+            src={logoUrl}
+            alt="America First"
+            width="400"
+            height="400"
             style={{
-              fontSize: 96,
-              fontWeight: 900,
-              color: 'white',
-              marginBottom: 24,
-              letterSpacing: '-0.02em',
+              marginBottom: 40,
             }}
-          >
-            America <span style={{ color: '#3b82f6' }}>First</span>
-          </h1>
+          />
           <p
             style={{
-              fontSize: 40,
-              color: 'rgba(255, 255, 255, 0.85)',
-              fontWeight: 600,
+              fontSize: 48,
+              color: 'rgba(255, 255, 255, 0.9)',
+              fontWeight: 700,
+              marginTop: 0,
             }}
           >
             Civic Education & Advocacy
