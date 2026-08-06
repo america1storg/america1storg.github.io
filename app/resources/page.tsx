@@ -109,8 +109,8 @@ export default function ResourcesPage() {
     >
       <BreadcrumbSchema
         items={[
-          { name: 'Home', url: 'https://america1stusa.com' },
-          { name: 'Resources', url: 'https://america1stusa.com/resources' }
+          { name: 'Home', url: 'https://america1stusa.vercel.app' },
+          { name: 'Resources', url: 'https://america1stusa.vercel.app/resources' }
         ]}
       />
       <Navigation />

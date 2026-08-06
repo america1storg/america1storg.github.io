@@ -22,7 +22,7 @@ export function ArticleClient({ article }: { article: Article }) {
   const isDark = theme === 'dark';
 
   const excerpt = article.content.replace(/<[^>]*>/g, '').substring(0, 160);
-  const articleUrl = `https://america1stusa.com/articles/${article.slug || article.id}`;
+  const articleUrl = `https://america1stusa.vercel.app/articles/${article.slug || article.id}`;
 
   return (
     <div className="min-h-screen" style={{ background: isDark ? '#000a2e' : '#f8f9fa', color: isDark ? '#fff' : '#000', fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
@@ -36,8 +36,8 @@ export function ArticleClient({ article }: { article: Article }) {
       />
       <BreadcrumbSchema
         items={[
-          { name: 'Home', url: 'https://america1stusa.com' },
-          { name: 'Articles', url: 'https://america1stusa.com/articles' },
+          { name: 'Home', url: 'https://america1stusa.vercel.app' },
+          { name: 'Articles', url: 'https://america1stusa.vercel.app/articles' },
           { name: article.title, url: articleUrl }
         ]}
       />

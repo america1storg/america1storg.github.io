@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin', '/api', '/auth'],
       },
     ],
-    sitemap: 'https://america1stusa.com/sitemap.xml',
+    sitemap: 'https://america1stusa.vercel.app/sitemap.xml',
   };
 }

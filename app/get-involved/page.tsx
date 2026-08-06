@@ -88,8 +88,8 @@ export default function GetInvolvedPage() {
     >
       <BreadcrumbSchema
         items={[
-          { name: 'Home', url: 'https://america1stusa.com' },
-          { name: 'Get Involved', url: 'https://america1stusa.com/get-involved' }
+          { name: 'Home', url: 'https://america1stusa.vercel.app' },
+          { name: 'Get Involved', url: 'https://america1stusa.vercel.app/get-involved' }
         ]}
       />
       <Navigation />

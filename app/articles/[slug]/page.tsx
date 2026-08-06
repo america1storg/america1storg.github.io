@@ -79,7 +79,7 @@ export async function generateMetadata({
   }
 
   const excerpt = article.content.replace(/<[^>]*>/g, '').substring(0, 160);
-  const baseUrl = 'https://america1stusa.com';
+  const baseUrl = 'https://america1stusa.vercel.app';
 
   return {
     alternates: {

@@ -14,8 +14,8 @@ interface OrganizationSchemaProps {
 
 export function OrganizationSchema({
   name = "America First",
-  url = "https://america1stusa.com",
-  logo = "https://america1stusa.com/logo-transparent.png",
+  url = "https://america1stusa.vercel.app",
+  logo = "https://america1stusa.vercel.app/logo-transparent.png",
   description = "An independent civic education and advocacy organization committed to restoring logical reasoning, fairness, and principled decision-making from an America-First perspective."
 }: OrganizationSchemaProps) {
   const schema = {
@@ -80,7 +80,7 @@ export function ArticleSchema({
       "name": "America First",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://america1stusa.com/logo-transparent.png"
+        "url": "https://america1stusa.vercel.app/logo-transparent.png"
       }
     },
     ...(image && {
@@ -135,7 +135,7 @@ interface WebsiteSchemaProps {
 
 export function WebsiteSchema({
   name = "America First",
-  url = "https://america1stusa.com",
+  url = "https://america1stusa.vercel.app",
   description = "Independent civic education and advocacy organization promoting logical reasoning, fairness, and principled decision-making."
 }: WebsiteSchemaProps) {
   const schema = {

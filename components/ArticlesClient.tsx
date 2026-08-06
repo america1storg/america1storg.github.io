@@ -25,8 +25,8 @@ export function ArticlesClient({ articles }: { articles: Article[] }) {
     <div className="min-h-screen" style={{ background: isDark ? '#000a2e' : '#f8f9fa', color: isDark ? '#fff' : '#000', fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
       <BreadcrumbSchema
         items={[
-          { name: 'Home', url: 'https://america1stusa.com' },
-          { name: 'Articles', url: 'https://america1stusa.com/articles' }
+          { name: 'Home', url: 'https://america1stusa.vercel.app' },
+          { name: 'Articles', url: 'https://america1stusa.vercel.app/articles' }
         ]}
       />
       {/* Navigation */}

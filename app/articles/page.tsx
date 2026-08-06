@@ -4,17 +4,17 @@ import { sql } from '@vercel/postgres';
 
 export const metadata: Metadata = {
   alternates: {
-    canonical: 'https://america1stusa.com/articles',
+    canonical: 'https://america1stusa.vercel.app/articles',
   },
   title: "Articles",
   description: "Read articles on civic education, American values, and principled decision-making. Stay informed on issues affecting our nation.",
   openGraph: {
     title: "Articles | America First",
     description: "Read articles on civic education, American values, and principled decision-making.",
-    url: "https://america1stusa.com/articles",
+    url: "https://america1stusa.vercel.app/articles",
     images: [
       {
-        url: "https://america1stusa.com/api/og?v=2",
+        url: "https://america1stusa.vercel.app/api/og?v=2",
         width: 1200,
         height: 630,
         alt: "America First Articles",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Articles | America First",
     description: "Read articles on civic education, American values, and principled decision-making.",
-    images: ["https://america1stusa.com/api/og?v=2"],
+    images: ["https://america1stusa.vercel.app/api/og?v=2"],
   },
 };
 
