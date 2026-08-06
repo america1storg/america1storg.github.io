@@ -6,6 +6,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { ExternalLinkModal } from '@/components/ExternalLinkModal';
+import { BreadcrumbSchema } from '@/components/StructuredData';
 
 interface Resource {
   title: string;
@@ -106,6 +107,12 @@ export default function ResourcesPage() {
         fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif",
       }}
     >
+      <BreadcrumbSchema
+        items={[
+          { name: 'Home', url: 'https://america1stusa.com' },
+          { name: 'Resources', url: 'https://america1stusa.com/resources' }
+        ]}
+      />
       <Navigation />
 
       {/* Header */}

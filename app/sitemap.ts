@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { sql } from '@vercel/postgres';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://america1st.org';
+  const baseUrl = 'https://america1stusa.com';
 
   // Static pages
   const routes = [

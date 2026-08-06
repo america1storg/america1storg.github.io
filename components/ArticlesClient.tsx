@@ -5,6 +5,7 @@ import { useTheme } from './ThemeProvider';
 import { Navigation } from './Navigation';
 import { Footer } from './Footer';
 import { ShareButton } from './ShareButton';
+import { BreadcrumbSchema } from './StructuredData';
 
 interface Article {
   id: number;
@@ -22,6 +23,12 @@ export function ArticlesClient({ articles }: { articles: Article[] }) {
 
   return (
     <div className="min-h-screen" style={{ background: isDark ? '#000a2e' : '#f8f9fa', color: isDark ? '#fff' : '#000', fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+      <BreadcrumbSchema
+        items={[
+          { name: 'Home', url: 'https://america1stusa.com' },
+          { name: 'Articles', url: 'https://america1stusa.com/articles' }
+        ]}
+      />
       {/* Navigation */}
       <Navigation />
 

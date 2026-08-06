@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://america1st.org'),
+  metadataBase: new URL('https://america1stusa.com'),
   title: {
     default: "America First - Civic Education & Advocacy",
     template: "%s | America First",
@@ -44,16 +44,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://america1st.org",
+    url: "https://america1stusa.com",
     siteName: "America First",
     title: "America First - Civic Education & Advocacy",
     description: "Independent civic education and advocacy organization committed to restoring logical reasoning and principled decision-making.",
     images: [
       {
-        url: "/logo-dark.png",
+        url: "https://america1stusa.com/api/og",
         width: 1200,
         height: 630,
-        alt: "America First Logo",
+        alt: "America First - Civic Education & Advocacy",
       },
     ],
   },
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "America First - Civic Education & Advocacy",
     description: "Independent civic education and advocacy organization committed to restoring logical reasoning and principled decision-making.",
-    images: ["/logo-dark.png"],
+    images: ["https://america1stusa.com/api/og"],
   },
   robots: {
     index: true,

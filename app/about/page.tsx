@@ -7,6 +7,7 @@ import { Footer } from '@/components/Footer';
 import { ContactForm } from '@/components/ContactForm';
 import { SocialLinks } from '@/components/SocialLinks';
 import { NewsletterSubscribe } from '@/components/NewsletterSubscribe';
+import { BreadcrumbSchema } from '@/components/StructuredData';
 
 // Removed force-dynamic - about page is now static with client-side theme only
 
@@ -16,6 +17,12 @@ export default function About() {
 
   return (
       <div className="min-h-screen" style={{ background: isDark ? '#000a2e' : '#f8f9fa', color: isDark ? '#fff' : '#000', fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+        <BreadcrumbSchema
+          items={[
+            { name: 'Home', url: 'https://america1stusa.com' },
+            { name: 'About', url: 'https://america1stusa.com/about' }
+          ]}
+        />
         {/* Navigation */}
         <Navigation />
 

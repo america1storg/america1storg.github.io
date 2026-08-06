@@ -79,7 +79,7 @@ export async function generateMetadata({
   }
 
   const excerpt = article.content.replace(/<[^>]*>/g, '').substring(0, 160);
-  const baseUrl = 'https://america1st.org';
+  const baseUrl = 'https://america1stusa.com';
 
   return {
     title: article.title,
@@ -96,19 +96,28 @@ export async function generateMetadata({
       images: article.cover_image
         ? [
             {
-              url: article.cover_image,
+              url: article.cover_image.startsWith('http') ? article.cover_image : `${baseUrl}${article.cover_image}`,
               width: 1200,
               height: 630,
               alt: article.title,
             },
           ]
-        : [],
+        : [
+            {
+              url: `${baseUrl}/api/og`,
+              width: 1200,
+              height: 630,
+              alt: article.title,
+            },
+          ],
     },
     twitter: {
       card: 'summary_large_image',
       title: article.title,
       description: excerpt,
-      images: article.cover_image ? [article.cover_image] : [],
+      images: article.cover_image
+        ? [article.cover_image.startsWith('http') ? article.cover_image : `${baseUrl}${article.cover_image}`]
+        : [`${baseUrl}/api/og`],
     },
   };
 }

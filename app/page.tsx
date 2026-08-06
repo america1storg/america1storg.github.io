@@ -7,6 +7,7 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { SocialLinks } from '@/components/SocialLinks';
 import { NewsletterSubscribe } from '@/components/NewsletterSubscribe';
+import { OrganizationSchema, WebsiteSchema } from '@/components/StructuredData';
 
 // Removed force-dynamic - homepage is now static with client-side theme only
 
@@ -268,6 +269,8 @@ export default function Home() {
 
   return (
     <>
+      <OrganizationSchema />
+      <WebsiteSchema />
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 

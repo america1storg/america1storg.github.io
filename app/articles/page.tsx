@@ -8,6 +8,21 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Articles | America First",
     description: "Read articles on civic education, American values, and principled decision-making.",
+    url: "https://america1stusa.com/articles",
+    images: [
+      {
+        url: "https://america1stusa.com/api/og",
+        width: 1200,
+        height: 630,
+        alt: "America First Articles",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Articles | America First",
+    description: "Read articles on civic education, American values, and principled decision-making.",
+    images: ["https://america1stusa.com/api/og"],
   },
 };
 
@@ -24,23 +39,40 @@ interface Article {
 export const revalidate = 60;
 
 async function getArticles(): Promise<Article[]> {
-  try {
-    // Query database directly instead of making API call
-    // This is much faster during server-side rendering
-    const result = await sql`
-      SELECT a.*, u.name as author_name
-      FROM articles a
-      LEFT JOIN users u ON a.author_id = u.id
-      WHERE a.status = 'published'
-      ORDER BY a.published_at DESC
-    `;
-
-    return result.rows as Article[];
-  } catch (error) {
-    console.error('Error fetching articles:', error);
-    // Return empty array on error so page still renders
-    return [];
+  // In production or with valid DB connection, query directly for speed
+  // In development without DB, fall back to API route
+  if (process.env.POSTGRES_URL && !process.env.POSTGRES_URL.includes('your-postgres')) {
+    try {
+      const result = await sql`
+        SELECT a.*, u.name as author_name
+        FROM articles a
+        LEFT JOIN users u ON a.author_id = u.id
+        WHERE a.status = 'published'
+        ORDER BY a.published_at DESC
+      `;
+      return result.rows as Article[];
+    } catch (error) {
+      console.error('Error fetching articles from database:', error);
+      // Fall through to API route
+    }
   }
+
+  // Fallback: use API route (works in dev without DB)
+  try {
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/articles?status=published`, {
+      cache: 'no-store',
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data.articles || [];
+    }
+  } catch (error) {
+    console.error('Error fetching articles from API:', error);
+  }
+
+  return [];
 }
 
 export default async function ArticlesPage() {

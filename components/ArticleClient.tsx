@@ -5,6 +5,7 @@ import { useTheme } from './ThemeProvider';
 import { Navigation } from './Navigation';
 import { Footer } from './Footer';
 import { ShareButton } from './ShareButton';
+import { ArticleSchema, BreadcrumbSchema } from './StructuredData';
 
 interface Article {
   id: number;
@@ -20,8 +21,26 @@ export function ArticleClient({ article }: { article: Article }) {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
+  const excerpt = article.content.replace(/<[^>]*>/g, '').substring(0, 160);
+  const articleUrl = `https://america1stusa.com/articles/${article.slug || article.id}`;
+
   return (
     <div className="min-h-screen" style={{ background: isDark ? '#000a2e' : '#f8f9fa', color: isDark ? '#fff' : '#000', fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+      <ArticleSchema
+        headline={article.title}
+        description={excerpt}
+        datePublished={article.published_at}
+        author={article.author_name || 'America First Team'}
+        image={article.cover_image || undefined}
+        url={articleUrl}
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: 'Home', url: 'https://america1stusa.com' },
+          { name: 'Articles', url: 'https://america1stusa.com/articles' },
+          { name: article.title, url: articleUrl }
+        ]}
+      />
       {/* Navigation */}
       <Navigation />
 
