@@ -25,6 +25,7 @@ export default function ArticlesList() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'draft' | 'submitted' | 'needs_re_edit' | 'approved' | 'published'>('all');
+  const [deletingArticle, setDeletingArticle] = useState<{ id: number; title: string } | null>(null);
 
   useEffect(() => {
     fetchArticles();
@@ -42,15 +43,14 @@ export default function ArticlesList() {
     }
   };
 
-  const handleDelete = async (id: number, title: string) => {
-    if (!confirm(`Are you sure you want to delete "${title}"?`)) {
-      return;
-    }
+  const handleDelete = async () => {
+    if (!deletingArticle) return;
 
     showToast('Deleting article...', 'info');
+    setDeletingArticle(null); // Close modal
 
     try {
-      const response = await fetch(`/api/articles/${id}`, {
+      const response = await fetch(`/api/articles/${deletingArticle.id}`, {
         method: 'DELETE',
       });
 
@@ -252,7 +252,7 @@ export default function ArticlesList() {
                     {/* Only God/King/Captain can delete articles */}
                     {['god_mode', 'king', 'captain'].includes(session?.user?.role || '') && (
                       <button
-                        onClick={() => handleDelete(article.id, article.title)}
+                        onClick={() => setDeletingArticle({ id: article.id, title: article.title })}
                         className="flex-1 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 rounded transition-colors border border-red-200"
                       >
                         Delete
@@ -277,6 +277,32 @@ export default function ArticlesList() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deletingArticle && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-8 max-w-md w-full shadow-2xl">
+            <h3 className="text-2xl font-bold mb-4 text-gray-900">Delete Article?</h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete <strong>"{deletingArticle.title}"</strong>? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeletingArticle(null)}
+                className="px-6 py-2 border-2 border-gray-400 rounded-lg hover:bg-gray-100 font-semibold text-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
