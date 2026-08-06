@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     url: "https://america1stusa.vercel.app/articles",
     images: [
       {
-        url: "https://america1stusa.vercel.app/api/og?v=11",
+        url: "https://america1stusa.vercel.app/logo-full-transparent.png",
         width: 1200,
         height: 630,
         alt: "America First Articles",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Articles | America First",
     description: "Read articles on civic education, American values, and principled decision-making.",
-    images: ["https://america1stusa.vercel.app/api/og?v=11"],
+    images: ["https://america1stusa.vercel.app/logo-full-transparent.png"],
   },
 };
 
