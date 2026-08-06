@@ -130,12 +130,16 @@ export default function ArticleEditorWorkflow({
   const handleSubmitForApproval = async () => {
     if (!editor || !articleId) return;
 
+    showToast('Submitting article...', 'info');
+
     try {
       const response = await fetch(`/api/articles/${articleId}/submit`, {
         method: 'POST',
       });
 
       if (response.ok) {
+        // Wait a moment for database to update
+        await new Promise(resolve => setTimeout(resolve, 500));
         showToast('Article submitted for approval!', 'success');
         setTimeout(() => window.location.reload(), 1500);
       } else {

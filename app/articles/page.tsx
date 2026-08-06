@@ -19,17 +19,27 @@ interface Article {
   author_name: string | null;
 }
 
-// Revalidate once per day instead of every 60 seconds
-export const revalidate = 86400; // 24 hours
+// Revalidate every 60 seconds for fresh content
+export const revalidate = 60;
 
 async function getArticles(): Promise<Article[]> {
   try {
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+
+    // Add timeout to prevent hanging
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
     const response = await fetch(`${baseUrl}/api/articles`, {
       cache: 'force-cache', // Use static cache, rely on page-level revalidation
+      signal: controller.signal,
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
     });
 
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
+      console.error('Articles API returned error:', response.status);
       throw new Error('Failed to fetch articles');
     }
 
@@ -37,6 +47,7 @@ async function getArticles(): Promise<Article[]> {
     return data.articles || [];
   } catch (error) {
     console.error('Error fetching articles:', error);
+    // Return empty array on error so page still renders
     return [];
   }
 }

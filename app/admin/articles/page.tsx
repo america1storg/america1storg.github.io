@@ -47,13 +47,15 @@ export default function ArticlesList() {
       return;
     }
 
+    showToast('Deleting article...', 'info');
+
     try {
       const response = await fetch(`/api/articles/${id}`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
-        fetchArticles();
+        await fetchArticles(); // Wait for refresh
         showToast('Article deleted successfully!', 'success');
       } else {
         showToast('Failed to delete article', 'error');
