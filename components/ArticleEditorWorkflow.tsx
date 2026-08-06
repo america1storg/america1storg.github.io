@@ -263,7 +263,7 @@ export default function ArticleEditorWorkflow({
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter your article title here..."
             disabled={!canEdit}
-            className={`w-full text-xl focus:outline-none text-gray-900 placeholder-gray-400 ${!canEdit ? 'opacity-60' : ''}`}
+            className={`w-full text-xl focus:outline-none text-black placeholder-gray-400 bg-white ${!canEdit ? 'opacity-60' : ''}`}
           />
         </div>
 

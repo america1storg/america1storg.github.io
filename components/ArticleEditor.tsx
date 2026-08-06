@@ -175,7 +175,7 @@ export default function ArticleEditor({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Enter your article title here..."
-          className="w-full text-xl focus:outline-none text-gray-900 placeholder-gray-400"
+          className="w-full text-xl focus:outline-none text-black placeholder-gray-400 bg-white"
         />
       </div>
 

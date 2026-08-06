@@ -175,7 +175,7 @@ export default function ManageUsers() {
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black bg-white placeholder-gray-400"
                 placeholder="admin@example.com"
               />
             </div>
@@ -188,7 +188,7 @@ export default function ManageUsers() {
                 id="name"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black bg-white placeholder-gray-400"
                 placeholder="John Doe"
               />
             </div>
@@ -201,7 +201,7 @@ export default function ManageUsers() {
               id="role"
               value={newRole}
               onChange={(e) => setNewRole(e.target.value as 'king' | 'captain' | 'soldier')}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black bg-white"
             >
               <option value="soldier">Soldier - Can create articles</option>
               <option value="captain">Captain - Can review and publish articles</option>
@@ -264,7 +264,7 @@ export default function ManageUsers() {
                           <select
                             value={editingRole}
                             onChange={(e) => setEditingRole(e.target.value as 'king' | 'captain' | 'soldier')}
-                            className="px-2 py-1 text-xs border border-gray-300 rounded"
+                            className="px-2 py-1 text-xs border border-gray-300 rounded text-black bg-white"
                           >
                             <option value="soldier">Soldier</option>
                             <option value="captain">Captain</option>

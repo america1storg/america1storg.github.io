@@ -313,7 +313,7 @@ export default function ReviewDashboard() {
             <textarea
               value={rejectionReason}
               onChange={(e) => setRejectionReason(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 text-gray-900 mb-4"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 text-black bg-white placeholder-gray-400 mb-4"
               rows={4}
               placeholder="Explain what needs to be revised..."
             />
