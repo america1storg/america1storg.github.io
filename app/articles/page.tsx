@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { ArticlesClient } from '@/components/ArticlesClient';
+import { sql } from '@vercel/postgres';
 
 export const metadata: Metadata = {
   title: "Articles",
@@ -24,27 +25,17 @@ export const revalidate = 60;
 
 async function getArticles(): Promise<Article[]> {
   try {
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    // Query database directly instead of making API call
+    // This is much faster during server-side rendering
+    const result = await sql`
+      SELECT a.*, u.name as author_name
+      FROM articles a
+      LEFT JOIN users u ON a.author_id = u.id
+      WHERE a.status = 'published'
+      ORDER BY a.published_at DESC
+    `;
 
-    // Add timeout to prevent hanging
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
-    const response = await fetch(`${baseUrl}/api/articles`, {
-      cache: 'force-cache', // Use static cache, rely on page-level revalidation
-      signal: controller.signal,
-      next: { revalidate: 60 }, // Revalidate every 60 seconds
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      console.error('Articles API returned error:', response.status);
-      throw new Error('Failed to fetch articles');
-    }
-
-    const data = await response.json();
-    return data.articles || [];
+    return result.rows as Article[];
   } catch (error) {
     console.error('Error fetching articles:', error);
     // Return empty array on error so page still renders
