@@ -3,14 +3,6 @@ import { ImageResponse } from 'next/og';
 export const runtime = 'edge';
 
 export async function GET() {
-  // Fetch logo directly in Edge function
-  const logoResponse = await fetch(
-    new URL('/logo-dark-smaller.jpg', 'https://america1stusa.vercel.app')
-  );
-  const logoArrayBuffer = await logoResponse.arrayBuffer();
-  const logoBase64 = Buffer.from(logoArrayBuffer).toString('base64');
-  const logoDataUrl = `data:image/jpeg;base64,${logoBase64}`;
-
   return new ImageResponse(
     (
       <div
@@ -18,7 +10,6 @@ export async function GET() {
           height: '100%',
           width: '100%',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           background: 'linear-gradient(135deg, #000a2e 0%, #1e3a8a 100%)',
@@ -30,25 +21,73 @@ export async function GET() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
             textAlign: 'center',
+            padding: '60px',
           }}
         >
-          {/* Logo as base64 data URL */}
-          <img
-            src={logoDataUrl}
-            alt="America First"
-            width="450"
-            height="450"
+          {/* Large "A" emblem to represent America First */}
+          <div
             style={{
-              marginBottom: 30,
+              width: '280px',
+              height: '280px',
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.95)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '48px',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
+              border: '8px solid rgba(220, 38, 38, 0.6)',
             }}
-          />
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div
+                style={{
+                  fontSize: 140,
+                  fontWeight: 900,
+                  background: 'linear-gradient(135deg, #000a2e 0%, #1e3a8a 100%)',
+                  backgroundClip: 'text',
+                  color: 'transparent',
+                  lineHeight: 1,
+                  letterSpacing: '-0.05em',
+                  marginBottom: '-20px',
+                }}
+              >
+                A
+              </div>
+              <div
+                style={{
+                  fontSize: 32,
+                  fontWeight: 700,
+                  color: '#dc2626',
+                  letterSpacing: '0.1em',
+                }}
+              >
+                FIRST
+              </div>
+            </div>
+          </div>
+
+          {/* Title */}
+          <h1
+            style={{
+              fontSize: 72,
+              fontWeight: 900,
+              color: 'white',
+              margin: 0,
+              marginBottom: '16px',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            AMERICA FIRST
+          </h1>
+
+          {/* Subtitle */}
           <p
             style={{
-              fontSize: 48,
-              color: 'rgba(255, 255, 255, 0.95)',
-              fontWeight: 700,
+              fontSize: 36,
+              fontWeight: 600,
+              color: 'rgba(255, 255, 255, 0.85)',
               margin: 0,
             }}
           >
