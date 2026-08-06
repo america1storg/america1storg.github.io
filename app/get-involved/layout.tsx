@@ -1,6 +1,9 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: 'https://america1stusa.com/get-involved',
+  },
   title: 'Get Involved',
   description: 'Volunteer opportunities and civic engagement programs. Join advisory boards, serve locally, and make a difference.',
   openGraph: {
@@ -10,7 +13,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://america1stusa.com/api/og',
+        url: 'https://america1stusa.com/api/og?v=2',
         width: 1200,
         height: 630,
         alt: 'Get Involved with America First',
@@ -21,7 +24,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Get Involved | America First',
     description: 'Volunteer opportunities and civic engagement programs.',
-    images: ['https://america1stusa.com/api/og'],
+    images: ['https://america1stusa.com/api/og?v=2'],
   },
 };
 

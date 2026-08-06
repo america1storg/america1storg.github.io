@@ -82,6 +82,9 @@ export async function generateMetadata({
   const baseUrl = 'https://america1stusa.com';
 
   return {
+    alternates: {
+      canonical: `${baseUrl}/articles/${article.slug || article.id}`,
+    },
     title: article.title,
     description: excerpt,
     authors: article.author_name ? [{ name: article.author_name }] : undefined,
@@ -104,7 +107,7 @@ export async function generateMetadata({
           ]
         : [
             {
-              url: `${baseUrl}/api/og`,
+              url: `${baseUrl}/api/og?v=2`,
               width: 1200,
               height: 630,
               alt: article.title,
@@ -117,7 +120,7 @@ export async function generateMetadata({
       description: excerpt,
       images: article.cover_image
         ? [article.cover_image.startsWith('http') ? article.cover_image : `${baseUrl}${article.cover_image}`]
-        : [`${baseUrl}/api/og`],
+        : [`${baseUrl}/api/og?v=2`],
     },
   };
 }

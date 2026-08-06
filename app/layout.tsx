@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://america1stusa.com'),
+  alternates: {
+    canonical: 'https://america1stusa.com',
+  },
   title: {
     default: "America First - Civic Education & Advocacy",
     template: "%s | America First",
@@ -50,7 +53,7 @@ export const metadata: Metadata = {
     description: "Civic education and advocacy promoting logical reasoning and principled decision-making.",
     images: [
       {
-        url: "https://america1stusa.com/api/og",
+        url: "https://america1stusa.com/api/og?v=2",
         width: 1200,
         height: 630,
         alt: "America First - Civic Education & Advocacy",
@@ -61,7 +64,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "America First - Civic Education & Advocacy",
     description: "Civic education and advocacy promoting logical reasoning and principled decision-making.",
-    images: ["https://america1stusa.com/api/og"],
+    images: ["https://america1stusa.com/api/og?v=2"],
   },
   robots: {
     index: true,

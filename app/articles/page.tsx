@@ -3,6 +3,9 @@ import { ArticlesClient } from '@/components/ArticlesClient';
 import { sql } from '@vercel/postgres';
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: 'https://america1stusa.com/articles',
+  },
   title: "Articles",
   description: "Read articles on civic education, American values, and principled decision-making. Stay informed on issues affecting our nation.",
   openGraph: {
@@ -11,7 +14,7 @@ export const metadata: Metadata = {
     url: "https://america1stusa.com/articles",
     images: [
       {
-        url: "https://america1stusa.com/api/og",
+        url: "https://america1stusa.com/api/og?v=2",
         width: 1200,
         height: 630,
         alt: "America First Articles",
@@ -22,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Articles | America First",
     description: "Read articles on civic education, American values, and principled decision-making.",
-    images: ["https://america1stusa.com/api/og"],
+    images: ["https://america1stusa.com/api/og?v=2"],
   },
 };
 
