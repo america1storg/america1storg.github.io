@@ -3,26 +3,33 @@
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/ToastProvider';
 
 interface User {
   id: number;
   email: string;
   name: string | null;
   is_super_admin: boolean;
+  role: 'god_mode' | 'king' | 'captain' | 'soldier';
   created_at: string;
 }
 
 export default function ManageUsers() {
   const { data: session } = useSession();
   const router = useRouter();
+  const { showToast } = useToast();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [newEmail, setNewEmail] = useState('');
   const [newName, setNewName] = useState('');
+  const [newRole, setNewRole] = useState<'king' | 'captain' | 'soldier'>('soldier');
   const [isAdding, setIsAdding] = useState(false);
+  const [editingUserId, setEditingUserId] = useState<number | null>(null);
+  const [editingRole, setEditingRole] = useState<'king' | 'captain' | 'soldier'>('soldier');
 
   useEffect(() => {
-    if (session && !session.user?.isSuperAdmin) {
+    const canManage = session?.user?.role && ['god_mode', 'king'].includes(session.user.role);
+    if (session && !canManage) {
       router.push('/admin');
       return;
     }
@@ -49,27 +56,34 @@ export default function ManageUsers() {
       const response = await fetch('/api/admin/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: newEmail, name: newName }),
+        body: JSON.stringify({ email: newEmail, name: newName, role: newRole }),
       });
 
       if (response.ok) {
         setNewEmail('');
         setNewName('');
+        setNewRole('soldier');
         fetchUsers();
-        alert('User added successfully!');
+        showToast('User added successfully!', 'success');
       } else {
         const error = await response.json();
-        alert(error.message || 'Failed to add user');
+        showToast(error.message || 'Failed to add user', 'error');
       }
     } catch (error) {
       console.error('Error adding user:', error);
-      alert('Failed to add user');
+      showToast('Failed to add user', 'error');
     } finally {
       setIsAdding(false);
     }
   };
 
   const handleDeleteUser = async (userId: number, email: string) => {
+    // God Mode cannot be deleted
+    if (email === 'americafirstusateam@gmail.com') {
+      showToast('God Mode user cannot be deleted', 'warning');
+      return;
+    }
+
     if (!confirm(`Are you sure you want to remove ${email}?`)) {
       return;
     }
@@ -81,18 +95,62 @@ export default function ManageUsers() {
 
       if (response.ok) {
         fetchUsers();
-        alert('User removed successfully!');
+        showToast('User removed successfully!', 'success');
       } else {
         const error = await response.json();
-        alert(error.message || 'Failed to remove user');
+        showToast(error.message || 'Failed to remove user', 'error');
       }
     } catch (error) {
       console.error('Error removing user:', error);
-      alert('Failed to remove user');
+      showToast('Failed to remove user', 'error');
     }
   };
 
-  if (!session?.user?.isSuperAdmin) {
+  const handleUpdateRole = async (userId: number, newRole: 'king' | 'captain' | 'soldier') => {
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, role: newRole }),
+      });
+
+      if (response.ok) {
+        showToast('User role updated successfully!', 'success');
+        setEditingUserId(null);
+        fetchUsers();
+      } else {
+        const error = await response.json();
+        showToast(error.message || 'Failed to update role', 'error');
+      }
+    } catch (error) {
+      console.error('Error updating role:', error);
+      showToast('Failed to update role', 'error');
+    }
+  };
+
+  const getRoleBadge = (role: string, isSuperAdmin: boolean) => {
+    if (role === 'god_mode' || isSuperAdmin) {
+      return <span className="px-3 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">God Mode</span>;
+    }
+    const badges = {
+      king: 'bg-yellow-100 text-yellow-800',
+      captain: 'bg-blue-100 text-blue-800',
+      soldier: 'bg-gray-100 text-gray-800',
+    };
+    const labels = {
+      king: 'King',
+      captain: 'Captain',
+      soldier: 'Soldier',
+    };
+    return (
+      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${badges[role as keyof typeof badges] || badges.soldier}`}>
+        {labels[role as keyof typeof labels] || role}
+      </span>
+    );
+  };
+
+  const canManage = session?.user?.role && ['god_mode', 'king'].includes(session.user.role);
+  if (!canManage) {
     return null;
   }
 
@@ -134,6 +192,21 @@ export default function ManageUsers() {
                 placeholder="John Doe"
               />
             </div>
+          </div>
+          <div>
+            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+              Role *
+            </label>
+            <select
+              id="role"
+              value={newRole}
+              onChange={(e) => setNewRole(e.target.value as 'king' | 'captain' | 'soldier')}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="soldier">Soldier - Can create articles</option>
+              <option value="captain">Captain - Can review and publish articles</option>
+              <option value="king">King - Can manage users and publish</option>
+            </select>
           </div>
           <button
             type="submit"
@@ -186,27 +259,61 @@ export default function ManageUsers() {
                       {user.name || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {user.is_super_admin ? (
-                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
-                          Super Admin
-                        </span>
+                      {editingUserId === user.id ? (
+                        <div className="flex items-center gap-2">
+                          <select
+                            value={editingRole}
+                            onChange={(e) => setEditingRole(e.target.value as 'king' | 'captain' | 'soldier')}
+                            className="px-2 py-1 text-xs border border-gray-300 rounded"
+                          >
+                            <option value="soldier">Soldier</option>
+                            <option value="captain">Captain</option>
+                            <option value="king">King</option>
+                          </select>
+                          <button
+                            onClick={() => handleUpdateRole(user.id, editingRole)}
+                            className="text-green-600 hover:text-green-800 text-xs"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => setEditingUserId(null)}
+                            className="text-gray-600 hover:text-gray-800 text-xs"
+                          >
+                            Cancel
+                          </button>
+                        </div>
                       ) : (
-                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                          Admin
-                        </span>
+                        <div className="flex items-center gap-2">
+                          {getRoleBadge(user.role, user.is_super_admin)}
+                          {user.role !== 'god_mode' && !user.is_super_admin && (
+                            <button
+                              onClick={() => {
+                                setEditingUserId(user.id);
+                                setEditingRole(user.role === 'king' || user.role === 'captain' ? user.role : 'soldier');
+                              }}
+                              className="text-blue-600 hover:text-blue-800 text-xs"
+                            >
+                              Edit
+                            </button>
+                          )}
+                        </div>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                       {new Date(user.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      {!user.is_super_admin && (
+                      {user.role !== 'god_mode' && user.email !== 'americafirstusateam@gmail.com' && (
                         <button
                           onClick={() => handleDeleteUser(user.id, user.email)}
                           className="text-red-600 hover:text-red-800"
                         >
                           Remove
                         </button>
+                      )}
+                      {(user.role === 'god_mode' || user.email === 'americafirstusateam@gmail.com') && (
+                        <span className="text-gray-400 text-xs">Protected</span>
                       )}
                     </td>
                   </tr>

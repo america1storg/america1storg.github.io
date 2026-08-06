@@ -3,23 +3,28 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { useToast } from '@/components/ToastProvider';
 
 interface Article {
   id: number;
   title: string;
   excerpt: string;
   cover_image: string | null;
-  status: 'draft' | 'published';
+  status: 'draft' | 'submitted' | 'needs_re_edit' | 'approved' | 'published';
   created_at: string;
   published_at: string | null;
   author_name: string | null;
+  author_id: number;
 }
 
 export default function ArticlesList() {
   const router = useRouter();
+  const { data: session } = useSession();
+  const { showToast } = useToast();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'draft' | 'published'>('all');
+  const [filter, setFilter] = useState<'all' | 'draft' | 'submitted' | 'needs_re_edit' | 'approved' | 'published'>('all');
 
   useEffect(() => {
     fetchArticles();
@@ -49,14 +54,36 @@ export default function ArticlesList() {
 
       if (response.ok) {
         fetchArticles();
-        alert('Article deleted successfully!');
+        showToast('Article deleted successfully!', 'success');
       } else {
-        alert('Failed to delete article');
+        showToast('Failed to delete article', 'error');
       }
     } catch (error) {
       console.error('Error deleting article:', error);
-      alert('Failed to delete article');
+      showToast('Failed to delete article', 'error');
     }
+  };
+
+  const getStatusBadge = (status: string) => {
+    const badges = {
+      draft: 'bg-gray-100 text-gray-800',
+      submitted: 'bg-blue-100 text-blue-800',
+      needs_re_edit: 'bg-yellow-100 text-yellow-800',
+      approved: 'bg-green-100 text-green-800',
+      published: 'bg-purple-100 text-purple-800',
+    };
+    const labels = {
+      draft: 'Draft',
+      submitted: 'Pending Review',
+      needs_re_edit: 'Needs Re-edit',
+      approved: 'Approved',
+      published: 'Published',
+    };
+    return (
+      <span className={`px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap ${badges[status as keyof typeof badges] || badges.draft}`}>
+        {labels[status as keyof typeof labels] || status}
+      </span>
+    );
   };
 
   const filteredArticles = articles.filter((article) => {
@@ -77,7 +104,7 @@ export default function ArticlesList() {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2 mb-6 flex-wrap">
         <button
           onClick={() => setFilter('all')}
           className={`px-4 py-2 rounded-lg transition-colors ${
@@ -89,16 +116,6 @@ export default function ArticlesList() {
           All ({articles.length})
         </button>
         <button
-          onClick={() => setFilter('published')}
-          className={`px-4 py-2 rounded-lg transition-colors ${
-            filter === 'published'
-              ? 'bg-blue-900 text-white'
-              : 'bg-white text-gray-700 hover:bg-gray-100'
-          }`}
-        >
-          Published ({articles.filter((a) => a.status === 'published').length})
-        </button>
-        <button
           onClick={() => setFilter('draft')}
           className={`px-4 py-2 rounded-lg transition-colors ${
             filter === 'draft'
@@ -107,6 +124,46 @@ export default function ArticlesList() {
           }`}
         >
           Drafts ({articles.filter((a) => a.status === 'draft').length})
+        </button>
+        <button
+          onClick={() => setFilter('submitted')}
+          className={`px-4 py-2 rounded-lg transition-colors ${
+            filter === 'submitted'
+              ? 'bg-blue-900 text-white'
+              : 'bg-white text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          Pending Review ({articles.filter((a) => a.status === 'submitted').length})
+        </button>
+        <button
+          onClick={() => setFilter('needs_re_edit')}
+          className={`px-4 py-2 rounded-lg transition-colors ${
+            filter === 'needs_re_edit'
+              ? 'bg-blue-900 text-white'
+              : 'bg-white text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          Needs Re-edit ({articles.filter((a) => a.status === 'needs_re_edit').length})
+        </button>
+        <button
+          onClick={() => setFilter('approved')}
+          className={`px-4 py-2 rounded-lg transition-colors ${
+            filter === 'approved'
+              ? 'bg-blue-900 text-white'
+              : 'bg-white text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          Approved ({articles.filter((a) => a.status === 'approved').length})
+        </button>
+        <button
+          onClick={() => setFilter('published')}
+          className={`px-4 py-2 rounded-lg transition-colors ${
+            filter === 'published'
+              ? 'bg-blue-900 text-white'
+              : 'bg-white text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          Published ({articles.filter((a) => a.status === 'published').length})
         </button>
       </div>
 
@@ -156,15 +213,7 @@ export default function ArticlesList() {
                     <h3 className="text-lg font-bold text-gray-900 line-clamp-2 flex-1">
                       {article.title}
                     </h3>
-                    <span
-                      className={`px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap ${
-                        article.status === 'published'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-yellow-100 text-yellow-800'
-                      }`}
-                    >
-                      {article.status}
-                    </span>
+                    {getStatusBadge(article.status)}
                   </div>
 
                   {article.excerpt && (

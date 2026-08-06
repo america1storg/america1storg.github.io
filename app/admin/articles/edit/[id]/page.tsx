@@ -3,20 +3,24 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import ArticleEditor from '@/components/ArticleEditor';
+import ArticleEditorWorkflow from '@/components/ArticleEditorWorkflow';
+import { useToast } from '@/components/ToastProvider';
 
 interface Article {
   id: number;
   title: string;
   content: string;
   cover_image: string | null;
-  status: 'draft' | 'published';
+  status: 'draft' | 'submitted' | 'needs_re_edit' | 'approved' | 'published';
+  author_id: number;
+  rejection_reason: string | null;
 }
 
 export default function EditArticle() {
   const router = useRouter();
   const params = useParams();
   const { data: session } = useSession();
+  const { showToast } = useToast();
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -34,12 +38,12 @@ export default function EditArticle() {
         const data = await response.json();
         setArticle(data.article);
       } else {
-        alert('Article not found');
+        showToast('Article not found', 'error');
         router.push('/admin/articles');
       }
     } catch (error) {
       console.error('Error fetching article:', error);
-      alert('Failed to load article');
+      showToast('Failed to load article', 'error');
     } finally {
       setLoading(false);
     }
@@ -49,10 +53,10 @@ export default function EditArticle() {
     title: string,
     content: string,
     coverImage: string,
-    status: 'draft' | 'published'
+    status: string
   ) => {
     if (!session?.user || !article) {
-      alert('Unable to save article');
+      showToast('Unable to save article', 'error');
       return;
     }
 
@@ -71,17 +75,15 @@ export default function EditArticle() {
       });
 
       if (response.ok) {
-        alert(
-          `Article ${status === 'published' ? 'published' : 'saved'} successfully!`
-        );
-        router.push('/admin/articles');
+        showToast('Article saved successfully!', 'success');
+        setTimeout(() => router.push('/admin/articles'), 1000);
       } else {
         const error = await response.json();
-        alert(error.message || 'Failed to save article');
+        showToast(error.message || 'Failed to save article', 'error');
       }
     } catch (error) {
       console.error('Error saving article:', error);
-      alert('Failed to save article');
+      showToast('Failed to save article', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -112,10 +114,15 @@ export default function EditArticle() {
         </p>
       </div>
 
-      <ArticleEditor
+      <ArticleEditorWorkflow
+        articleId={article.id}
         initialTitle={article.title}
         initialContent={article.content}
         initialCoverImage={article.cover_image || ''}
+        initialStatus={article.status}
+        rejectionReason={article.rejection_reason}
+        userRole={session?.user?.role || 'soldier'}
+        isAuthor={article.author_id === session?.user?.id}
         onSave={handleSave}
         isSaving={isSaving}
       />

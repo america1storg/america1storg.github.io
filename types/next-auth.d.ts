@@ -7,6 +7,7 @@ declare module 'next-auth' {
       email: string;
       name?: string | null;
       isSuperAdmin: boolean;
+      role: 'god_mode' | 'king' | 'captain' | 'soldier';
     };
   }
 
@@ -15,5 +16,6 @@ declare module 'next-auth' {
     email: string;
     name?: string | null;
     isSuperAdmin: boolean;
+    role: 'god_mode' | 'king' | 'captain' | 'soldier';
   }
 }

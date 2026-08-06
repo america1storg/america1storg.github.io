@@ -44,7 +44,7 @@ export const authOptions: NextAuthOptions = {
       if (user?.email) {
         try {
           const result = await sql`
-            SELECT id, email, name, is_super_admin FROM users
+            SELECT id, email, name, is_super_admin, role FROM users
             WHERE email = ${user.email}
           `;
 
@@ -54,6 +54,7 @@ export const authOptions: NextAuthOptions = {
             token.email = dbUser.email;
             token.name = dbUser.name;
             token.isSuperAdmin = dbUser.is_super_admin;
+            token.role = dbUser.role || 'soldier';
           }
         } catch (error) {
           console.error('Error fetching user data:', error);
@@ -68,6 +69,7 @@ export const authOptions: NextAuthOptions = {
         session.user.email = token.email as string;
         session.user.name = token.name as string;
         session.user.isSuperAdmin = token.isSuperAdmin as boolean;
+        session.user.role = (token.role as 'god_mode' | 'king' | 'captain' | 'soldier') || 'soldier';
       }
       return session;
     },

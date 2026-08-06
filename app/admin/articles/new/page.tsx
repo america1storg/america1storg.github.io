@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import ArticleEditor from '@/components/ArticleEditor';
+import { useToast } from '@/components/ToastProvider';
 
 export default function NewArticle() {
   const router = useRouter();
   const { data: session } = useSession();
+  const { showToast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async (
@@ -17,7 +19,7 @@ export default function NewArticle() {
     status: 'draft' | 'published'
   ) => {
     if (!session?.user) {
-      alert('You must be logged in to create an article');
+      showToast('You must be logged in to create an article', 'error');
       return;
     }
 
@@ -38,17 +40,18 @@ export default function NewArticle() {
 
       if (response.ok) {
         const data = await response.json();
-        alert(
-          `Article ${status === 'published' ? 'published' : 'saved as draft'} successfully!`
+        showToast(
+          `Article ${status === 'published' ? 'published' : 'saved as draft'} successfully!`,
+          'success'
         );
-        router.push('/admin/articles');
+        setTimeout(() => router.push('/admin/articles'), 1000);
       } else {
         const error = await response.json();
-        alert(error.message || 'Failed to save article');
+        showToast(error.message || 'Failed to save article', 'error');
       }
     } catch (error) {
       console.error('Error saving article:', error);
-      alert('Failed to save article');
+      showToast('Failed to save article', 'error');
     } finally {
       setIsSaving(false);
     }

@@ -4,6 +4,7 @@ import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { ToastProvider } from '@/components/ToastProvider';
 
 export default function AdminLayout({
   children,
@@ -13,16 +14,19 @@ export default function AdminLayout({
   const { data: session } = useSession();
   const pathname = usePathname();
 
+  const canReview = session?.user?.role && ['god_mode', 'king', 'captain'].includes(session.user.role);
+  const canManageUsers = session?.user?.role && ['god_mode', 'king'].includes(session.user.role);
+
   const navigation = [
     { name: 'Dashboard', href: '/admin' },
     { name: 'Articles', href: '/admin/articles' },
     { name: 'New Article', href: '/admin/articles/new' },
-    ...(session?.user?.isSuperAdmin
-      ? [{ name: 'Manage Users', href: '/admin/users' }]
-      : []),
+    ...(canReview ? [{ name: 'Review Queue', href: '/admin/review' }] : []),
+    ...(canManageUsers ? [{ name: 'Manage Users', href: '/admin/users' }] : []),
   ];
 
   return (
+    <ToastProvider>
     <div className="min-h-screen bg-gray-100">
       {/* Top Navigation */}
       <nav className="bg-blue-900 text-white shadow-lg">
@@ -42,7 +46,14 @@ export default function AdminLayout({
               <span className="ml-2 text-sm text-blue-200">Admin Panel</span>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm">{session?.user?.email}</span>
+              <div className="text-right">
+                <div className="text-sm">{session?.user?.email}</div>
+                {session?.user?.role && (
+                  <div className="text-xs text-blue-200 capitalize">
+                    {session.user.role.replace('_', ' ')}
+                  </div>
+                )}
+              </div>
               <button
                 onClick={() => signOut({ callbackUrl: '/' })}
                 className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded transition-colors text-sm"
@@ -81,5 +92,6 @@ export default function AdminLayout({
         <main className="flex-1 p-8">{children}</main>
       </div>
     </div>
+    </ToastProvider>
   );
 }

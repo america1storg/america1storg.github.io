@@ -2,17 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@vercel/postgres';
+import { canManageUsers } from '@/lib/db';
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.isSuperAdmin) {
+    if (!session?.user || !canManageUsers(session.user.role)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     const result = await sql`
-      SELECT id, email, name, is_super_admin, created_at
+      SELECT id, email, name, is_super_admin, role, created_at
       FROM users
       ORDER BY created_at DESC
     `;
@@ -31,11 +32,11 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.isSuperAdmin) {
+    if (!session?.user || !canManageUsers(session.user.role)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const { email, name } = await request.json();
+    const { email, name, role } = await request.json();
 
     if (!email) {
       return NextResponse.json(
@@ -44,10 +45,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const userRole = role || 'soldier';
+
     const result = await sql`
-      INSERT INTO users (email, name, is_super_admin)
-      VALUES (${email}, ${name || null}, FALSE)
-      RETURNING id, email, name, is_super_admin, created_at
+      INSERT INTO users (email, name, is_super_admin, role)
+      VALUES (${email}, ${name || null}, FALSE, ${userRole})
+      RETURNING id, email, name, is_super_admin, role, created_at
     `;
 
     return NextResponse.json({ user: result.rows[0] });
@@ -68,11 +71,57 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user || !canManageUsers(session.user.role)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+    const { userId, role } = await request.json();
+
+    if (!userId || !role) {
+      return NextResponse.json(
+        { error: 'User ID and role are required' },
+        { status: 400 }
+      );
+    }
+
+    // Check if trying to modify God Mode user
+    const userCheck = await sql`
+      SELECT email, role FROM users WHERE id = ${userId}
+    `;
+
+    if (userCheck.rows[0]?.email === 'americafirstusateam@gmail.com') {
+      return NextResponse.json(
+        { error: 'Cannot modify God Mode user' },
+        { status: 400 }
+      );
+    }
+
+    const result = await sql`
+      UPDATE users
+      SET role = ${role}
+      WHERE id = ${userId}
+      RETURNING id, email, name, is_super_admin, role, created_at
+    `;
+
+    return NextResponse.json({ user: result.rows[0] });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    return NextResponse.json(
+      { error: 'Failed to update user' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.isSuperAdmin) {
+    if (!session?.user || !canManageUsers(session.user.role)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
@@ -86,20 +135,20 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Check if user is super admin
+    // Check if user is God Mode
     const userCheck = await sql`
-      SELECT is_super_admin FROM users WHERE id = ${userId}
+      SELECT email, role FROM users WHERE id = ${userId}
     `;
 
-    if (userCheck.rows[0]?.is_super_admin) {
+    if (userCheck.rows[0]?.email === 'americafirstusateam@gmail.com' || userCheck.rows[0]?.role === 'god_mode') {
       return NextResponse.json(
-        { error: 'Cannot delete super admin' },
+        { error: 'Cannot delete God Mode user' },
         { status: 400 }
       );
     }
 
     await sql`
-      DELETE FROM users WHERE id = ${userId} AND is_super_admin = FALSE
+      DELETE FROM users WHERE id = ${userId}
     `;
 
     return NextResponse.json({ success: true });
