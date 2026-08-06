@@ -2,10 +2,10 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'About Us',
-  description: 'America First is an independent 501(c)(4) civic education and advocacy organization. Learn about our mission to restore logical reasoning, fairness, and principled decision-making in American civic life.',
+  description: 'Independent civic education and advocacy organization. Learn about our mission to promote logical reasoning and principled decision-making.',
   openGraph: {
     title: 'About America First',
-    description: 'Independent civic education and advocacy organization committed to restoring logical reasoning and principled decision-making.',
+    description: 'Civic education and advocacy promoting logical reasoning and principled decision-making.',
     url: 'https://america1stusa.com/about',
     type: 'website',
     images: [
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'About America First',
-    description: 'Independent civic education and advocacy organization committed to restoring logical reasoning and principled decision-making.',
+    description: 'Civic education and advocacy promoting logical reasoning and principled decision-making.',
     images: ['https://america1stusa.com/api/og'],
   },
 };

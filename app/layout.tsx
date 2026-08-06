@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     default: "America First - Civic Education & Advocacy",
     template: "%s | America First",
   },
-  description: "Independent 501(c)(4) civic education and advocacy organization committed to restoring logical reasoning, fairness, and principled decision-making from an America-First perspective.",
+  description: "Independent civic education and advocacy organization promoting logical reasoning, fairness, and principled decision-making.",
   keywords: [
     "civic education",
     "america first",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     url: "https://america1stusa.com",
     siteName: "America First",
     title: "America First - Civic Education & Advocacy",
-    description: "Independent civic education and advocacy organization committed to restoring logical reasoning and principled decision-making.",
+    description: "Civic education and advocacy promoting logical reasoning and principled decision-making.",
     images: [
       {
         url: "https://america1stusa.com/api/og",
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "America First - Civic Education & Advocacy",
-    description: "Independent civic education and advocacy organization committed to restoring logical reasoning and principled decision-making.",
+    description: "Civic education and advocacy promoting logical reasoning and principled decision-making.",
     images: ["https://america1stusa.com/api/og"],
   },
   robots: {

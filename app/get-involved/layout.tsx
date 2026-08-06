@@ -2,10 +2,10 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Get Involved',
-  description: 'Find volunteer opportunities, civic engagement programs, and ways to make a difference in your community. Join advisory boards, serve locally, and engage in meaningful civic action.',
+  description: 'Volunteer opportunities and civic engagement programs. Join advisory boards, serve locally, and make a difference.',
   openGraph: {
     title: 'Get Involved | America First',
-    description: 'Volunteer opportunities and civic engagement programs. Find ways to serve your community and make a difference.',
+    description: 'Volunteer opportunities and civic engagement programs to serve your community.',
     url: 'https://america1stusa.com/get-involved',
     type: 'website',
     images: [

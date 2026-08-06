@@ -2,10 +2,10 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Resources',
-  description: 'Curated civic resources including government information, nonpartisan research, voter guides, and educational materials. Find trusted sources for informed civic engagement.',
+  description: 'Curated civic resources: government info, research, voter guides, and educational materials for informed citizenship.',
   openGraph: {
     title: 'Civic Resources | America First',
-    description: 'Curated civic resources for informed citizenship. Government information, research, voter guides, and educational materials.',
+    description: 'Civic resources: government info, research, voter guides, and educational materials.',
     url: 'https://america1stusa.com/resources',
     type: 'website',
     images: [
