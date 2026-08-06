@@ -223,6 +223,7 @@ export default function ArticlesList() {
                   <div className="text-xs text-gray-500 mb-4">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold">By {article.author_name || 'Unknown'}</span>
+                      <span className="text-xs text-gray-400">(Public: America First Team)</span>
                     </div>
                     <div>
                       {article.status === 'published' && article.published_at
@@ -232,18 +233,41 @@ export default function ArticlesList() {
                   </div>
 
                   <div className="flex gap-2">
-                    <button
-                      onClick={() => router.push(`/admin/articles/edit/${article.id}`)}
-                      className="flex-1 px-4 py-2 text-sm font-semibold text-blue-600 hover:bg-blue-50 rounded transition-colors border border-blue-200"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(article.id, article.title)}
-                      className="flex-1 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 rounded transition-colors border border-red-200"
-                    >
-                      Delete
-                    </button>
+                    {/* Soldiers can only edit their own drafts or needs_re_edit articles */}
+                    {/* God/King/Captain can edit any article */}
+                    {((['god_mode', 'king', 'captain'].includes(session?.user?.role || '')) ||
+                      (session?.user?.role === 'soldier' &&
+                       article.author_id === session?.user?.id &&
+                       ['draft', 'needs_re_edit'].includes(article.status))) && (
+                      <button
+                        onClick={() => router.push(`/admin/articles/edit/${article.id}`)}
+                        className="flex-1 px-4 py-2 text-sm font-semibold text-blue-600 hover:bg-blue-50 rounded transition-colors border border-blue-200"
+                      >
+                        {['draft', 'needs_re_edit'].includes(article.status) ? 'Edit' : 'View/Edit'}
+                      </button>
+                    )}
+
+                    {/* Only God/King/Captain can delete articles */}
+                    {['god_mode', 'king', 'captain'].includes(session?.user?.role || '') && (
+                      <button
+                        onClick={() => handleDelete(article.id, article.title)}
+                        className="flex-1 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 rounded transition-colors border border-red-200"
+                      >
+                        Delete
+                      </button>
+                    )}
+
+                    {/* Soldiers can view articles but show read-only button */}
+                    {session?.user?.role === 'soldier' &&
+                     (article.author_id !== session?.user?.id ||
+                      !['draft', 'needs_re_edit'].includes(article.status)) && (
+                      <button
+                        onClick={() => router.push(`/admin/articles/edit/${article.id}`)}
+                        className="flex-1 px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded transition-colors border border-gray-200"
+                      >
+                        View
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

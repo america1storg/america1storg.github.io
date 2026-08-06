@@ -106,10 +106,11 @@ export default function ArticleEditor({
     }
   };
 
-  const handleSave = async (status: 'draft' | 'published') => {
+  const handleSave = async () => {
     if (!editor) return;
     const content = editor.getHTML();
-    await onSave(title, content, coverImage, status);
+    // Always save as draft - soldiers cannot publish directly
+    await onSave(title, content, coverImage, 'draft');
   };
 
   if (!editor) {
@@ -316,18 +317,11 @@ export default function ArticleEditor({
         </p>
         <div className="flex gap-3">
           <button
-            onClick={() => handleSave('draft')}
-            disabled={isSaving || !title}
-            className="px-8 py-3 border-3 border-gray-400 rounded-full font-bold text-black text-base hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white shadow-md"
-          >
-            {isSaving ? 'Saving...' : 'Save as Draft'}
-          </button>
-          <button
-            onClick={() => handleSave('published')}
+            onClick={handleSave}
             disabled={isSaving || !title}
             className="px-8 py-3 bg-blue-600 text-white rounded-full font-bold text-base hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
           >
-            {isSaving ? 'Publishing...' : 'Publish Now'}
+            {isSaving ? 'Saving...' : 'Save Draft'}
           </button>
         </div>
       </div>

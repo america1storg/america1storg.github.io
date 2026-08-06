@@ -155,6 +155,9 @@ export default function ReviewDashboard() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Article Review Dashboard</h1>
         <p className="text-gray-600 mt-2">Review and manage article submissions</p>
+        <p className="text-sm text-gray-500 mt-1">
+          💡 To see ALL articles including published ones, go to <a href="/admin/articles" className="text-blue-600 hover:underline">Articles page</a>
+        </p>
       </div>
 
       {/* Filter Tabs */}
@@ -239,7 +242,10 @@ export default function ReviewDashboard() {
                     )}
 
                     <div className="text-xs text-gray-500 mb-4 space-y-1">
-                      <div>By {article.author_name || 'Unknown'}</div>
+                      <div>
+                        By {article.author_name || 'Unknown'}
+                        <span className="text-gray-400 ml-2">(Public: America First Team)</span>
+                      </div>
                       {article.submitted_at && (
                         <div>Submitted: {new Date(article.submitted_at).toLocaleString()}</div>
                       )}

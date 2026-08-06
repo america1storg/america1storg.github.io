@@ -86,6 +86,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Role-based status validation
+    const userRole = session.user.role || 'soldier';
+
+    // Soldiers can only create drafts
+    if (userRole === 'soldier' && status !== 'draft') {
+      return NextResponse.json(
+        { error: 'Soldiers can only save articles as drafts' },
+        { status: 403 }
+      );
+    }
+
+    // Only God/King/Captain can publish directly
+    if (status === 'published' && !['god_mode', 'king', 'captain'].includes(userRole)) {
+      return NextResponse.json(
+        { error: 'You do not have permission to publish articles directly' },
+        { status: 403 }
+      );
+    }
+
     // Generate excerpt from content (first 200 characters of plain text)
     const tempDiv = content.replace(/<[^>]*>/g, '');
     const excerpt = tempDiv.substring(0, 200) + (tempDiv.length > 200 ? '...' : '');
