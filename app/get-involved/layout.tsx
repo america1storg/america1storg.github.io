@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://america1stusa.vercel.app/api/og?v=5',
+        url: 'https://america1stusa.vercel.app/api/og?v=6',
         width: 1200,
         height: 630,
         alt: 'Get Involved with America First',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Get Involved | America First',
     description: 'Volunteer opportunities and civic engagement programs.',
-    images: ['https://america1stusa.vercel.app/api/og?v=5'],
+    images: ['https://america1stusa.vercel.app/api/og?v=6'],
   },
 };
 
