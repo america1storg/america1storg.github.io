@@ -3,8 +3,8 @@ import { ImageResponse } from 'next/og';
 export const runtime = 'edge';
 
 export async function GET() {
-  // Use the smaller transparent logo (123KB vs 4.3MB)
-  const logoUrl = new URL('/logo-transparent.png', 'https://america1stusa.vercel.app').toString();
+  // Use logo-dark-smaller.jpg (525KB) - optimized for Edge runtime
+  const logoUrl = new URL('/logo-dark-smaller.jpg', 'https://america1stusa.vercel.app').toString();
 
   return new ImageResponse(
     (
@@ -16,7 +16,7 @@ export async function GET() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, #000a2e 0%, #1e3a8a 100%)',
+          background: '#ffffff',
           fontFamily: 'system-ui, sans-serif',
         }}
       >
@@ -33,16 +33,16 @@ export async function GET() {
           <img
             src={logoUrl}
             alt="America First"
-            width="400"
-            height="400"
+            width="500"
+            height="500"
             style={{
-              marginBottom: 40,
+              marginBottom: 20,
             }}
           />
           <p
             style={{
-              fontSize: 48,
-              color: 'rgba(255, 255, 255, 0.9)',
+              fontSize: 42,
+              color: '#1e3a8a',
               fontWeight: 700,
               marginTop: 0,
             }}
