@@ -3,6 +3,14 @@ import { ImageResponse } from 'next/og';
 export const runtime = 'edge';
 
 export async function GET() {
+  // Fetch logo directly in Edge function
+  const logoResponse = await fetch(
+    new URL('/logo-dark-smaller.jpg', 'https://america1stusa.vercel.app')
+  );
+  const logoArrayBuffer = await logoResponse.arrayBuffer();
+  const logoBase64 = Buffer.from(logoArrayBuffer).toString('base64');
+  const logoDataUrl = `data:image/jpeg;base64,${logoBase64}`;
+
   return new ImageResponse(
     (
       <div
@@ -13,9 +21,8 @@ export async function GET() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, #0a1931 0%, #1e3a8a 50%, #2563eb 100%)',
+          background: 'linear-gradient(135deg, #000a2e 0%, #1e3a8a 100%)',
           fontFamily: 'system-ui, sans-serif',
-          padding: '80px',
         }}
       >
         <div
@@ -25,66 +32,28 @@ export async function GET() {
             alignItems: 'center',
             justifyContent: 'center',
             textAlign: 'center',
-            background: 'rgba(255, 255, 255, 0.98)',
-            padding: '80px',
-            borderRadius: '32px',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-            width: '100%',
           }}
         >
-          {/* USA Flag Colors Accent */}
-          <div
+          {/* Logo as base64 data URL */}
+          <img
+            src={logoDataUrl}
+            alt="America First"
+            width="450"
+            height="450"
             style={{
-              display: 'flex',
-              gap: '12px',
-              marginBottom: '40px',
+              marginBottom: 30,
             }}
-          >
-            <div style={{ width: '80px', height: '8px', background: '#dc2626', borderRadius: '4px' }} />
-            <div style={{ width: '80px', height: '8px', background: '#ffffff', borderRadius: '4px', border: '2px solid #e5e7eb' }} />
-            <div style={{ width: '80px', height: '8px', background: '#1e40af', borderRadius: '4px' }} />
-          </div>
-
-          {/* Main Title */}
-          <h1
-            style={{
-              fontSize: 96,
-              fontWeight: 900,
-              margin: 0,
-              marginBottom: '24px',
-              letterSpacing: '-0.02em',
-              background: 'linear-gradient(135deg, #0a1931 0%, #1e3a8a 50%, #2563eb 100%)',
-              backgroundClip: 'text',
-              color: 'transparent',
-              lineHeight: 1,
-            }}
-          >
-            America First
-          </h1>
-
-          {/* Subtitle */}
+          />
           <p
             style={{
-              fontSize: 40,
-              fontWeight: 600,
-              color: '#475569',
+              fontSize: 48,
+              color: 'rgba(255, 255, 255, 0.95)',
+              fontWeight: 700,
               margin: 0,
-              letterSpacing: '0.02em',
             }}
           >
             Civic Education & Advocacy
           </p>
-
-          {/* Bottom Accent */}
-          <div
-            style={{
-              marginTop: '40px',
-              width: '300px',
-              height: '4px',
-              background: 'linear-gradient(90deg, #dc2626 0%, #1e40af 100%)',
-              borderRadius: '2px',
-            }}
-          />
         </div>
       </div>
     ),

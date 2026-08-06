@@ -107,7 +107,7 @@ export async function generateMetadata({
           ]
         : [
             {
-              url: `${baseUrl}/api/og?v=6`,
+              url: `${baseUrl}/api/og?v=7`,
               width: 1200,
               height: 630,
               alt: article.title,
@@ -120,7 +120,7 @@ export async function generateMetadata({
       description: excerpt,
       images: article.cover_image
         ? [article.cover_image.startsWith('http') ? article.cover_image : `${baseUrl}${article.cover_image}`]
-        : [`${baseUrl}/api/og?v=6`],
+        : [`${baseUrl}/api/og?v=7`],
     },
   };
 }
