@@ -3,8 +3,8 @@ import { ImageResponse } from 'next/og';
 export const runtime = 'edge';
 
 export async function GET() {
-  // Fetch the logo
-  const logoUrl = new URL('/logo-dark.png', 'https://america1stusa.vercel.app').toString();
+  // Use the smaller transparent logo (123KB vs 4.3MB)
+  const logoUrl = new URL('/logo-transparent.png', 'https://america1stusa.vercel.app').toString();
 
   return new ImageResponse(
     (

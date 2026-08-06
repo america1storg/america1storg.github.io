@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     description: "Civic education and advocacy promoting logical reasoning and principled decision-making.",
     images: [
       {
-        url: "https://america1stusa.vercel.app/api/og?v=3",
+        url: "https://america1stusa.vercel.app/api/og?v=4",
         width: 1200,
         height: 630,
         alt: "America First - Civic Education & Advocacy",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "America First - Civic Education & Advocacy",
     description: "Civic education and advocacy promoting logical reasoning and principled decision-making.",
-    images: ["https://america1stusa.vercel.app/api/og?v=3"],
+    images: ["https://america1stusa.vercel.app/api/og?v=4"],
   },
   robots: {
     index: true,
