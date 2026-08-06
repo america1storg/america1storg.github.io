@@ -33,17 +33,13 @@ export default function NewArticle() {
           title,
           content,
           cover_image: coverImage,
-          status,
+          status: 'draft',
           author_id: session.user.id,
         }),
       });
 
       if (response.ok) {
-        const data = await response.json();
-        showToast(
-          `Article ${status === 'published' ? 'published' : 'saved as draft'} successfully!`,
-          'success'
-        );
+        showToast('Article saved as draft successfully!', 'success');
         setTimeout(() => router.push('/admin/articles'), 1000);
       } else {
         const error = await response.json();
@@ -52,6 +48,61 @@ export default function NewArticle() {
     } catch (error) {
       console.error('Error saving article:', error);
       showToast('Failed to save article', 'error');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSubmit = async (
+    title: string,
+    content: string,
+    coverImage: string
+  ) => {
+    if (!session?.user) {
+      showToast('You must be logged in to create an article', 'error');
+      return;
+    }
+
+    setIsSaving(true);
+    showToast('Submitting article...', 'info');
+
+    try {
+      // First, create the article as draft
+      const response = await fetch('/api/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title,
+          content,
+          cover_image: coverImage,
+          status: 'draft',
+          author_id: session.user.id,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const articleId = data.article.id;
+
+        // Then submit it for approval
+        const submitResponse = await fetch(`/api/articles/${articleId}/submit`, {
+          method: 'POST',
+        });
+
+        if (submitResponse.ok) {
+          showToast('Article submitted for approval!', 'success');
+          setTimeout(() => router.push('/admin/articles'), 1000);
+        } else {
+          showToast('Article saved as draft, but submission failed', 'warning');
+          setTimeout(() => router.push('/admin/articles'), 1000);
+        }
+      } else {
+        const error = await response.json();
+        showToast(error.message || 'Failed to save article', 'error');
+      }
+    } catch (error) {
+      console.error('Error submitting article:', error);
+      showToast('Failed to submit article', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -66,7 +117,12 @@ export default function NewArticle() {
         </p>
       </div>
 
-      <ArticleEditor onSave={handleSave} isSaving={isSaving} />
+      <ArticleEditor
+        onSave={handleSave}
+        onSubmit={handleSubmit}
+        isSaving={isSaving}
+        showSubmitButton={true}
+      />
     </div>
   );
 }

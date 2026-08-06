@@ -12,7 +12,9 @@ interface ArticleEditorProps {
   initialTitle?: string;
   initialCoverImage?: string;
   onSave: (title: string, content: string, coverImage: string, status: 'draft' | 'published') => Promise<void>;
+  onSubmit?: (title: string, content: string, coverImage: string) => Promise<void>;
   isSaving: boolean;
+  showSubmitButton?: boolean;
 }
 
 export default function ArticleEditor({
@@ -20,7 +22,9 @@ export default function ArticleEditor({
   initialTitle = '',
   initialCoverImage = '',
   onSave,
+  onSubmit,
   isSaving,
+  showSubmitButton = false,
 }: ArticleEditorProps) {
   const [title, setTitle] = useState(initialTitle);
   const [coverImage, setCoverImage] = useState(initialCoverImage);
@@ -111,6 +115,20 @@ export default function ArticleEditor({
     const content = editor.getHTML();
     // Always save as draft - soldiers cannot publish directly
     await onSave(title, content, coverImage, 'draft');
+  };
+
+  const handleSubmit = async () => {
+    if (!editor || !onSubmit) return;
+    const content = editor.getHTML();
+
+    // Validate content length
+    const textContent = content.replace(/<[^>]*>/g, '');
+    if (textContent.length < 100) {
+      alert('Article content is too short. Please write at least a few paragraphs.');
+      return;
+    }
+
+    await onSubmit(title, content, coverImage);
   };
 
   if (!editor) {
@@ -319,10 +337,19 @@ export default function ArticleEditor({
           <button
             onClick={handleSave}
             disabled={isSaving || !title}
-            className="px-8 py-3 bg-blue-600 text-white rounded-full font-bold text-base hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+            className="px-8 py-3 border-3 border-gray-400 rounded-full font-bold text-black text-base hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white shadow-md"
           >
-            {isSaving ? 'Saving...' : 'Save Draft'}
+            {isSaving ? 'Saving...' : 'Save as Draft'}
           </button>
+          {showSubmitButton && (
+            <button
+              onClick={handleSubmit}
+              disabled={isSaving || !title}
+              className="px-8 py-3 bg-green-600 text-white rounded-full font-bold text-base hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+            >
+              {isSaving ? 'Submitting...' : 'Submit for Approval'}
+            </button>
+          )}
         </div>
       </div>
 
