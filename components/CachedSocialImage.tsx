@@ -33,6 +33,14 @@ export function CachedSocialImage({ url, title, domain, isDark = false }: Cached
     const timestampKey = `social_image_timestamp_${domain}`;
     const fallbackCacheKey = `${FALLBACK_CACHE_KEY_PREFIX}${domain}`;
 
+    // Fallback timeout - show letter badge if nothing loads after 10 seconds
+    const fallbackTimeout = setTimeout(() => {
+      if (isLoading) {
+        setShowFallback(true);
+        setIsLoading(false);
+      }
+    }, 10000);
+
     // Check if we have a cached image (either social or fallback)
     const cachedImage = localStorage.getItem(cacheKey);
     const cachedFallback = localStorage.getItem(fallbackCacheKey);
@@ -44,6 +52,7 @@ export function CachedSocialImage({ url, title, domain, isDark = false }: Cached
 
       // If cache is still valid (less than 1 week old), use it
       if (now - timestamp < CACHE_DURATION) {
+        clearTimeout(fallbackTimeout);
         setImageUrl(cachedImage || cachedFallback);
         setIsLoading(false);
         return;
@@ -62,6 +71,7 @@ export function CachedSocialImage({ url, title, domain, isDark = false }: Cached
         });
 
         clearTimeout(timeoutId);
+        clearTimeout(fallbackTimeout);
 
         if (response.ok) {
           const data = await response.json();
@@ -157,12 +167,18 @@ export function CachedSocialImage({ url, title, domain, isDark = false }: Cached
       }
 
       // All attempts failed - show SVG fallback
+      clearTimeout(fallbackTimeout);
       setShowFallback(true);
       setIsLoading(false);
     };
 
     fetchImageWithFallback();
-  }, [url, domain]);
+
+    // Cleanup timeout on unmount
+    return () => {
+      clearTimeout(fallbackTimeout);
+    };
+  }, [url, domain, isLoading]);
 
   if (showFallback) {
     // Generate vibrant color based on domain name
