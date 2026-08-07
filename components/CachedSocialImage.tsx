@@ -113,7 +113,7 @@ export function CachedSocialImage({ url, title, domain, isDark = false }: Cached
             if (blob.size > 100 && blob.size < 500 * 1024) { // Between 100 bytes and 500KB
               // Check image dimensions to avoid tiny blurry icons
               const imageUrl = URL.createObjectURL(blob);
-              const img = new Image();
+              const img = document.createElement('img');
 
               await new Promise<void>((resolve, reject) => {
                 img.onload = () => {
