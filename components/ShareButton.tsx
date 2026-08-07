@@ -11,6 +11,7 @@ interface ShareButtonProps {
 
 export function ShareButton({ url, title, description }: ShareButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [showCopiedModal, setShowCopiedModal] = useState(false);
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
@@ -24,8 +25,9 @@ export function ShareButton({ url, title, description }: ShareButtonProps) {
   const handleShare = (platform: string) => {
     if (platform === 'copy') {
       navigator.clipboard.writeText(url);
-      alert('Link copied to clipboard!');
       setIsOpen(false);
+      setShowCopiedModal(true);
+      setTimeout(() => setShowCopiedModal(false), 2000);
       return;
     }
 
@@ -152,6 +154,75 @@ export function ShareButton({ url, title, description }: ShareButtonProps) {
             </div>
           </div>
         </>
+      )}
+
+      {/* Custom Copied Modal */}
+      {showCopiedModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div
+            className="fixed inset-0 bg-black"
+            style={{ opacity: isDark ? 0.7 : 0.5 }}
+            onClick={() => setShowCopiedModal(false)}
+          />
+          <div
+            className="relative rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center animate-in fade-in zoom-in duration-200"
+            style={{
+              background: isDark
+                ? 'linear-gradient(135deg, rgba(20, 20, 30, 0.98) 0%, rgba(30, 30, 50, 0.98) 100%)'
+                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 250, 255, 0.98) 100%)',
+              backdropFilter: 'blur(20px)',
+              border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            {/* Success Icon */}
+            <div
+              className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
+              style={{
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+              }}
+            >
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+
+            {/* Message */}
+            <h3
+              className="text-xl font-bold mb-2"
+              style={{ color: isDark ? '#fff' : '#000' }}
+            >
+              Link Copied!
+            </h3>
+            <p
+              className="text-sm"
+              style={{ color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)' }}
+            >
+              The link has been copied to your clipboard
+            </p>
+
+            {/* OK Button */}
+            <button
+              onClick={() => setShowCopiedModal(false)}
+              className="mt-6 px-8 py-3 rounded-xl font-semibold transition-all hover:scale-105 w-full"
+              style={{
+                background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                color: '#fff',
+                boxShadow: '0 4px 20px rgba(59, 130, 246, 0.4)',
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
