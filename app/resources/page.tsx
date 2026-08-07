@@ -6,7 +6,7 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { ExternalLinkModal } from '@/components/ExternalLinkModal';
 import { BreadcrumbSchema } from '@/components/StructuredData';
-import { CachedFavicon } from '@/components/CachedFavicon';
+import { CachedSocialImage } from '@/components/CachedSocialImage';
 
 interface Resource {
   title: string;
@@ -165,19 +165,19 @@ export default function ResourcesPage() {
                 cursor: 'pointer',
               }}
             >
-              {/* Favicon Image */}
+              {/* Social Share Image */}
               <div
-                className="h-48 flex items-center justify-center"
+                className="h-48 relative overflow-hidden"
                 style={{
                   background: isDark
                     ? 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)'
                     : 'linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%)',
                 }}
               >
-                <CachedFavicon
+                <CachedSocialImage
+                  url={resource.url}
                   domain={resource.domain}
                   title={resource.title}
-                  size={96}
                   isDark={isDark}
                 />
               </div>
