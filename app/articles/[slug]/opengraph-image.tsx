@@ -31,25 +31,57 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const { slug } = await params;
   const article = await getArticle(slug);
 
-  // If article has a cover image, redirect to it
+  // If article has a cover image, return it
   if (article?.cover_image) {
-    const coverImageUrl = article.cover_image.startsWith('http')
-      ? article.cover_image
-      : `https://america1stusa.vercel.app${article.cover_image}`;
+    // Handle base64 data URLs
+    if (article.cover_image.startsWith('data:image/')) {
+      const base64Data = article.cover_image.split(',')[1];
+      const mimeType = article.cover_image.match(/data:(image\/[a-z]+);/)?.[1] || 'image/jpeg';
 
-    // Fetch and return the cover image
-    try {
-      const imageResponse = await fetch(coverImageUrl);
-      if (imageResponse.ok) {
-        const imageBuffer = await imageResponse.arrayBuffer();
-        return new Response(imageBuffer, {
-          headers: {
-            'Content-Type': imageResponse.headers.get('content-type') || 'image/jpeg',
-          },
-        });
+      const imageBuffer = Buffer.from(base64Data, 'base64');
+      return new Response(imageBuffer, {
+        headers: {
+          'Content-Type': mimeType,
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        },
+      });
+    }
+
+    // Handle HTTP URLs
+    if (article.cover_image.startsWith('http')) {
+      try {
+        const imageResponse = await fetch(article.cover_image);
+        if (imageResponse.ok) {
+          const imageBuffer = await imageResponse.arrayBuffer();
+          return new Response(imageBuffer, {
+            headers: {
+              'Content-Type': imageResponse.headers.get('content-type') || 'image/jpeg',
+              'Cache-Control': 'public, max-age=31536000, immutable',
+            },
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching cover image:', error);
       }
-    } catch (error) {
-      console.error('Error fetching cover image:', error);
+    }
+
+    // Handle relative URLs
+    if (article.cover_image.startsWith('/')) {
+      const coverImageUrl = `https://america1stusa.vercel.app${article.cover_image}`;
+      try {
+        const imageResponse = await fetch(coverImageUrl);
+        if (imageResponse.ok) {
+          const imageBuffer = await imageResponse.arrayBuffer();
+          return new Response(imageBuffer, {
+            headers: {
+              'Content-Type': imageResponse.headers.get('content-type') || 'image/jpeg',
+              'Cache-Control': 'public, max-age=31536000, immutable',
+            },
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching cover image:', error);
+      }
     }
   }
 
