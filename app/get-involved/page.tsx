@@ -1,18 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { useTheme } from '@/components/ThemeProvider';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { ExternalLinkModal } from '@/components/ExternalLinkModal';
 import { BreadcrumbSchema } from '@/components/StructuredData';
+import { CachedSocialImage } from '@/components/CachedSocialImage';
+import { usePreloadImages } from '@/hooks/usePreloadImages';
 
 interface Opportunity {
   title: string;
   url: string;
   description: string;
-  image?: string;
+  domain: string;
   category: string;
 }
 
@@ -21,35 +22,35 @@ const opportunities: Opportunity[] = [
     title: 'Join Advisory Boards',
     url: 'https://www.jointab.us/find-your-seat',
     description: "There's an empty government seat near you. Many positions are filled by appointment, not election. Find open seats in your area and learn how to apply. Takes minutes to start—just enter your ZIP code.",
-    image: 'https://www.google.com/s2/favicons?domain=jointab.us&sz=256',
+    domain: 'jointab.us',
     category: 'Civic Leadership',
   },
   {
     title: 'JustServe',
     url: 'https://www.justserve.org/',
     description: 'Built to help people find local service projects near them, with a strong community-service focus. Connect with organizations in your area that need volunteers for hands-on projects.',
-    image: 'https://www.google.com/s2/favicons?domain=justserve.org&sz=256',
+    domain: 'justserve.org',
     category: 'Local Service',
   },
   {
     title: 'Volunteers of America',
     url: 'https://www.voa.org/volunteer/',
     description: 'National nonprofit with local affiliate opportunities across the country. Help vulnerable communities through health services, housing support, and community outreach programs.',
-    image: 'https://www.google.com/s2/favicons?domain=voa.org&sz=256',
+    domain: 'voa.org',
     category: 'National Nonprofit',
   },
   {
     title: 'AmeriCorps',
     url: 'https://www.americorps.gov/join/find-volunteer-opportunity#/',
     description: 'Huge national database with 100,000+ volunteer opportunities, including virtual and onsite roles. Search by location and cause—from education and environment to disaster relief and veterans services.',
-    image: 'https://www.google.com/s2/favicons?domain=americorps.gov&sz=256',
+    domain: 'americorps.gov',
     category: 'National Service',
   },
   {
     title: 'Volunteer.gov',
     url: 'https://www.volunteer.gov/s/',
     description: 'Official federal volunteer portal with opportunities at national parks, forests, wildlife areas, and other federal sites. Serve your country while preserving America\'s natural treasures.',
-    image: 'https://www.google.com/s2/favicons?domain=volunteer.gov&sz=256',
+    domain: 'volunteer.gov',
     category: 'Federal Programs',
   },
 ];
@@ -60,6 +61,9 @@ export default function GetInvolvedPage() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUrl, setSelectedUrl] = useState('');
+
+  // Preload all images in the background on mount
+  usePreloadImages(opportunities);
 
   const handleOpportunityClick = (url: string) => {
     setSelectedUrl(url);
@@ -215,51 +219,21 @@ export default function GetInvolvedPage() {
                 cursor: 'pointer',
               }}
             >
-              {/* Favicon Image */}
+              {/* Social Share Image */}
               <div
-                className="h-48 flex items-center justify-center"
+                className="h-48 relative overflow-hidden"
                 style={{
                   background: isDark
                     ? 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)'
                     : 'linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%)',
                 }}
               >
-                {opportunity.image ? (
-                  <Image
-                    src={opportunity.image}
-                    alt={`${opportunity.title} logo`}
-                    width={96}
-                    height={96}
-                    className="w-24 h-24 object-contain"
-                    unoptimized
-                    onError={(e) => {
-                      // Fallback to icon if favicon fails to load
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const svg = target.nextElementSibling as HTMLElement;
-                      if (svg) svg.style.display = 'block';
-                    }}
-                  />
-                ) : null}
-                <svg
-                  width="64"
-                  height="64"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{
-                    color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.3)',
-                    display: opportunity.image ? 'none' : 'block'
-                  }}
-                >
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
+                <CachedSocialImage
+                  url={opportunity.url}
+                  domain={opportunity.domain}
+                  title={opportunity.title}
+                  isDark={isDark}
+                />
               </div>
 
               {/* Content */}
