@@ -1,18 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { useTheme } from '@/components/ThemeProvider';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { ExternalLinkModal } from '@/components/ExternalLinkModal';
 import { BreadcrumbSchema } from '@/components/StructuredData';
+import { CachedFavicon } from '@/components/CachedFavicon';
 
 interface Resource {
   title: string;
   url: string;
   description: string;
-  image?: string;
+  domain: string;
   category: string;
 }
 
@@ -21,63 +21,63 @@ const resources: Resource[] = [
     title: 'White House Fact Sheets',
     url: 'https://www.whitehouse.gov/briefing-room/statements-releases/',
     description: 'Official White House fact sheets, policy statements, and press releases. Detailed information on administration initiatives, policies, and executive actions.',
-    image: 'https://www.google.com/s2/favicons?domain=whitehouse.gov&sz=256',
+    domain: 'whitehouse.gov',
     category: 'Executive',
   },
   {
     title: 'Guides.vote',
     url: 'https://guides.vote/',
     description: 'Nonpartisan candidate guide with researched comparisons and credible sourcing. Side-by-side candidate comparisons with verified facts and citations.',
-    image: 'https://www.google.com/s2/favicons?domain=guides.vote&sz=256',
+    domain: 'guides.vote',
     category: 'Elections',
   },
   {
     title: 'GovTrack',
     url: 'https://www.govtrack.us/congress/bills/',
     description: 'Good for federal bill tracking, voting records, and legislative history. Track Congress with clear visualizations and email alerts for bills you care about.',
-    image: 'https://www.google.com/s2/favicons?domain=govtrack.us&sz=256',
+    domain: 'govtrack.us',
     category: 'Legislative',
   },
   {
     title: 'The White House',
     url: 'https://www.whitehouse.gov/',
     description: 'Official information from the presidency. Presidential statements, policy initiatives, executive actions, and administration updates.',
-    image: 'https://www.google.com/s2/favicons?domain=whitehouse.gov&sz=256',
+    domain: 'whitehouse.gov',
     category: 'Executive',
   },
   {
     title: 'Congress.gov',
     url: 'https://www.congress.gov/',
     description: 'Official federal bill site; best for bill status, sponsors, and legislative text. The authoritative source for all congressional legislation and records.',
-    image: 'https://www.google.com/s2/favicons?domain=congress.gov&sz=256',
+    domain: 'congress.gov',
     category: 'Legislative',
   },
   {
     title: 'Vote Smart',
     url: 'https://www.votesmart.org/',
     description: 'Best for candidates, voting records, issue positions, public comments, and factual profiles. Nonpartisan research on elected officials and candidates across America.',
-    image: 'https://www.google.com/s2/favicons?domain=votesmart.org&sz=256',
+    domain: 'votesmart.org',
     category: 'Elections',
   },
   {
     title: 'National Constitution Center',
     url: 'https://constitutioncenter.org/',
     description: 'Learn about, debate, and celebrate the greatest vision of human freedom in history—the U.S. Constitution. Interactive exhibits, educational resources, and constitutional debates.',
-    image: 'https://www.google.com/s2/favicons?domain=constitutioncenter.org&sz=256',
+    domain: 'constitutioncenter.org',
     category: 'Education',
   },
   {
     title: 'Senate Floor Activity',
     url: 'https://www.senate.gov/legislative/LIS/floor_activity/floor_activity.htm',
     description: 'Track real-time Senate legislative action. See what bills are being debated, voted on, and moving through the legislative process right now.',
-    image: 'https://www.google.com/s2/favicons?domain=senate.gov&sz=256',
+    domain: 'senate.gov',
     category: 'Legislative',
   },
   {
     title: 'Ballotpedia Legislation Trackers',
     url: 'https://ballotpedia.org/Legislation_Trackers',
     description: 'Comprehensive tracking of candidates, ballot measures, and legislation across all 50 states. See who is running, what offices are on the ballot, and topic-based bill trackers.',
-    image: 'https://www.google.com/s2/favicons?domain=ballotpedia.org&sz=256',
+    domain: 'ballotpedia.org',
     category: 'Elections',
   },
 ];
@@ -174,41 +174,12 @@ export default function ResourcesPage() {
                     : 'linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%)',
                 }}
               >
-                {resource.image ? (
-                  <Image
-                    src={resource.image}
-                    alt={`${resource.title} logo`}
-                    width={96}
-                    height={96}
-                    className="w-24 h-24 object-contain"
-                    unoptimized
-                    onError={(e) => {
-                      // Fallback to icon if favicon fails to load
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const svg = target.nextElementSibling as HTMLElement;
-                      if (svg) svg.style.display = 'block';
-                    }}
-                  />
-                ) : null}
-                <svg
-                  width="64"
-                  height="64"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{
-                    color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.3)',
-                    display: resource.image ? 'none' : 'block'
-                  }}
-                >
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                  <polyline points="15 3 21 3 21 9" />
-                  <line x1="10" y1="14" x2="21" y2="3" />
-                </svg>
+                <CachedFavicon
+                  domain={resource.domain}
+                  title={resource.title}
+                  size={96}
+                  isDark={isDark}
+                />
               </div>
 
               {/* Content */}

@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import { ArticlesClient } from '@/components/ArticlesClient';
 import { sql } from '@vercel/postgres';
+import ArticlesLoading from './loading';
 
 export const metadata: Metadata = {
   alternates: {
@@ -56,29 +58,47 @@ async function getArticles(): Promise<Article[]> {
       return result.rows as Article[];
     } catch (error) {
       console.error('Error fetching articles from database:', error);
-      // Fall through to API route
+      return [];
     }
   }
 
   // Fallback: use API route (works in dev without DB)
   try {
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+
     const response = await fetch(`${baseUrl}/api/articles?status=published`, {
       cache: 'no-store',
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (response.ok) {
       const data = await response.json();
       return data.articles || [];
     }
   } catch (error) {
-    console.error('Error fetching articles from API:', error);
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.error('Articles fetch timed out');
+    } else {
+      console.error('Error fetching articles from API:', error);
+    }
   }
 
   return [];
 }
 
-export default async function ArticlesPage() {
+async function ArticlesContent() {
   const articles = await getArticles();
   return <ArticlesClient articles={articles} />;
+}
+
+export default function ArticlesPage() {
+  return (
+    <Suspense fallback={<ArticlesLoading />}>
+      <ArticlesContent />
+    </Suspense>
+  );
 }
