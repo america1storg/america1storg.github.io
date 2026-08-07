@@ -80,10 +80,16 @@ export async function generateMetadata({
 
   const excerpt = article.content.replace(/<[^>]*>/g, '').substring(0, 160);
   const baseUrl = 'https://america1stusa.vercel.app';
+  const articleUrl = `${baseUrl}/articles/${article.slug || article.id}`;
+
+  // Use cover image if available, otherwise use opengraph-image route
+  const ogImageUrl = article.cover_image
+    ? (article.cover_image.startsWith('http') ? article.cover_image : `${baseUrl}${article.cover_image}`)
+    : `${articleUrl}/opengraph-image`;
 
   return {
     alternates: {
-      canonical: `${baseUrl}/articles/${article.slug || article.id}`,
+      canonical: articleUrl,
     },
     title: article.title,
     description: excerpt,
@@ -92,35 +98,24 @@ export async function generateMetadata({
       type: 'article',
       title: article.title,
       description: excerpt,
-      url: `${baseUrl}/articles/${article.slug || article.id}`,
+      url: articleUrl,
       siteName: 'America First',
       publishedTime: article.published_at,
       authors: article.author_name ? [article.author_name] : ['America First Team'],
-      images: article.cover_image
-        ? [
-            {
-              url: article.cover_image.startsWith('http') ? article.cover_image : `${baseUrl}${article.cover_image}`,
-              width: 1200,
-              height: 630,
-              alt: article.title,
-            },
-          ]
-        : [
-            {
-              url: `${baseUrl}/logo-full-transparent.png`,
-              width: 1200,
-              height: 630,
-              alt: article.title,
-            },
-          ],
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: article.title,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: article.title,
       description: excerpt,
-      images: article.cover_image
-        ? [article.cover_image.startsWith('http') ? article.cover_image : `${baseUrl}${article.cover_image}`]
-        : [`${baseUrl}/logo-full-transparent.png`],
+      images: [ogImageUrl],
     },
   };
 }
