@@ -11,6 +11,17 @@ interface CachedSocialImageProps {
 }
 
 const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000; // 1 week in milliseconds
+const FALLBACK_CACHE_KEY_PREFIX = 'fallback_';
+
+// Multi-tier fallback URLs for each attempt
+const getFallbackUrls = (domain: string, url: string) => [
+  // Tier 1: High-res favicon from Google
+  `https://www.google.com/s2/favicons?domain=${domain}&sz=256`,
+  // Tier 2: Apple touch icon (usually high quality)
+  `${new URL(url).origin}/apple-touch-icon.png`,
+  // Tier 3: Standard favicon
+  `${new URL(url).origin}/favicon.ico`,
+];
 
 export function CachedSocialImage({ url, title, domain, isDark = false }: CachedSocialImageProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -20,85 +31,145 @@ export function CachedSocialImage({ url, title, domain, isDark = false }: Cached
   useEffect(() => {
     const cacheKey = `social_image_${domain}`;
     const timestampKey = `social_image_timestamp_${domain}`;
+    const fallbackCacheKey = `${FALLBACK_CACHE_KEY_PREFIX}${domain}`;
 
-    // Check if we have a cached image
+    // Check if we have a cached image (either social or fallback)
     const cachedImage = localStorage.getItem(cacheKey);
+    const cachedFallback = localStorage.getItem(fallbackCacheKey);
     const cachedTimestamp = localStorage.getItem(timestampKey);
 
-    if (cachedImage && cachedTimestamp) {
+    if ((cachedImage || cachedFallback) && cachedTimestamp) {
       const timestamp = parseInt(cachedTimestamp, 10);
       const now = Date.now();
 
       // If cache is still valid (less than 1 week old), use it
       if (now - timestamp < CACHE_DURATION) {
-        setImageUrl(cachedImage);
+        setImageUrl(cachedImage || cachedFallback);
         setIsLoading(false);
         return;
       }
     }
 
-    // Fetch new social image via our API route
-    const fetchSocialImage = async () => {
+    // Try fetching image with fallback cascade
+    const fetchImageWithFallback = async () => {
       try {
-        const response = await fetch(`/api/og-image?url=${encodeURIComponent(url)}`);
+        // Attempt 1: Try social share image (OG/Twitter)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+
+        const response = await fetch(`/api/og-image?url=${encodeURIComponent(url)}`, {
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
 
         if (response.ok) {
           const data = await response.json();
 
           if (data.imageUrl) {
-            // Fetch the actual image and convert to base64
-            const imageResponse = await fetch(data.imageUrl);
+            // Try to fetch and cache the social image
+            try {
+              const imageResponse = await fetch(data.imageUrl);
 
-            if (imageResponse.ok) {
-              const blob = await imageResponse.blob();
+              if (imageResponse.ok && imageResponse.headers.get('content-type')?.startsWith('image/')) {
+                const blob = await imageResponse.blob();
+
+                // Check if image is reasonable size (< 2MB to avoid localStorage quota)
+                if (blob.size < 2 * 1024 * 1024) {
+                  const reader = new FileReader();
+
+                  reader.onloadend = () => {
+                    const base64data = reader.result as string;
+                    localStorage.setItem(cacheKey, base64data);
+                    localStorage.setItem(timestampKey, Date.now().toString());
+                    setImageUrl(base64data);
+                    setIsLoading(false);
+                  };
+
+                  reader.readAsDataURL(blob);
+                  return; // Success!
+                }
+              }
+            } catch (imgError) {
+              console.log(`Social image fetch failed for ${domain}, trying fallback`);
+            }
+          }
+        }
+      } catch (error) {
+        // Timeout or fetch error - continue to fallback
+        console.log(`OG image timeout/error for ${domain}, using fallback`);
+      }
+
+      // Attempt 2: Try high-res favicon fallbacks
+      const fallbackUrls = getFallbackUrls(domain, url);
+
+      for (const fallbackUrl of fallbackUrls) {
+        try {
+          const imgResponse = await fetch(fallbackUrl);
+
+          if (imgResponse.ok && imgResponse.headers.get('content-type')?.startsWith('image/')) {
+            const blob = await imgResponse.blob();
+
+            if (blob.size > 100 && blob.size < 500 * 1024) { // Between 100 bytes and 500KB
               const reader = new FileReader();
 
               reader.onloadend = () => {
                 const base64data = reader.result as string;
-                // Store in localStorage
-                localStorage.setItem(cacheKey, base64data);
+                // Cache as fallback
+                localStorage.setItem(fallbackCacheKey, base64data);
                 localStorage.setItem(timestampKey, Date.now().toString());
                 setImageUrl(base64data);
                 setIsLoading(false);
               };
 
               reader.readAsDataURL(blob);
-            } else {
-              setShowFallback(true);
-              setIsLoading(false);
+              return; // Success with fallback!
             }
-          } else {
-            setShowFallback(true);
-            setIsLoading(false);
           }
-        } else {
-          setShowFallback(true);
-          setIsLoading(false);
+        } catch (fallbackError) {
+          // Try next fallback
+          continue;
         }
-      } catch (error) {
-        console.error(`Error fetching social image for ${domain}:`, error);
-        setShowFallback(true);
-        setIsLoading(false);
       }
+
+      // All attempts failed - show SVG fallback
+      setShowFallback(true);
+      setIsLoading(false);
     };
 
-    fetchSocialImage();
+    fetchImageWithFallback();
   }, [url, domain]);
 
   if (showFallback) {
+    // Enhanced SVG fallback with site initial
+    const initial = title.charAt(0).toUpperCase();
     return (
-      <div className="w-full h-full flex items-center justify-center">
+      <div className="w-full h-full flex flex-col items-center justify-center gap-3">
+        <div
+          className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl font-bold"
+          style={{
+            background: isDark
+              ? 'rgba(255, 255, 255, 0.15)'
+              : 'rgba(255, 255, 255, 0.9)',
+            color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.7)',
+            boxShadow: isDark
+              ? '0 4px 20px rgba(0, 0, 0, 0.3)'
+              : '0 4px 20px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          {initial}
+        </div>
         <svg
-          width="96"
-          height="96"
+          width="32"
+          height="32"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          strokeWidth="1.5"
+          strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{
-            color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)',
+            color: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)',
           }}
         >
           <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />

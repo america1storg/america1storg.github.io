@@ -7,6 +7,7 @@ import { Footer } from '@/components/Footer';
 import { ExternalLinkModal } from '@/components/ExternalLinkModal';
 import { BreadcrumbSchema } from '@/components/StructuredData';
 import { CachedSocialImage } from '@/components/CachedSocialImage';
+import { usePreloadImages } from '@/hooks/usePreloadImages';
 
 interface Resource {
   title: string;
@@ -88,6 +89,9 @@ export default function ResourcesPage() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUrl, setSelectedUrl] = useState('');
+
+  // Preload all images in the background on mount
+  usePreloadImages(resources);
 
   const handleResourceClick = (url: string) => {
     setSelectedUrl(url);
