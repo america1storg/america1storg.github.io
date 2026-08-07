@@ -18,9 +18,9 @@ interface Resource {
 
 const resources: Resource[] = [
   {
-    title: 'The White House',
-    url: 'https://www.whitehouse.gov/',
-    description: 'Official information from the presidency. Presidential statements, policy initiatives, executive actions, and administration updates.',
+    title: 'White House Fact Sheets',
+    url: 'https://www.whitehouse.gov/briefing-room/statements-releases/',
+    description: 'Official White House fact sheets, policy statements, and press releases. Detailed information on administration initiatives, policies, and executive actions.',
     image: 'https://www.google.com/s2/favicons?domain=whitehouse.gov&sz=256',
     category: 'Executive',
   },
@@ -37,6 +37,13 @@ const resources: Resource[] = [
     description: 'Good for federal bill tracking, voting records, and legislative history. Track Congress with clear visualizations and email alerts for bills you care about.',
     image: 'https://www.google.com/s2/favicons?domain=govtrack.us&sz=256',
     category: 'Legislative',
+  },
+  {
+    title: 'The White House',
+    url: 'https://www.whitehouse.gov/',
+    description: 'Official information from the presidency. Presidential statements, policy initiatives, executive actions, and administration updates.',
+    image: 'https://www.google.com/s2/favicons?domain=whitehouse.gov&sz=256',
+    category: 'Executive',
   },
   {
     title: 'Congress.gov',
