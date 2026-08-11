@@ -28,7 +28,7 @@ export function Navigation() {
           maxWidth: '95vw',
         }}
       >
-        <div className="pl-6 pr-12">
+        <div className="pl-6 pr-6">
           <div className="flex justify-between items-center h-14 gap-8">
             <Link href="/" className="flex items-center gap-3 shrink-0">
               <Image
