@@ -275,7 +275,7 @@ export default function FlagsPage() {
                   type="text"
                   value={formData.flag_key}
                   onChange={e => setFormData({ ...formData, flag_key: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-600 font-mono"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-600 font-mono text-gray-900 bg-white"
                   placeholder="AF_carousel"
                 />
               </div>
@@ -286,7 +286,7 @@ export default function FlagsPage() {
                   type="text"
                   value={formData.name}
                   onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-600"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-600 text-gray-900 bg-white"
                   placeholder="Homepage Carousel"
                 />
               </div>
@@ -296,7 +296,7 @@ export default function FlagsPage() {
                 <textarea
                   value={formData.description}
                   onChange={e => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-600"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-600 text-gray-900 bg-white"
                   rows={3}
                   placeholder="Rotating carousel on homepage..."
                 />
@@ -308,7 +308,7 @@ export default function FlagsPage() {
                   type="text"
                   value={formData.component_name}
                   onChange={e => setFormData({ ...formData, component_name: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-600 font-mono"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-600 font-mono text-gray-900 bg-white"
                   placeholder="HomeCarousel"
                 />
               </div>
@@ -318,7 +318,7 @@ export default function FlagsPage() {
                 <select
                   value={formData.status}
                   onChange={e => setFormData({ ...formData, status: e.target.value as any })}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-600"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-600 text-gray-900 bg-white"
                 >
                   <option value="draft">Draft (Hidden from debugger)</option>
                   <option value="available">Available (Visible in debugger)</option>
@@ -334,7 +334,7 @@ export default function FlagsPage() {
                   type="text"
                   value={formData.pages}
                   onChange={e => setFormData({ ...formData, pages: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-600 font-mono"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-600 font-mono text-gray-900 bg-white"
                   placeholder="/, /articles, /about"
                 />
               </div>
