@@ -35,9 +35,9 @@ interface Article {
   id: number;
   title: string;
   excerpt: string;
-  cover_image: string | null;
   published_at: string;
   author_name: string | null;
+  slug?: string;
 }
 
 // Revalidate every 60 seconds for fresh content
@@ -53,7 +53,7 @@ async function getArticles(): Promise<Article[]> {
           a.id,
           a.title,
           a.excerpt,
-          a.cover_image,
+          a.slug,
           a.published_at,
           u.name as author_name
         FROM articles a

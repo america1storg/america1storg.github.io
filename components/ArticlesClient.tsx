@@ -11,7 +11,7 @@ interface Article {
   id: number;
   title: string;
   excerpt: string;
-  cover_image: string | null;
+  cover_image?: string | null;
   published_at: string;
   author_name: string | null;
   slug?: string;
