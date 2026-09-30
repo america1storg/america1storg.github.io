@@ -14,9 +14,10 @@ export function FlagDebugger() {
   // Check for ?showFlags in URL
   useEffect(() => {
     const checkURL = () => {
+      if (typeof window === 'undefined') return;
       const searchParams = new URLSearchParams(window.location.search);
       const hasFlag = searchParams.has('showFlags');
-      console.log('FlagDebugger: Checking URL for showFlags:', hasFlag);
+      console.log('FlagDebugger: URL check - has showFlags:', hasFlag, 'Full URL:', window.location.href);
       setIsVisible(hasFlag);
     };
 
