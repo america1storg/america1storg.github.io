@@ -111,8 +111,6 @@ export default function ResourcesPage() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUrl, setSelectedUrl] = useState('');
-  const [imagesLoaded, setImagesLoaded] = useState<Set<string>>(new Set());
-  const [allImagesLoaded, setAllImagesLoaded] = useState(false);
   const [resources, setResources] = useState<Resource[]>(fallbackResources);
   const [loading, setLoading] = useState(true);
 
@@ -141,17 +139,6 @@ export default function ResourcesPage() {
     fetchResources();
   }, []);
 
-  // Track when all images have loaded
-  useEffect(() => {
-    if (imagesLoaded.size === resources.length) {
-      setAllImagesLoaded(true);
-    }
-  }, [imagesLoaded, resources.length]);
-
-  const handleImageLoad = (domain: string) => {
-    setImagesLoaded(prev => new Set(prev).add(domain));
-  };
-
   const handleResourceClick = (url: string) => {
     setSelectedUrl(url);
     setModalOpen(true);
@@ -168,8 +155,8 @@ export default function ResourcesPage() {
     setSelectedUrl('');
   };
 
-  // If images are still loading, show the loading skeleton
-  if (!allImagesLoaded) {
+  // If data is still loading, show the loading skeleton
+  if (loading) {
     return (
       <div
         className="min-h-screen"
@@ -179,21 +166,6 @@ export default function ResourcesPage() {
         }}
       >
         <Navigation />
-
-        {/* Preload images in hidden container */}
-        <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
-          {resources.map((resource) => (
-            <Image
-              key={resource.domain}
-              src={resource.imageUrl || resource.image_url || ''}
-              alt={resource.title}
-              width={1200}
-              height={520}
-              onLoad={() => handleImageLoad(resource.domain)}
-              priority
-            />
-          ))}
-        </div>
 
         {/* Header Skeleton */}
         <header className="pt-32 pb-16 px-[6vw] max-w-[1400px] mx-auto">
@@ -322,14 +294,14 @@ export default function ResourcesPage() {
               }}
             >
               {/* Resource Image */}
-              <div className="h-48 relative overflow-hidden">
+              <div className="h-48 relative overflow-hidden bg-gradient-to-br from-blue-500/20 to-blue-600/30">
                 <Image
                   src={resource.imageUrl || resource.image_url || ''}
                   alt={`${resource.title} preview`}
                   fill
-                  className="object-cover"
+                  className="object-cover transition-opacity duration-300"
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  priority
+                  loading="eager"
                 />
               </div>
 
