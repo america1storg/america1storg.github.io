@@ -20,35 +20,48 @@ export default function Toast({ message, type, onClose, duration = 5000 }: Toast
   }, [duration, onClose]);
 
   const typeStyles = {
-    success: 'bg-green-50 border-green-500 text-green-900',
-    error: 'bg-red-50 border-red-500 text-red-900',
-    warning: 'bg-yellow-50 border-yellow-500 text-yellow-900',
-    info: 'bg-blue-50 border-blue-500 text-blue-900',
+    success: {
+      bg: 'bg-green-600',
+      text: 'text-white',
+      indicator: 'bg-green-400',
+    },
+    error: {
+      bg: 'bg-red-600',
+      text: 'text-white',
+      indicator: 'bg-red-400',
+    },
+    warning: {
+      bg: 'bg-yellow-600',
+      text: 'text-white',
+      indicator: 'bg-yellow-400',
+    },
+    info: {
+      bg: 'bg-blue-600',
+      text: 'text-white',
+      indicator: 'bg-blue-400',
+    },
   };
 
-  const icons = {
-    success: '✓',
-    error: '✕',
-    warning: '⚠',
-    info: 'ℹ',
-  };
+  const style = typeStyles[type];
 
   return (
     <div
-      className={`fixed top-4 right-4 z-50 max-w-md w-full shadow-lg rounded-lg border-l-4 p-4 flex items-start gap-3 animate-slide-in ${typeStyles[type]}`}
+      className={`fixed top-4 right-4 z-50 max-w-md w-full shadow-2xl rounded-xl overflow-hidden animate-slide-in ${style.bg}`}
       role="alert"
     >
-      <div className="flex-shrink-0 text-2xl font-bold">{icons[type]}</div>
-      <div className="flex-1">
-        <p className="font-semibold text-sm">{message}</p>
+      <div className="flex items-center gap-3 p-4">
+        <div className={`flex-shrink-0 w-2 h-2 rounded-full ${style.indicator}`} />
+        <div className="flex-1">
+          <p className={`font-medium text-base ${style.text}`}>{message}</p>
+        </div>
+        <button
+          onClick={onClose}
+          className={`flex-shrink-0 ${style.text} hover:opacity-70 transition-opacity text-xl leading-none`}
+          aria-label="Close"
+        >
+          ×
+        </button>
       </div>
-      <button
-        onClick={onClose}
-        className="flex-shrink-0 text-xl font-bold hover:opacity-70 transition-opacity"
-        aria-label="Close"
-      >
-        ×
-      </button>
       <style jsx>{`
         @keyframes slide-in {
           from {
