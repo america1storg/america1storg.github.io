@@ -60,7 +60,6 @@ function SortableVolunteerCard({ volunteer, onEdit, onDelete, isDark }: {
   return (
     <div
       ref={setNodeRef}
-      style={style}
       className="rounded-2xl overflow-hidden"
       style={{
         ...style,
