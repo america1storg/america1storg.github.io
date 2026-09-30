@@ -1,59 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '@/components/ThemeProvider';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { ExternalLinkModal } from '@/components/ExternalLinkModal';
 import { BreadcrumbSchema } from '@/components/StructuredData';
-import { CachedSocialImage } from '@/components/CachedSocialImage';
-import { usePreloadImages } from '@/hooks/usePreloadImages';
+import Image from 'next/image';
 
 interface Opportunity {
+  id?: number;
   title: string;
   url: string;
   description: string;
   domain: string;
   category: string;
+  imageUrl?: string;
+  image_url?: string;
 }
-
-const opportunities: Opportunity[] = [
-  {
-    title: 'Join Advisory Boards',
-    url: 'https://www.jointab.us/find-your-seat',
-    description: "There's an empty government seat near you. Many positions are filled by appointment, not election. Find open seats in your area and learn how to apply. Takes minutes to start—just enter your ZIP code.",
-    domain: 'jointab.us',
-    category: 'Civic Leadership',
-  },
-  {
-    title: 'JustServe',
-    url: 'https://www.justserve.org/',
-    description: 'Built to help people find local service projects near them, with a strong community-service focus. Connect with organizations in your area that need volunteers for hands-on projects.',
-    domain: 'justserve.org',
-    category: 'Local Service',
-  },
-  {
-    title: 'Volunteers of America',
-    url: 'https://www.voa.org/volunteer/',
-    description: 'National nonprofit with local affiliate opportunities across the country. Help vulnerable communities through health services, housing support, and community outreach programs.',
-    domain: 'voa.org',
-    category: 'National Nonprofit',
-  },
-  {
-    title: 'AmeriCorps',
-    url: 'https://www.americorps.gov/join/find-volunteer-opportunity#/',
-    description: 'Huge national database with 100,000+ volunteer opportunities, including virtual and onsite roles. Search by location and cause—from education and environment to disaster relief and veterans services.',
-    domain: 'americorps.gov',
-    category: 'National Service',
-  },
-  {
-    title: 'Volunteer.gov',
-    url: 'https://www.volunteer.gov/s/',
-    description: 'Official federal volunteer portal with opportunities at national parks, forests, wildlife areas, and other federal sites. Serve your country while preserving America\'s natural treasures.',
-    domain: 'volunteer.gov',
-    category: 'Federal Programs',
-  },
-];
 
 export default function GetInvolvedPage() {
   const { theme } = useTheme();
@@ -61,9 +25,31 @@ export default function GetInvolvedPage() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUrl, setSelectedUrl] = useState('');
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Preload all images in the background on mount
-  usePreloadImages(opportunities);
+  // Fetch volunteers from database
+  useEffect(() => {
+    const fetchVolunteers = async () => {
+      try {
+        const response = await fetch('/api/volunteers');
+        if (response.ok) {
+          const data = await response.json();
+          const normalized = data.map((v: Opportunity) => ({
+            ...v,
+            imageUrl: v.image_url || v.imageUrl,
+          }));
+          setOpportunities(normalized);
+        }
+      } catch (error) {
+        console.error('Error fetching volunteers:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVolunteers();
+  }, []);
 
   const handleOpportunityClick = (url: string) => {
     setSelectedUrl(url);
@@ -202,39 +188,80 @@ export default function GetInvolvedPage() {
         >
           National Volunteer Platforms
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {opportunities.map((opportunity) => (
-            <div
-              key={opportunity.url}
-              onClick={() => handleOpportunityClick(opportunity.url)}
-              className="rounded-2xl overflow-hidden transition-all hover:-translate-y-2 hover:shadow-2xl"
-              style={{
-                background: isDark
-                  ? 'linear-gradient(135deg, rgba(0, 10, 35, 0.85) 0%, rgba(0, 15, 50, 0.9) 100%)'
-                  : 'rgba(255, 255, 255, 0.9)',
-                border: isDark ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(0, 0, 0, 0.1)',
-                boxShadow: isDark
-                  ? '0 8px 32px rgba(0, 0, 0, 0.6)'
-                  : '0 8px 32px rgba(0, 0, 0, 0.1)',
-                cursor: 'pointer',
-              }}
-            >
-              {/* Social Share Image */}
+
+        {/* Loading Skeleton */}
+        {loading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3, 4, 5].map((i) => (
               <div
-                className="h-48 relative overflow-hidden"
+                key={i}
+                className="rounded-2xl overflow-hidden animate-pulse"
                 style={{
                   background: isDark
-                    ? 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)'
-                    : 'linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%)',
+                    ? 'rgba(255, 255, 255, 0.05)'
+                    : 'rgba(255, 255, 255, 0.9)',
+                  border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)',
                 }}
               >
-                <CachedSocialImage
-                  url={opportunity.url}
-                  domain={opportunity.domain}
-                  title={opportunity.title}
-                  isDark={isDark}
+                <div
+                  className="h-48"
+                  style={{
+                    background: isDark
+                      ? 'rgba(59, 130, 246, 0.2)'
+                      : 'rgba(59, 130, 246, 0.1)',
+                  }}
                 />
+                <div className="p-6">
+                  <div
+                    className="h-6 w-24 rounded-full mb-3"
+                    style={{ background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}
+                  />
+                  <div
+                    className="h-7 w-3/4 rounded mb-3"
+                    style={{ background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}
+                  />
+                  <div
+                    className="h-20 w-full rounded"
+                    style={{ background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}
+                  />
+                </div>
               </div>
+            ))}
+          </div>
+        )}
+
+        {/* Volunteer Cards */}
+        {!loading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {opportunities.map((opportunity) => (
+              <div
+                key={opportunity.url}
+                onClick={() => handleOpportunityClick(opportunity.url)}
+                className="rounded-2xl overflow-hidden transition-all hover:-translate-y-2 hover:shadow-2xl"
+                style={{
+                  background: isDark
+                    ? 'linear-gradient(135deg, rgba(0, 10, 35, 0.85) 0%, rgba(0, 15, 50, 0.9) 100%)'
+                    : 'rgba(255, 255, 255, 0.9)',
+                  border: isDark ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(0, 0, 0, 0.1)',
+                  boxShadow: isDark
+                    ? '0 8px 32px rgba(0, 0, 0, 0.6)'
+                    : '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  cursor: 'pointer',
+                }}
+              >
+                {/* Volunteer Image */}
+                <div className="h-48 relative overflow-hidden bg-gradient-to-br from-blue-500/20 to-blue-600/30">
+                  {(opportunity.imageUrl || opportunity.image_url) && (
+                    <Image
+                      src={opportunity.imageUrl || opportunity.image_url || ''}
+                      alt={`${opportunity.title} preview`}
+                      fill
+                      className="object-cover transition-opacity duration-300"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      loading="eager"
+                    />
+                  )}
+                </div>
 
               {/* Content */}
               <div className="p-6">
@@ -288,8 +315,9 @@ export default function GetInvolvedPage() {
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </main>
 
       {/* Bottom CTA Section */}
