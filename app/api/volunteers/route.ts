@@ -11,12 +11,23 @@ const getSql = () => neon(process.env.POSTGRES_PRISMA_URL || process.env.DATABAS
 export async function GET() {
   try {
     const sql = getSql();
-    const rows = await sql`
-      SELECT * FROM volunteers
-      ORDER BY display_order ASC, created_at DESC
-    `;
 
-    return NextResponse.json(rows);
+    // Try with display_order first, fallback to created_at if column doesn't exist
+    try {
+      const rows = await sql`
+        SELECT * FROM volunteers
+        ORDER BY display_order ASC, created_at DESC
+      `;
+      return NextResponse.json(rows);
+    } catch (orderError) {
+      // If display_order column doesn't exist yet, use created_at
+      console.warn('display_order column not found, using created_at ordering');
+      const rows = await sql`
+        SELECT * FROM volunteers
+        ORDER BY created_at DESC
+      `;
+      return NextResponse.json(rows);
+    }
   } catch (error) {
     console.error('Error fetching volunteers:', error);
     return NextResponse.json(
