@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
         hostname: 'zvlofasbk97vnlui.public.blob.vercel-storage.com',
         pathname: '/resources/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'zvlofasbk97vnlui.public.blob.vercel-storage.com',
+        pathname: '/volunteers/**',
+      },
     ],
   },
   async headers() {

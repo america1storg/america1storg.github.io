@@ -5,6 +5,23 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/components/ThemeProvider';
 import Image from 'next/image';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface Volunteer {
   id: number;
@@ -14,8 +31,108 @@ interface Volunteer {
   domain: string;
   category: string;
   image_url: string;
+  display_order?: number;
   created_at: string;
   updated_at: string;
+}
+
+function SortableVolunteerCard({ volunteer, onEdit, onDelete, isDark }: {
+  volunteer: Volunteer;
+  onEdit: (v: Volunteer) => void;
+  onDelete: (id: number) => void;
+  isDark: boolean;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: volunteer.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="rounded-2xl overflow-hidden"
+      style={{
+        ...style,
+        background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.9)',
+        border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)',
+      }}
+    >
+      <div className="relative h-48">
+        <Image
+          src={volunteer.image_url}
+          alt={volunteer.title}
+          fill
+          className="object-cover"
+        />
+      </div>
+      <div className="p-4">
+        {/* Drag Handle */}
+        <div
+          {...attributes}
+          {...listeners}
+          className="mb-2 cursor-grab active:cursor-grabbing flex items-center gap-2 text-sm"
+          style={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M9 5h6M9 12h6M9 19h6" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          <span>Drag to reorder</span>
+        </div>
+
+        <div className="flex items-center justify-between mb-2">
+          <span
+            className="text-xs font-semibold px-3 py-1 rounded-full"
+            style={{
+              background: isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.1)',
+              color: '#3b82f6',
+            }}
+          >
+            {volunteer.category}
+          </span>
+        </div>
+        <h3 className="text-lg font-bold mb-2">{volunteer.title}</h3>
+        <p
+          className="text-sm mb-4 line-clamp-3"
+          style={{ color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)' }}
+        >
+          {volunteer.description}
+        </p>
+        <div className="flex gap-2">
+          <button
+            onClick={() => onEdit(volunteer)}
+            className="flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all"
+            style={{
+              background: '#3b82f6',
+              color: '#fff',
+            }}
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => onDelete(volunteer.id)}
+            className="flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all"
+            style={{
+              background: '#ef4444',
+              color: '#fff',
+            }}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function AdminVolunteersPage() {
@@ -29,6 +146,7 @@ export default function AdminVolunteersPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [reordering, setReordering] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -38,6 +156,13 @@ export default function AdminVolunteersPage() {
     category: 'Civic Leadership',
     image_url: '',
   });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -63,6 +188,35 @@ export default function AdminVolunteersPage() {
     }
   };
 
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = volunteers.findIndex((v) => v.id === active.id);
+      const newIndex = volunteers.findIndex((v) => v.id === over.id);
+
+      const newOrder = arrayMove(volunteers, oldIndex, newIndex);
+      setVolunteers(newOrder);
+
+      // Save new order to backend
+      setReordering(true);
+      try {
+        const orderedIds = newOrder.map((v) => v.id);
+        await fetch('/api/volunteers/reorder', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderedIds }),
+        });
+      } catch (error) {
+        console.error('Error saving order:', error);
+        // Revert on error
+        await fetchVolunteers();
+      } finally {
+        setReordering(false);
+      }
+    }
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -72,7 +226,7 @@ export default function AdminVolunteersPage() {
     formData.append('file', file);
 
     try {
-      const response = await fetch('/api/resources/upload-image', {
+      const response = await fetch('/api/volunteers/upload-image', {
         method: 'POST',
         body: formData,
       });
@@ -185,7 +339,7 @@ export default function AdminVolunteersPage() {
           <div>
             <h1 className="text-4xl font-bold mb-2">Manage Volunteer Opportunities</h1>
             <p style={{ color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)' }}>
-              Add, edit, or remove volunteer opportunity cards
+              Add, edit, or reorder volunteer opportunity cards
             </p>
           </div>
           <button
@@ -202,6 +356,12 @@ export default function AdminVolunteersPage() {
             {showForm ? 'Cancel' : '+ Add New Opportunity'}
           </button>
         </div>
+
+        {reordering && (
+          <div className="mb-4 p-4 bg-blue-500 text-white rounded-lg">
+            Saving new order...
+          </div>
+        )}
 
         {/* Form */}
         {showForm && (
@@ -357,70 +517,29 @@ export default function AdminVolunteersPage() {
           </form>
         )}
 
-        {/* Volunteers Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {volunteers.map((volunteer) => (
-            <div
-              key={volunteer.id}
-              className="rounded-2xl overflow-hidden"
-              style={{
-                background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.9)',
-                border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)',
-              }}
-            >
-              <div className="relative h-48">
-                <Image
-                  src={volunteer.image_url}
-                  alt={volunteer.title}
-                  fill
-                  className="object-cover"
+        {/* Volunteers Grid with Drag and Drop */}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={volunteers.map((v) => v.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {volunteers.map((volunteer) => (
+                <SortableVolunteerCard
+                  key={volunteer.id}
+                  volunteer={volunteer}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  isDark={isDark}
                 />
-              </div>
-              <div className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span
-                    className="text-xs font-semibold px-3 py-1 rounded-full"
-                    style={{
-                      background: isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.1)',
-                      color: '#3b82f6',
-                    }}
-                  >
-                    {volunteer.category}
-                  </span>
-                </div>
-                <h3 className="text-lg font-bold mb-2">{volunteer.title}</h3>
-                <p
-                  className="text-sm mb-4 line-clamp-3"
-                  style={{ color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)' }}
-                >
-                  {volunteer.description}
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleEdit(volunteer)}
-                    className="flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all"
-                    style={{
-                      background: '#3b82f6',
-                      color: '#fff',
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(volunteer.id)}
-                    className="flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all"
-                    style={{
-                      background: '#ef4444',
-                      color: '#fff',
-                    }}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </SortableContext>
+        </DndContext>
 
         {volunteers.length === 0 && !loading && (
           <div className="text-center py-12">
