@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         hostname: 'www.google.com',
         pathname: '/s2/favicons/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'zvlofasbk97vnlui.public.blob.vercel-storage.com',
+        pathname: '/resources/**',
+      },
     ],
   },
   async headers() {
