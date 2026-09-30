@@ -56,6 +56,21 @@ export async function initializeDatabase() {
       )
     `;
 
+    // Create feature_flags table
+    await sql`
+      CREATE TABLE IF NOT EXISTS feature_flags (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        flag_key VARCHAR(100) UNIQUE NOT NULL,
+        description TEXT,
+        component_name VARCHAR(255),
+        status VARCHAR(20) DEFAULT 'draft' CHECK (status IN ('draft', 'available', 'permanent')),
+        pages TEXT[], -- Array of page paths where flag can be used, e.g., ['/home', '/articles']
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
     // Insert super admin (God Mode) if doesn't exist
     await sql`
       INSERT INTO users (email, name, is_super_admin, role)

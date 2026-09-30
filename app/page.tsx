@@ -8,6 +8,8 @@ import { Footer } from '@/components/Footer';
 import { SocialLinks } from '@/components/SocialLinks';
 import { NewsletterSubscribe } from '@/components/NewsletterSubscribe';
 import { OrganizationSchema, WebsiteSchema } from '@/components/StructuredData';
+import { FeatureGate } from '@/components/FeatureGate';
+import { HomeCarousel } from '@/components/HomeCarousel';
 
 // Removed force-dynamic - homepage is now static with client-side theme only
 
@@ -410,6 +412,13 @@ export default function Home() {
 
           <div className="scroll-hint">Scroll to explore</div>
         </section>
+
+        {/* Feature-Flagged Carousel */}
+        <FeatureGate flag="AF_carousel">
+          <section className="py-20 px-[6vw] max-w-[1400px] mx-auto">
+            <HomeCarousel />
+          </section>
+        </FeatureGate>
 
         {/* Mission */}
         <section className="min-h-[110vh] flex flex-col justify-center px-[6vw] max-w-[1400px] mx-auto">
