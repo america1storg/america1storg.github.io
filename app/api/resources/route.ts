@@ -14,8 +14,13 @@ export async function GET() {
     return NextResponse.json(rows);
   } catch (error) {
     console.error('Error fetching resources:', error);
+    // Return detailed error for debugging
     return NextResponse.json(
-      { error: 'Failed to fetch resources' },
+      {
+        error: 'Failed to fetch resources',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        stack: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.stack : '') : undefined
+      },
       { status: 500 }
     );
   }
