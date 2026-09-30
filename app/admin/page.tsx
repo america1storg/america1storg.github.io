@@ -20,10 +20,12 @@ export default function AdminDashboard() {
     totalAdmins: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [displayName, setDisplayName] = useState('');
 
   useEffect(() => {
     fetchStats();
-  }, []);
+    fetchPreferences();
+  }, [session]);
 
   const fetchStats = async () => {
     try {
@@ -37,10 +39,35 @@ export default function AdminDashboard() {
     }
   };
 
+  const fetchPreferences = async () => {
+    try {
+      const response = await fetch('/api/user/preferences');
+      if (response.ok) {
+        const data = await response.json();
+        // Determine display name based on preferences
+        if (data.display_name_type === 'email') {
+          setDisplayName(data.email);
+        } else if (data.display_name_type === 'name') {
+          setDisplayName(data.name || data.email);
+        } else if (data.display_name_type === 'custom') {
+          setDisplayName(data.display_name || data.email);
+        } else {
+          setDisplayName(session?.user?.name || session?.user?.email || '');
+        }
+      } else {
+        // Fallback to session data
+        setDisplayName(session?.user?.name || session?.user?.email || '');
+      }
+    } catch (error) {
+      console.error('Error fetching preferences:', error);
+      setDisplayName(session?.user?.name || session?.user?.email || '');
+    }
+  };
+
   return (
     <div>
       <h1 className="text-3xl font-bold text-gray-900 mb-8">
-        Welcome, {session?.user?.name || session?.user?.email}!
+        Welcome, {displayName || session?.user?.name || session?.user?.email}!
       </h1>
 
       {/* Stats Grid */}

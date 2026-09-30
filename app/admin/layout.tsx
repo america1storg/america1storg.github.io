@@ -26,6 +26,7 @@ export default function AdminLayout({
     ...(canReview ? [{ name: 'Review Queue', href: '/admin/review' }] : []),
     ...(canManageUsers ? [{ name: 'Manage Users', href: '/admin/users' }] : []),
     ...(canManageUsers ? [{ name: 'Feature Flags', href: '/admin/flags' }] : []),
+    { name: 'Settings', href: '/admin/settings' },
   ];
 
   return (
