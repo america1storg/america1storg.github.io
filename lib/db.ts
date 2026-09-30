@@ -1,4 +1,4 @@
-import { sql } from '@vercel/postgres';
+import { sql, createPool } from '@vercel/postgres';
 
 export async function initializeDatabase() {
   try {

@@ -63,6 +63,19 @@ export function FeatureFlagProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.error('Error fetching feature flags:', error);
+
+      // Fallback: Use demo flag if API fails (for testing without database)
+      setAvailableFlags([
+        {
+          id: 1,
+          name: 'Homepage Carousel',
+          flag_key: 'AF_carousel',
+          description: 'Rotating carousel showcasing site features',
+          component_name: 'HomeCarousel',
+          status: 'available',
+          pages: ['/'],
+        },
+      ]);
     }
   };
 
