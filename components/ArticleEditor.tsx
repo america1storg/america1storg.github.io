@@ -38,6 +38,7 @@ export default function ArticleEditor({
   const [showCoverModal, setShowCoverModal] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [imageAlt, setImageAlt] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   const [editorKey, setEditorKey] = useState(0);
 
@@ -76,7 +77,7 @@ export default function ArticleEditor({
     },
   });
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, isCover: boolean = false) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, isCover: boolean = false) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -86,18 +87,43 @@ export default function ArticleEditor({
       return;
     }
 
-    // Convert to base64
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64String = reader.result as string;
+    // Check file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert('File too large. Maximum size is 5MB.');
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      // Upload to Vercel Blob
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Upload failed');
+      }
+
+      const { url } = await response.json();
+
       if (isCover) {
-        setCoverImage(base64String);
+        setCoverImage(url);
         setShowCoverModal(false);
       } else {
-        setImageUrl(base64String);
+        setImageUrl(url);
       }
-    };
-    reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert(error instanceof Error ? error.message : 'Failed to upload image');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const addImage = () => {
