@@ -17,16 +17,12 @@ export function FlagDebugger() {
     setIsVisible(searchParams.has('showFlags'));
   }, []);
 
-  if (!isVisible || availableFlags.length === 0) {
+  if (!isVisible) {
     return null;
   }
 
   // Filter to only show available and draft flags (not permanent)
   const toggleableFlags = availableFlags.filter(flag => flag.status !== 'permanent');
-
-  if (toggleableFlags.length === 0) {
-    return null;
-  }
 
   return (
     <div
@@ -83,7 +79,23 @@ export function FlagDebugger() {
       {/* Flag List */}
       {isExpanded && (
         <div className="p-3 space-y-2 max-h-[400px] overflow-y-auto">
-          {toggleableFlags.map(flag => (
+          {toggleableFlags.length === 0 ? (
+            <div className="text-center py-8">
+              <p
+                className="text-sm mb-2"
+                style={{ color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)' }}
+              >
+                No feature flags available
+              </p>
+              <p
+                className="text-xs"
+                style={{ color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)' }}
+              >
+                Create flags in the admin panel
+              </p>
+            </div>
+          ) : (
+            toggleableFlags.map(flag => (
             <div
               key={flag.id}
               className="rounded-xl p-3 transition-all"
@@ -153,7 +165,8 @@ export function FlagDebugger() {
                 </button>
               </div>
             </div>
-          ))}
+          ))
+          )}
         </div>
       )}
 
