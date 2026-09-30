@@ -12,6 +12,9 @@ export default function NewArticle() {
   const { showToast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
 
+  const userRole = session?.user?.role || 'soldier';
+  const isGodMode = userRole === 'god_mode';
+
   const handleSave = async (
     title: string,
     content: string,
@@ -48,6 +51,48 @@ export default function NewArticle() {
     } catch (error) {
       console.error('Error saving article:', error);
       showToast('Failed to save article', 'error');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handlePublish = async (
+    title: string,
+    content: string,
+    coverImage: string
+  ) => {
+    if (!session?.user) {
+      showToast('You must be logged in to create an article', 'error');
+      return;
+    }
+
+    setIsSaving(true);
+    showToast('Publishing article...', 'info');
+
+    try {
+      // Create the article as published directly (God Mode privilege)
+      const response = await fetch('/api/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title,
+          content,
+          cover_image: coverImage,
+          status: 'published',
+          author_id: session.user.id,
+        }),
+      });
+
+      if (response.ok) {
+        showToast('Article published successfully!', 'success');
+        setTimeout(() => router.push('/admin/articles'), 1000);
+      } else {
+        const error = await response.json();
+        showToast(error.message || 'Failed to publish article', 'error');
+      }
+    } catch (error) {
+      console.error('Error publishing article:', error);
+      showToast('Failed to publish article', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -119,9 +164,12 @@ export default function NewArticle() {
 
       <ArticleEditor
         onSave={handleSave}
-        onSubmit={handleSubmit}
+        onSubmit={!isGodMode ? handleSubmit : undefined}
+        onPublish={isGodMode ? handlePublish : undefined}
         isSaving={isSaving}
-        showSubmitButton={true}
+        showSubmitButton={!isGodMode}
+        showPublishButton={isGodMode}
+        userRole={userRole}
       />
     </div>
   );

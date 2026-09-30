@@ -13,8 +13,11 @@ interface ArticleEditorProps {
   initialCoverImage?: string;
   onSave: (title: string, content: string, coverImage: string, status: 'draft' | 'published') => Promise<void>;
   onSubmit?: (title: string, content: string, coverImage: string) => Promise<void>;
+  onPublish?: (title: string, content: string, coverImage: string) => Promise<void>;
   isSaving: boolean;
   showSubmitButton?: boolean;
+  showPublishButton?: boolean;
+  userRole?: 'god_mode' | 'king' | 'captain' | 'soldier';
 }
 
 export default function ArticleEditor({
@@ -23,8 +26,11 @@ export default function ArticleEditor({
   initialCoverImage = '',
   onSave,
   onSubmit,
+  onPublish,
   isSaving,
   showSubmitButton = false,
+  showPublishButton = false,
+  userRole = 'soldier',
 }: ArticleEditorProps) {
   const [title, setTitle] = useState(initialTitle);
   const [coverImage, setCoverImage] = useState(initialCoverImage);
@@ -129,6 +135,20 @@ export default function ArticleEditor({
     }
 
     await onSubmit(title, content, coverImage);
+  };
+
+  const handlePublish = async () => {
+    if (!editor || !onPublish) return;
+    const content = editor.getHTML();
+
+    // Validate content length
+    const textContent = content.replace(/<[^>]*>/g, '');
+    if (textContent.length < 100) {
+      alert('Article content is too short. Please write at least a few paragraphs.');
+      return;
+    }
+
+    await onPublish(title, content, coverImage);
   };
 
   if (!editor) {
@@ -348,6 +368,15 @@ export default function ArticleEditor({
               className="px-8 py-3 bg-green-600 text-white rounded-full font-bold text-base hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
               {isSaving ? 'Submitting...' : 'Submit for Approval'}
+            </button>
+          )}
+          {showPublishButton && (
+            <button
+              onClick={handlePublish}
+              disabled={isSaving || !title}
+              className="px-8 py-3 bg-blue-600 text-white rounded-full font-bold text-base hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+            >
+              {isSaving ? 'Publishing...' : 'Publish Now'}
             </button>
           )}
         </div>
