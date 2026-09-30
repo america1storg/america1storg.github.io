@@ -347,7 +347,7 @@ export default function FlagsPage() {
                   setEditingFlag(null);
                   resetForm();
                 }}
-                className="flex-1 px-6 py-3 border-2 border-gray-300 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
+                className="flex-1 px-6 py-3 border-2 border-gray-300 rounded-xl font-semibold hover:bg-gray-50 transition-colors bg-white text-gray-900"
               >
                 Cancel
               </button>
