@@ -13,7 +13,7 @@ export async function GET() {
     const sql = getSql();
     const rows = await sql`
       SELECT * FROM resources
-      ORDER BY created_at DESC
+      ORDER BY display_order ASC, created_at DESC
     `;
 
     return NextResponse.json(rows);

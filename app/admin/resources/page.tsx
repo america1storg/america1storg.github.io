@@ -5,6 +5,23 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/components/ThemeProvider';
 import Image from 'next/image';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface Resource {
   id: number;
@@ -14,8 +31,107 @@ interface Resource {
   domain: string;
   category: string;
   image_url: string;
+  display_order?: number;
   created_at: string;
   updated_at: string;
+}
+
+function SortableResourceCard({ resource, onEdit, onDelete, isDark }: {
+  resource: Resource;
+  onEdit: (r: Resource) => void;
+  onDelete: (id: number) => void;
+  isDark: boolean;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: resource.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      className="rounded-2xl overflow-hidden"
+      style={{
+        ...style,
+        background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.9)',
+        border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)',
+      }}
+    >
+      <div className="relative h-48">
+        <Image
+          src={resource.image_url}
+          alt={resource.title}
+          fill
+          className="object-cover"
+        />
+      </div>
+      <div className="p-4">
+        {/* Drag Handle */}
+        <div
+          {...attributes}
+          {...listeners}
+          className="mb-2 cursor-grab active:cursor-grabbing flex items-center gap-2 text-sm"
+          style={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M9 5h6M9 12h6M9 19h6" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          <span>Drag to reorder</span>
+        </div>
+
+        <div className="flex items-center justify-between mb-2">
+          <span
+            className="text-xs font-semibold px-3 py-1 rounded-full"
+            style={{
+              background: isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.1)',
+              color: '#3b82f6',
+            }}
+          >
+            {resource.category}
+          </span>
+        </div>
+        <h3 className="text-lg font-bold mb-2">{resource.title}</h3>
+        <p
+          className="text-sm mb-4 line-clamp-3"
+          style={{ color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)' }}
+        >
+          {resource.description}
+        </p>
+        <div className="flex gap-2">
+          <button
+            onClick={() => onEdit(resource)}
+            className="flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all"
+            style={{
+              background: '#3b82f6',
+              color: '#fff',
+            }}
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => onDelete(resource.id)}
+            className="flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all"
+            style={{
+              background: '#ef4444',
+              color: '#fff',
+            }}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function AdminResourcesPage() {
@@ -29,6 +145,7 @@ export default function AdminResourcesPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [reordering, setReordering] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -38,6 +155,13 @@ export default function AdminResourcesPage() {
     category: 'Executive',
     image_url: '',
   });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -60,6 +184,35 @@ export default function AdminResourcesPage() {
       console.error('Error fetching resources:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = resources.findIndex((r) => r.id === active.id);
+      const newIndex = resources.findIndex((r) => r.id === over.id);
+
+      const newOrder = arrayMove(resources, oldIndex, newIndex);
+      setResources(newOrder);
+
+      // Save new order to backend
+      setReordering(true);
+      try {
+        const orderedIds = newOrder.map((r) => r.id);
+        await fetch('/api/resources/reorder', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderedIds }),
+        });
+      } catch (error) {
+        console.error('Error saving order:', error);
+        // Revert on error
+        await fetchResources();
+      } finally {
+        setReordering(false);
+      }
     }
   };
 
@@ -185,7 +338,7 @@ export default function AdminResourcesPage() {
           <div>
             <h1 className="text-4xl font-bold mb-2">Manage Resources</h1>
             <p style={{ color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)' }}>
-              Add, edit, or remove civic resource cards
+              Add, edit, or reorder civic resource cards
             </p>
           </div>
           <button
@@ -202,6 +355,12 @@ export default function AdminResourcesPage() {
             {showForm ? 'Cancel' : '+ Add New Resource'}
           </button>
         </div>
+
+        {reordering && (
+          <div className="mb-4 p-4 bg-blue-500 text-white rounded-lg">
+            Saving new order...
+          </div>
+        )}
 
         {/* Form */}
         {showForm && (
@@ -304,7 +463,7 @@ export default function AdminResourcesPage() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block mb-2 font-medium">Image *</label>
+                <label className="block mb-2 font-medium">Image (1200x520px) *</label>
                 <input
                   type="file"
                   accept="image/*"
@@ -319,7 +478,7 @@ export default function AdminResourcesPage() {
                 />
                 {uploading && <p className="mt-2 text-blue-500">Uploading...</p>}
                 {formData.image_url && (
-                  <div className="mt-4 relative w-64 h-32">
+                  <div className="mt-4 relative w-full max-w-2xl h-48">
                     <Image
                       src={formData.image_url}
                       alt="Preview"
@@ -357,70 +516,29 @@ export default function AdminResourcesPage() {
           </form>
         )}
 
-        {/* Resources Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {resources.map((resource) => (
-            <div
-              key={resource.id}
-              className="rounded-2xl overflow-hidden"
-              style={{
-                background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.9)',
-                border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)',
-              }}
-            >
-              <div className="relative h-48">
-                <Image
-                  src={resource.image_url}
-                  alt={resource.title}
-                  fill
-                  className="object-cover"
+        {/* Resources Grid with Drag and Drop */}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={resources.map((r) => r.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {resources.map((resource) => (
+                <SortableResourceCard
+                  key={resource.id}
+                  resource={resource}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  isDark={isDark}
                 />
-              </div>
-              <div className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span
-                    className="text-xs font-semibold px-3 py-1 rounded-full"
-                    style={{
-                      background: isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.1)',
-                      color: '#3b82f6',
-                    }}
-                  >
-                    {resource.category}
-                  </span>
-                </div>
-                <h3 className="text-lg font-bold mb-2">{resource.title}</h3>
-                <p
-                  className="text-sm mb-4 line-clamp-3"
-                  style={{ color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)' }}
-                >
-                  {resource.description}
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleEdit(resource)}
-                    className="flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all"
-                    style={{
-                      background: '#3b82f6',
-                      color: '#fff',
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(resource.id)}
-                    className="flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all"
-                    style={{
-                      background: '#ef4444',
-                      color: '#fff',
-                    }}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </SortableContext>
+        </DndContext>
 
         {resources.length === 0 && !loading && (
           <div className="text-center py-12">
