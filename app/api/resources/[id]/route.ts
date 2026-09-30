@@ -3,7 +3,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { neon } from '@neondatabase/serverless';
 
-const sql = neon(process.env.DATABASE_URL!);
+// Lazy initialization - only create connection when needed
+const getSql = () => neon(process.env.DATABASE_URL!);
 
 // PUT update resource (admin only)
 export async function PUT(
@@ -28,6 +29,7 @@ export async function PUT(
       );
     }
 
+    const sql = getSql();
     const rows = await sql`
       UPDATE resources
       SET
@@ -70,6 +72,7 @@ export async function DELETE(
 
     const { id } = await params;
 
+    const sql = getSql();
     const rows = await sql`
       DELETE FROM resources
       WHERE id = ${id}

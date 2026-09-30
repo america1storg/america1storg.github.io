@@ -3,11 +3,13 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { neon } from '@neondatabase/serverless';
 
-const sql = neon(process.env.DATABASE_URL!);
+// Lazy initialization - only create connection when needed
+const getSql = () => neon(process.env.DATABASE_URL!);
 
 // GET all resources (public)
 export async function GET() {
   try {
+    const sql = getSql();
     const rows = await sql`
       SELECT * FROM resources
       ORDER BY created_at DESC
@@ -47,6 +49,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const sql = getSql();
     const rows = await sql`
       INSERT INTO resources (title, url, description, domain, category, image_url)
       VALUES (${title}, ${url}, ${description}, ${domain}, ${category}, ${image_url})
