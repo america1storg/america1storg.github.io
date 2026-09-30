@@ -21,6 +21,7 @@ export default function AdminLayout({
     { name: 'Dashboard', href: '/admin' },
     { name: 'Articles', href: '/admin/articles' },
     { name: 'New Article', href: '/admin/articles/new' },
+    { name: 'Resources', href: '/admin/resources' },
     ...(canReview ? [{ name: 'Review Queue', href: '/admin/review' }] : []),
     ...(canManageUsers ? [{ name: 'Manage Users', href: '/admin/users' }] : []),
     ...(canManageUsers ? [{ name: 'Feature Flags', href: '/admin/flags' }] : []),
