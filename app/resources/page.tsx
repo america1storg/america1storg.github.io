@@ -19,6 +19,8 @@ interface Resource {
   image_url?: string;
 }
 
+const BLOB_BASE_URL = 'https://zvlofasbk97vnlui.public.blob.vercel-storage.com/resources';
+
 // Fallback resources (used while loading or if API fails)
 const fallbackResources: Resource[] = [
   {
