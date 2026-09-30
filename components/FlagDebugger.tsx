@@ -13,8 +13,24 @@ export function FlagDebugger() {
 
   // Check for ?showFlags in URL
   useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    setIsVisible(searchParams.has('showFlags'));
+    const checkURL = () => {
+      const searchParams = new URLSearchParams(window.location.search);
+      const hasFlag = searchParams.has('showFlags');
+      console.log('FlagDebugger: Checking URL for showFlags:', hasFlag);
+      setIsVisible(hasFlag);
+    };
+
+    // Check on mount
+    checkURL();
+
+    // Also check when URL changes (for client-side navigation)
+    window.addEventListener('popstate', checkURL);
+    window.addEventListener('hashchange', checkURL);
+
+    return () => {
+      window.removeEventListener('popstate', checkURL);
+      window.removeEventListener('hashchange', checkURL);
+    };
   }, []);
 
   if (!isVisible) {
