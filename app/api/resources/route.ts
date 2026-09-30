@@ -4,7 +4,8 @@ import { authOptions } from '@/lib/auth';
 import { neon } from '@neondatabase/serverless';
 
 // Lazy initialization - only create connection when needed
-const getSql = () => neon(process.env.DATABASE_URL!);
+// Neon integration provides POSTGRES_PRISMA_URL
+const getSql = () => neon(process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL!);
 
 // GET all resources (public)
 export async function GET() {
