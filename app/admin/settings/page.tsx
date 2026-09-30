@@ -72,7 +72,6 @@ function SortableItem({ id }: { id: string }) {
   return (
     <div
       ref={setNodeRef}
-      style={style}
       {...attributes}
       {...listeners}
       className="p-4 mb-2 rounded-lg cursor-grab active:cursor-grabbing flex items-center gap-3"
