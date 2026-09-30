@@ -1,6 +1,6 @@
 # America First - Official Website
 
-A modern civic education website with dynamic content management, database-driven resource cards, and AI-powered imagery.
+A modern civic education website with dynamic content management, database-driven resource & volunteer cards with drag-and-drop ordering, and AI-powered imagery.
 
 **Live Site:** https://america1stusa.vercel.app
 
@@ -23,7 +23,15 @@ A modern civic education website with dynamic content management, database-drive
 
 ## 🆕 What's New (September 2026)
 
-### Database-Driven Resource Cards
+### Volunteer Opportunities System (Latest - Sep 30)
+- ✅ Complete database-driven volunteer cards
+- ✅ **Drag-and-drop reordering** - custom display order
+- ✅ Admin CRUD interface at `/admin/volunteers`
+- ✅ Separate Blob folder for volunteer images
+- ✅ `/get-involved` page fully database-driven
+- ✅ 5 professional AI-generated images (1200x520px)
+
+### Database-Driven Resource Cards (Sep 30)
 - ✅ No more hardcoded arrays - all cards in Neon Postgres
 - ✅ Admin CRUD interface at `/admin/resources`
 - ✅ Drag & drop image uploads to Vercel Blob CDN
@@ -41,7 +49,8 @@ A modern civic education website with dynamic content management, database-drive
 ## 🇺🇸 Features
 
 ### Public Features
-- **Dynamic Resource Cards** - Database-backed civic resource cards with professional imagery
+- **Dynamic Resource & Volunteer Cards** - Database-backed cards with professional AI imagery
+- **Custom Card Ordering** - Admin drag-and-drop reordering reflected on public site
 - **3D Animated Homepage** - Interactive Three.js flag animation
 - **Articles Platform** - Rich text articles with cover images and social sharing
 - **SEO-Friendly URLs** - `/articles/title-slug-123` format
@@ -54,7 +63,9 @@ A modern civic education website with dynamic content management, database-drive
 - **Secure Authentication** - Email magic links via Gmail SMTP
 - **Article Management** - Rich text editor (Tiptap) with image uploads
 - **Resource Management** - Full CRUD for resource cards with drag & drop uploads
-- **Image CDN** - Vercel Blob storage with automatic optimization
+- **Volunteer Management** - Full CRUD for volunteer cards with drag-and-drop reordering
+- **Custom Ordering** - Drag-and-drop interface to reorder cards (saves to database)
+- **Image CDN** - Vercel Blob storage with automatic optimization (separate folders)
 - **No-Code Updates** - Add/edit cards without touching code or deploying
 - **Real-time Publishing** - Changes live immediately
 

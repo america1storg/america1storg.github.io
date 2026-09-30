@@ -1,7 +1,7 @@
 # America First Website - Complete Project Setup Guide
 
 ## Overview
-A Next.js 16 civic education website with authentication, article management, dynamic resource cards, and a 3D interactive homepage.
+A Next.js 16 civic education website with authentication, article management, dynamic resource cards, volunteer opportunity cards with drag-and-drop ordering, and a 3D interactive homepage.
 
 **Live Site:** https://america1stusa.vercel.app  
 **Repository:** https://github.com/america1storg/america1storg.github.io
@@ -179,6 +179,29 @@ CREATE TABLE IF NOT EXISTS resources (
 **Stores:** Civic resource cards (GovTrack, Congress.gov, etc.)  
 **Images:** Professional AI-generated images at 1200x520px stored in Vercel Blob  
 **Admin URL:** `/admin/resources`
+
+#### `volunteers` (NEW - September 2026)
+```sql
+CREATE TABLE IF NOT EXISTS volunteers (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  url TEXT NOT NULL,
+  description TEXT NOT NULL,
+  domain VARCHAR(255) NOT NULL,
+  category VARCHAR(100) NOT NULL,
+  image_url TEXT NOT NULL,  -- Vercel Blob URLs
+  display_order INTEGER DEFAULT 0,  -- For custom drag-and-drop ordering
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_volunteers_display_order ON volunteers(display_order);
+```
+
+**Stores:** Volunteer opportunity cards (AmeriCorps, JustServe, etc.)  
+**Images:** Professional AI-generated images at 1200x520px stored in Vercel Blob  
+**Admin URL:** `/admin/volunteers`  
+**Features:** Drag-and-drop reordering, custom display order, separate Blob folder
 
 ---
 
@@ -389,6 +412,36 @@ BLOB_READ_WRITE_TOKEN="vercel_blob_rw_..."
 }
 ```
 
+### Volunteers (NEW - September 2026)
+
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/api/volunteers` | GET | Public | Get all volunteers (ordered by display_order) |
+| `/api/volunteers` | POST | Admin | Create volunteer opportunity |
+| `/api/volunteers/[id]` | PUT | Admin | Update volunteer opportunity |
+| `/api/volunteers/[id]` | DELETE | Admin | Delete volunteer opportunity |
+| `/api/volunteers/upload-image` | POST | Admin | Upload image to Vercel Blob (volunteers folder) |
+| `/api/volunteers/reorder` | POST | Admin | Update display order (drag-and-drop) |
+
+**Example POST /api/volunteers:**
+```json
+{
+  "title": "AmeriCorps",
+  "url": "https://www.americorps.gov/join/find-volunteer-opportunity#/",
+  "description": "Huge national database with 100,000+ volunteer opportunities...",
+  "domain": "americorps.gov",
+  "category": "National Service",
+  "image_url": "https://zvlofasbk97vnlui.public.blob.vercel-storage.com/volunteers/americorps.jpg"
+}
+```
+
+**Example POST /api/volunteers/reorder:**
+```json
+{
+  "orderedIds": [3, 1, 5, 2, 4]
+}
+```
+
 ---
 
 ## File Structure
@@ -402,15 +455,17 @@ app/
 │   │   ├── page.tsx            # Article list
 │   │   ├── new/page.tsx        # Create article
 │   │   └── edit/[id]/page.tsx  # Edit article
-│   └── resources/              # NEW
-│       └── page.tsx            # Resource CRUD interface
+│   ├── resources/              # Resource CRUD
+│   │   └── page.tsx            # Resource management with uploads
+│   └── volunteers/             # NEW - Volunteer CRUD
+│       └── page.tsx            # Volunteer management with drag-and-drop
 ├── articles/
 │   ├── page.tsx                # Public article list
 │   └── [slug]/page.tsx         # Article detail
-├── resources/                  # UPDATED
-│   └── page.tsx                # Database-driven resources
-├── get-involved/
-│   └── page.tsx                # Volunteer opportunities
+├── resources/                  # Database-driven resources
+│   └── page.tsx                # Civic resource cards
+├── get-involved/               # UPDATED - Database-driven
+│   └── page.tsx                # Volunteer opportunities (from DB)
 ├── about/
 │   └── page.tsx                # About page
 ├── api/
@@ -418,10 +473,15 @@ app/
 │   ├── articles/
 │   │   ├── route.ts            # GET, POST
 │   │   └── [id]/route.ts       # GET, PUT, DELETE
-│   └── resources/              # NEW
-│       ├── route.ts            # GET all, POST new
+│   ├── resources/              # Resource management
+│   │   ├── route.ts            # GET all, POST new
+│   │   ├── [id]/route.ts       # PUT, DELETE
+│   │   └── upload-image/route.ts  # Blob upload (resources/ folder)
+│   └── volunteers/             # NEW - Volunteer management
+│       ├── route.ts            # GET all (ordered), POST new
 │       ├── [id]/route.ts       # PUT, DELETE
-│       └── upload-image/route.ts  # Blob upload
+│       ├── reorder/route.ts    # POST reorder (drag-and-drop)
+│       └── upload-image/route.ts  # Blob upload (volunteers/ folder)
 └── page.tsx                    # Homepage (3D flag)
 
 components/
@@ -650,30 +710,41 @@ const getSql = () => neon(process.env.POSTGRES_PRISMA_URL!);
 
 ## Recent Updates (September 2026)
 
-✅ **Database-Driven Resource Cards (Latest)**
+✅ **Volunteer Opportunities System (Latest - Sep 30)**
+- Complete database-driven volunteer cards with drag-and-drop ordering
+- `volunteers` table with `display_order` column for custom sorting
+- Full CRUD admin interface at `/admin/volunteers`
+- Drag-and-drop reordering with @dnd-kit library
+- Separate Blob folder (`volunteers/`) for images
+- `/get-involved` page migrated from hardcoded to database
+- Real-time order saving with visual feedback
+- 5 professional AI-generated images (1200x520px)
+
+✅ **Database-Driven Resource Cards (Sep 30)**
 - Migrated from hardcoded array to Neon Postgres
 - 10 initial resources with professional AI-generated images
 - Full CRUD admin interface at `/admin/resources`
 - Instant updates without deployment
 
-✅ **Vercel Blob Integration (Latest)**
+✅ **Vercel Blob Integration (Sep 30)**
 - Image uploads directly to Vercel Blob CDN
+- Separate folders for resources and volunteers
 - Drag & drop interface in admin panel
 - 1200x520px professional images
 - Next.js Image optimization with edge caching
 
-✅ **Streamlined Card Upload Process (Latest)**
+✅ **Streamlined Card Upload Process (Sep 30)**
 - No manual code editing
 - No git commits for new cards
 - No deployments for content updates
 - From 9 steps to 5 steps, 10+ minutes to 2 minutes
 
-✅ **Neon Database Migration (Latest)**
+✅ **Neon Database Migration (Sep 30)**
 - Migrated from deprecated `@vercel/postgres` to `@neondatabase/serverless`
 - Lazy initialization pattern for serverless functions
 - Fixed environment variable issues (`POSTGRES_PRISMA_URL`)
 
-✅ **Next.js 16 Compatibility (Latest)**
+✅ **Next.js 16 Compatibility (Sep 30)**
 - Fixed Promise-wrapped route params
 - Updated all API routes to await params
 - No TypeScript errors, clean build
@@ -703,12 +774,14 @@ const getSql = () => neon(process.env.POSTGRES_PRISMA_URL!);
 - [ ] Analytics on card clicks
 - [ ] Search and filter in admin
 
-### For Volunteers (Next Priority)
-- [ ] Create `volunteers` table (similar to `resources`)
-- [ ] Migrate hardcoded volunteer opportunities to database
-- [ ] Create `/admin/volunteers` CRUD interface
-- [ ] Generate AI images for 5 volunteer cards (prompts ready)
-- [ ] Update `/get-involved` page to fetch from database
+### For Volunteers
+- [x] ✅ Create `volunteers` table (COMPLETE)
+- [x] ✅ Migrate hardcoded volunteer opportunities to database (COMPLETE)
+- [x] ✅ Create `/admin/volunteers` CRUD interface (COMPLETE)
+- [x] ✅ Generate AI images for 5 volunteer cards (COMPLETE)
+- [x] ✅ Update `/get-involved` page to fetch from database (COMPLETE)
+- [x] ✅ Add drag-and-drop reordering (COMPLETE)
+- [ ] Add category-based filtering on public page
 
 ### For Articles
 - [ ] Add categories/tags

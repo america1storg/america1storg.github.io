@@ -87,7 +87,7 @@ Fill in the form fields:
 
 ## Deleting Cards
 
-1. Go to: `https://america1stusa.vercel.app/admin/resources`
+1. Go to: `https://america1stusa.vercel.app/admin/resources` (or `/admin/volunteers`)
 2. Find the card in the list
 3. Click **"Delete"**
 4. Confirm deletion
@@ -95,9 +95,27 @@ Fill in the form fields:
 
 ---
 
+## Reordering Cards (Volunteers Only)
+
+**New Feature:** Volunteer cards support drag-and-drop reordering!
+
+1. Go to: `https://america1stusa.vercel.app/admin/volunteers`
+2. Look for the **"≡ Drag to reorder"** handle at the top of each card
+3. **Click and hold** the drag handle
+4. **Drag the card** up or down to your desired position
+5. **Drop** in the new position
+6. Order **saves automatically** to database
+7. Visit `/get-involved` to see the new order live!
+
+**Note:** Resources use creation date order. Volunteers use custom drag-and-drop order.
+
+---
+
 ## Converting Hardcoded Cards to Database-Driven
 
-If you have hardcoded cards (like the volunteer opportunities currently in `app/get-involved/page.tsx`), follow this process to migrate them:
+✅ **Volunteers are now fully migrated!** Both resources and volunteers are database-driven.
+
+If you have other hardcoded cards elsewhere, follow this process:
 
 ### Option A: Manual Entry (Recommended for Small Lists)
 

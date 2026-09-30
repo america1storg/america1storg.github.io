@@ -34,6 +34,12 @@ Use prompts from `docs/VOLUNTEER_IMAGE_PROMPTS.md`
 ### Step 4: Save
 Click **"Add Resource"** → Card is **live immediately!**
 
+### Step 5: Reorder (Volunteers Only)
+1. Go to `/admin/volunteers`
+2. Drag cards by the **≡** handle
+3. Drop in new position
+4. Order saves automatically!
+
 ---
 
 ## 📁 AI Image Prompts (Volunteer Cards)
@@ -113,8 +119,8 @@ SELECT * FROM users;           # View admins
 
 ## 📊 Current Card Counts
 
-- **Resources:** 10 cards (all database-driven with AI images)
-- **Volunteers:** 5 cards (hardcoded, needs migration)
+- **Resources:** 10 cards (database-driven with AI images)
+- **Volunteers:** 5 cards (database-driven with AI images + drag-and-drop ordering)
 - **Articles:** Dynamic (varies)
 
 ---
