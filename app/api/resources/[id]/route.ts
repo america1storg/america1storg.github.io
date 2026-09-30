@@ -6,7 +6,7 @@ import { sql } from '@vercel/postgres';
 // PUT update resource (admin only)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -16,7 +16,7 @@ export async function PUT(
     }
 
     const { title, url, description, domain, category, image_url } = await request.json();
-    const id = params.id;
+    const { id } = await params;
 
     // Validate required fields
     if (!title || !url || !description || !domain || !category || !image_url) {
@@ -57,7 +57,7 @@ export async function PUT(
 // DELETE resource (admin only)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -66,7 +66,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const id = params.id;
+    const { id } = await params;
 
     const { rows } = await sql`
       DELETE FROM resources
