@@ -49,7 +49,13 @@ async function getArticles(): Promise<Article[]> {
   if (process.env.POSTGRES_URL && !process.env.POSTGRES_URL.includes('your-postgres')) {
     try {
       const result = await sql`
-        SELECT a.*, u.name as author_name
+        SELECT
+          a.id,
+          a.title,
+          a.excerpt,
+          a.cover_image,
+          a.published_at,
+          u.name as author_name
         FROM articles a
         LEFT JOIN users u ON a.author_id = u.id
         WHERE a.status = 'published'

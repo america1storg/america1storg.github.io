@@ -30,10 +30,20 @@ export async function GET(request: NextRequest) {
 
     let query;
     if (session?.user) {
-      // Admin view: show all articles
+      // Admin view: show all articles (listing fields only, not full content)
       if (status) {
         query = sql`
-          SELECT a.*, u.name as author_name
+          SELECT
+            a.id,
+            a.title,
+            a.excerpt,
+            a.cover_image,
+            a.status,
+            a.published_at,
+            a.created_at,
+            a.updated_at,
+            a.author_id,
+            u.name as author_name
           FROM articles a
           LEFT JOIN users u ON a.author_id = u.id
           WHERE a.status = ${status}
@@ -41,16 +51,32 @@ export async function GET(request: NextRequest) {
         `;
       } else {
         query = sql`
-          SELECT a.*, u.name as author_name
+          SELECT
+            a.id,
+            a.title,
+            a.excerpt,
+            a.cover_image,
+            a.status,
+            a.published_at,
+            a.created_at,
+            a.updated_at,
+            a.author_id,
+            u.name as author_name
           FROM articles a
           LEFT JOIN users u ON a.author_id = u.id
           ORDER BY a.created_at DESC
         `;
       }
     } else {
-      // Public view: only show published articles
+      // Public view: only show published articles (listing fields only, not full content)
       query = sql`
-        SELECT a.*, u.name as author_name
+        SELECT
+          a.id,
+          a.title,
+          a.excerpt,
+          a.cover_image,
+          a.published_at,
+          u.name as author_name
         FROM articles a
         LEFT JOIN users u ON a.author_id = u.id
         WHERE a.status = 'published'
