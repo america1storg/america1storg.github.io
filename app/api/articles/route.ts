@@ -30,13 +30,14 @@ export async function GET(request: NextRequest) {
 
     let query;
     if (session?.user) {
-      // Admin view: show all articles (listing fields only, not full content or cover images)
+      // Admin view: show all articles (listing fields with cover images)
       if (status) {
         query = sql`
           SELECT
             a.id,
             a.title,
             a.excerpt,
+            a.cover_image,
             a.slug,
             a.status,
             a.published_at,
@@ -55,6 +56,7 @@ export async function GET(request: NextRequest) {
             a.id,
             a.title,
             a.excerpt,
+            a.cover_image,
             a.slug,
             a.status,
             a.published_at,
@@ -68,12 +70,13 @@ export async function GET(request: NextRequest) {
         `;
       }
     } else {
-      // Public view: only show published articles (listing fields only, not full content or cover images)
+      // Public view: only show published articles (listing fields with cover images)
       query = sql`
         SELECT
           a.id,
           a.title,
           a.excerpt,
+          a.cover_image,
           a.slug,
           a.published_at,
           u.name as author_name
