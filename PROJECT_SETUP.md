@@ -1,7 +1,7 @@
-# America First Website - Project Setup & Documentation
+# America First Website - Complete Project Setup Guide
 
 ## Overview
-A Next.js 16 civic education website with authentication, article management, and a 3D interactive homepage.
+A Next.js 16 civic education website with authentication, article management, dynamic resource cards, and a 3D interactive homepage.
 
 **Live Site:** https://america1stusa.vercel.app  
 **Repository:** https://github.com/america1storg/america1storg.github.io
@@ -12,12 +12,94 @@ A Next.js 16 civic education website with authentication, article management, an
 
 - **Framework:** Next.js 16.2.12 (App Router, Turbopack)
 - **Language:** TypeScript
-- **Database:** Neon Postgres (serverless, free tier)
+- **Database:** Neon Postgres (serverless via Vercel integration)
+- **File Storage:** Vercel Blob (for resource card images)
 - **Authentication:** NextAuth.js v5 with magic links (Gmail SMTP)
 - **Deployment:** Vercel
 - **Styling:** Tailwind CSS + inline styles
 - **3D Graphics:** Three.js (homepage flag animation)
 - **Rich Text Editor:** Tiptap (LinkedIn-style article editor)
+- **Image CDN:** Vercel Blob Storage with Next.js Image optimization
+
+---
+
+## Setting Up on a New Machine
+
+### Prerequisites
+- Node.js 18+ installed
+- Git installed
+- Access to Vercel account
+- Access to `americafirstusateam@gmail.com` for admin
+
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/america1storg/america1storg.github.io.git
+cd america1storg.github.io
+```
+
+### Step 2: Install Dependencies
+
+```bash
+npm install
+```
+
+### Step 3: Set Up Environment Variables
+
+Create `.env.local` file:
+
+```env
+# Neon Postgres (get these from Vercel dashboard after connecting Neon)
+POSTGRES_PRISMA_URL="postgresql://..."
+POSTGRES_URL_NON_POOLING="postgresql://..."
+DATABASE_URL="postgresql://..."  # Optional fallback for local dev
+
+# NextAuth
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="<generate-with-openssl-rand-base64-32>"
+
+# Gmail SMTP for Magic Links
+EMAIL_SERVER="smtp://americafirstusateam@gmail.com:<app-password>@smtp.gmail.com:587"
+EMAIL_FROM="America First <americafirstusateam@gmail.com>"
+
+# Vercel Blob (get these from Vercel dashboard after creating Blob store)
+BLOB_READ_WRITE_TOKEN="vercel_blob_rw_..."
+```
+
+**Generate NEXTAUTH_SECRET:**
+```bash
+openssl rand -base64 32
+```
+
+**Gmail App Password:**
+1. Go to Google Account → Security → 2-Step Verification
+2. Scroll to "App passwords"
+3. Generate password for "Mail"
+4. Use in EMAIL_SERVER
+
+### Step 4: Run Development Server
+
+```bash
+npm run dev
+```
+
+Visit `http://localhost:3000`
+
+### Step 5: Verify Database Connection
+
+The database tables should already exist in production. To verify locally:
+
+```bash
+# Check if you can connect to Neon
+node -e "const { neon } = require('@neondatabase/serverless'); const sql = neon(process.env.POSTGRES_PRISMA_URL); sql\`SELECT NOW()\`.then(console.log);"
+```
+
+### Step 6: Test Admin Access
+
+1. Go to `http://localhost:3000/admin`
+2. Sign in with `americafirstusateam@gmail.com`
+3. Check email for magic link
+4. Verify you can access admin dashboard
 
 ---
 
@@ -68,10 +150,6 @@ CREATE TABLE articles (
 );
 ```
 
-**Notes:** 
-- `cover_image` changed from `VARCHAR(1000)` to `TEXT` to support base64-encoded images (~50KB+)
-- `slug` added for SEO-friendly URLs (format: `title-slug-{id}`)
-
 #### `article_images`
 ```sql
 CREATE TABLE article_images (
@@ -83,16 +161,35 @@ CREATE TABLE article_images (
 );
 ```
 
+#### `resources` (NEW - September 2026)
+```sql
+CREATE TABLE IF NOT EXISTS resources (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  url TEXT NOT NULL,
+  description TEXT NOT NULL,
+  domain VARCHAR(255) NOT NULL,
+  category VARCHAR(100) NOT NULL,
+  image_url TEXT NOT NULL,  -- Vercel Blob URLs
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+**Stores:** Civic resource cards (GovTrack, Congress.gov, etc.)  
+**Images:** Professional AI-generated images at 1200x520px stored in Vercel Blob  
+**Admin URL:** `/admin/resources`
+
 ---
 
 ## Environment Variables
 
-### Required in Vercel
+### Required in Vercel (Production)
 
 ```env
-# Neon Postgres (auto-added by Vercel integration)
+# Neon Postgres (auto-added by Vercel Neon integration)
 POSTGRES_URL="postgresql://..."
-POSTGRES_PRISMA_URL="postgresql://..."
+POSTGRES_PRISMA_URL="postgresql://..."  # Used by app
 POSTGRES_URL_NO_SSL="postgresql://..."
 POSTGRES_URL_NON_POOLING="postgresql://..."
 POSTGRES_USER="default"
@@ -102,39 +199,79 @@ POSTGRES_DATABASE="verceldb"
 
 # NextAuth
 NEXTAUTH_URL="https://america1stusa.vercel.app"
-NEXTAUTH_SECRET="<generate-with-openssl-rand-base64-32>"
+NEXTAUTH_SECRET="<your-secret>"
 
 # Gmail SMTP for Magic Links
 EMAIL_SERVER="smtp://americafirstusateam@gmail.com:<app-password>@smtp.gmail.com:587"
 EMAIL_FROM="America First <americafirstusateam@gmail.com>"
+
+# Vercel Blob Storage (auto-added when creating Blob store)
+BLOB_READ_WRITE_TOKEN="vercel_blob_rw_..."
 ```
 
-### Gmail App Password Setup
-1. Go to Google Account → Security → 2-Step Verification
-2. Scroll to "App passwords"
-3. Generate password for "Mail"
-4. Use format: `smtp://EMAIL:APP_PASSWORD@smtp.gmail.com:587`
+### How to Get Vercel Environment Variables
+
+1. **Neon Postgres:**
+   - Vercel Dashboard → Your Project → Storage tab
+   - Click "Create Database" → Select "Neon Postgres"
+   - All `POSTGRES_*` variables auto-populate
+
+2. **Vercel Blob:**
+   - Vercel Dashboard → Your Project → Storage tab
+   - Click "Create Database" → Select "Blob"
+   - `BLOB_READ_WRITE_TOKEN` auto-populates
+
+3. **Manual Variables:**
+   - Settings → Environment Variables
+   - Add `NEXTAUTH_SECRET`, `EMAIL_SERVER`, `EMAIL_FROM`
+
+---
+
+## Architecture Overview
+
+### Resource Card System (NEW)
+
+**Problem Solved:** Previously, resource cards were hardcoded in the component. Adding new cards required code changes, git commits, and deployments.
+
+**Solution:** Database-driven resource cards with admin CRUD interface and Vercel Blob image storage.
+
+**Flow:**
+1. Admin uploads AI-generated image (1200x520px) via drag & drop
+2. Image uploaded to Vercel Blob CDN (instant, public URLs)
+3. Card details saved to Neon Postgres `resources` table
+4. Public page fetches from `/api/resources` (database-backed)
+5. Next.js Image component optimizes images with CDN caching
+6. **Result:** New cards live immediately, no code deployment needed
+
+**Files:**
+- **Frontend:** `app/resources/page.tsx` (public page)
+- **Admin:** `app/admin/resources/page.tsx` (CRUD interface)
+- **API:** `app/api/resources/route.ts` (GET all, POST new)
+- **API:** `app/api/resources/[id]/route.ts` (PUT update, DELETE)
+- **API:** `app/api/resources/upload-image/route.ts` (Blob upload)
+- **Config:** `next.config.ts` (Blob domain in remotePatterns)
 
 ---
 
 ## Authentication System
 
 ### Flow
-1. User enters email at `/admin` or `/admin/articles/new`
+1. User enters email at `/admin` or protected route
 2. NextAuth sends magic link via Gmail SMTP
-3. User clicks link → creates JWT session (no database sessions)
-4. Custom email adapter checks if user exists in `users` table
+3. User clicks link → creates JWT session
+4. Custom email adapter verifies user exists in `users` table
 5. Only users in `users` table can sign in
 
 ### Files
 - **`lib/auth.ts`** - NextAuth configuration with JWT strategy
-- **`lib/email-adapter.ts`** - Custom adapter implementing only needed methods
+- **`lib/email-adapter.ts`** - Custom adapter for email-only auth
 - **`app/api/auth/[...nextauth]/route.ts`** - NextAuth API handler
 
 ### Key Points
-- **JWT sessions** (not database sessions) - no `sessions` or `accounts` tables needed
-- Only users in `users` table can authenticate
+- **JWT sessions** (not database sessions)
+- No `sessions` or `accounts` tables needed
 - Magic links expire based on `verification_token.expires`
+- Only whitelisted users can authenticate
 
 ---
 
@@ -149,173 +286,197 @@ EMAIL_FROM="America First <americafirstusateam@gmail.com>"
 
 #### Dashboard (`/admin`)
 - Overview stats
-- Quick links to article management
+- Quick links to articles and resources
+- Navigation to articles, resources
 
 #### Articles Management (`/admin/articles`)
-- **Grid view** with cover images
-- Filter tabs: All / Published / Drafts
-- Actions: Edit, Delete
-- Card-based layout with:
-  - Cover image (or gradient placeholder)
-  - Title, excerpt, status badge
-  - Author, publish/create date
-  - Edit/Delete buttons
+- Grid view with cover images
+- Filter: All / Published / Drafts
+- Create, edit, delete articles
+- Rich text editor (Tiptap)
 
-#### New Article (`/admin/articles/new`)
-LinkedIn-style rich text editor with:
-- **Cover image upload** (file picker or URL)
-- **Title input**
-- **Toolbar:**
-  - Bold, Italic
-  - H2, H3 headings
-  - Bullet/numbered lists
-  - Blockquote
-  - Hyperlinks
-  - Image insertion (file upload or URL)
-  - Code blocks
-  - Horizontal dividers
-- **Active state tracking** (buttons highlight when active)
-- **Save as Draft** or **Publish Now**
-
-#### Edit Article (`/admin/articles/edit/[id]`)
-Same editor as new article, pre-filled with existing content.
-
-### Important Notes
-- **Cover images:** Stored as base64 in database (no external file storage)
-- **Image uploads:** Converted to base64 with FileReader API
-- **Excerpt:** Auto-generated from first 200 chars of content (HTML stripped)
-- **Published date:** Set on first publish, preserved on updates
+#### Resources Management (`/admin/resources`) - NEW
+- **Full CRUD interface** for resource cards
+- **Drag & drop image upload** to Vercel Blob
+- **Form fields:**
+  - Title (e.g., "GovTrack")
+  - URL (external link)
+  - Description (2-3 sentences)
+  - Domain (for favicon)
+  - Category (e.g., "Legislative")
+  - Image URL (auto-filled from upload)
+- **Live preview** of uploaded images
+- **Edit/Delete** buttons for each card
+- **No deployment required** - changes live immediately
 
 ---
 
 ## Public Pages
 
 ### Home (`/`)
-- **3D animated flag** (Three.js)
-- Floating particles (red, white, blue) - size: 0.015, very subtle
+- 3D animated flag (Three.js)
+- Floating particles (red, white, blue)
 - Scroll-based camera movement
-- Background: `#00164D` (navy blue) in dark mode
 - Sections: Hero, Mission, Stance, Principles, Closing
-- Floating pill navigation bar (centered, rounded-full)
 
 ### Articles (`/articles`)
 - Card grid (3 columns on desktop)
 - Cover images with "ARTICLE" badge
-- Hover effects (translate up, image scale)
+- Hover effects
 - Shows only published articles
-- Skeleton loading states
-- **Share button** on each card (bottom-left)
-- Optimized with ISR caching (60s revalidation)
+- Share buttons
+- ISR caching (60s revalidation)
 
 ### Article Detail (`/articles/[slug]`)
-- **SEO-friendly URLs:** `/articles/title-slug-123` instead of `/articles/123`
-- Full-width cover image at top
-- **Balanced typography:**
-  - Title: 2xl/3xl/4xl (responsive, not overwhelming)
-  - Body: 1.125rem with 1.75 line-height
-  - Proper paragraph spacing (1.5em between paragraphs)
-- Title, author, publish date
-- Rich text content (HTML rendered with preserved formatting)
-- Back to articles link
-- **Share button** next to author/date
-- Open Graph meta tags for social media
-- Twitter Card support
-- Pre-rendered with `generateStaticParams`
-- **Backward compatible:** Old `/articles/123` URLs still work
+- SEO-friendly URLs: `/articles/title-slug-123`
+- Full-width cover image
+- Rich text content
+- Social share buttons
+- Open Graph meta tags
+
+### Resources (`/resources`) - UPDATED
+- **Database-driven cards** (10+ resources)
+- **Professional AI-generated images** (1200x520px from Vercel Blob)
+- **Category badges** (Executive, Legislative, Elections, etc.)
+- **Skeleton loading** while fetching
+- **Progressive image loading** with gradients
+- **External link modal** for safety
+- **Responsive grid** (1/2/3 columns)
+
+### Get Involved (`/get-involved`)
+- Volunteer opportunity cards
+- Currently uses external OG images
+- **To be migrated** to database-driven system (see VOLUNTEER_IMAGE_PROMPTS.md)
 
 ### About (`/about`)
 - Mission statement
 - Organization principles
-- Core values
-- Skeleton loading state
-
-### Theme Toggle
-- Floating pill switch (gradient background)
-- Dark mode: Blue gradient (`#60A5FA` to `#3B82F6`) with moon 🌙
-- Light mode: Orange-red gradient (`#FB923C` to `#F87171`) with sun ☀️
-- Smooth sliding animation (duration-300)
-- Persists across sessions
-- Gradient shadows matching theme
+- Contact information
 
 ---
 
 ## API Routes
 
-### `GET /api/articles`
-Returns all articles (authenticated: all, public: published only).
+### Articles
 
-### `POST /api/articles`
-Create new article (authenticated only).
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/api/articles` | GET | Public (published) / Admin (all) | Get all articles |
+| `/api/articles` | POST | Admin | Create article |
+| `/api/articles/[id]` | GET | Public | Get single article |
+| `/api/articles/[id]` | PUT | Admin | Update article |
+| `/api/articles/[id]` | DELETE | Admin | Delete article |
 
-**Body:**
+### Resources (NEW)
+
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/api/resources` | GET | Public | Get all resources |
+| `/api/resources` | POST | Admin | Create resource |
+| `/api/resources/[id]` | PUT | Admin | Update resource |
+| `/api/resources/[id]` | DELETE | Admin | Delete resource |
+| `/api/resources/upload-image` | POST | Admin | Upload image to Vercel Blob |
+
+**Example POST /api/resources:**
 ```json
 {
-  "title": "string",
-  "content": "string (HTML)",
-  "cover_image": "string (base64 or URL)",
-  "status": "draft | published",
-  "author_id": "number"
+  "title": "GovTrack",
+  "url": "https://www.govtrack.us/congress/bills/",
+  "description": "Track Congress with clear visualizations...",
+  "domain": "govtrack.us",
+  "category": "Legislative",
+  "image_url": "https://zvlofasbk97vnlui.public.blob.vercel-storage.com/resources/govtrack.jpg"
 }
 ```
-
-### `GET /api/articles/[id]`
-Get single article by ID.
-
-### `PUT /api/articles/[id]`
-Update article (authenticated only).
-
-**Body:**
-```json
-{
-  "title": "string",
-  "content": "string (HTML)",
-  "cover_image": "string (base64 or URL)",
-  "status": "draft | published"
-}
-```
-
-### `DELETE /api/articles/[id]`
-Delete article (authenticated only).
-
-### `GET /api/migrate-cover-image`
-One-time migration to change `cover_image` column from `VARCHAR(1000)` to `TEXT`.
-
-### `GET /api/migrate-slugs`
-One-time migration to:
-- Add `slug` column to articles table
-- Generate slugs for all existing articles
-- Format: `{title-slug}-{id}` (e.g., `america-first-economic-policy-123`)
 
 ---
 
-## Database Migrations
+## File Structure
 
-### Initial Setup
-Run once on first deployment:
+```
+app/
+├── admin/
+│   ├── layout.tsx              # Admin navigation
+│   ├── page.tsx                # Dashboard
+│   ├── articles/
+│   │   ├── page.tsx            # Article list
+│   │   ├── new/page.tsx        # Create article
+│   │   └── edit/[id]/page.tsx  # Edit article
+│   └── resources/              # NEW
+│       └── page.tsx            # Resource CRUD interface
+├── articles/
+│   ├── page.tsx                # Public article list
+│   └── [slug]/page.tsx         # Article detail
+├── resources/                  # UPDATED
+│   └── page.tsx                # Database-driven resources
+├── get-involved/
+│   └── page.tsx                # Volunteer opportunities
+├── about/
+│   └── page.tsx                # About page
+├── api/
+│   ├── auth/[...nextauth]/route.ts
+│   ├── articles/
+│   │   ├── route.ts            # GET, POST
+│   │   └── [id]/route.ts       # GET, PUT, DELETE
+│   └── resources/              # NEW
+│       ├── route.ts            # GET all, POST new
+│       ├── [id]/route.ts       # PUT, DELETE
+│       └── upload-image/route.ts  # Blob upload
+└── page.tsx                    # Homepage (3D flag)
 
-```bash
-# Access from Vercel Functions or local with POSTGRES_URL
-npm run db:init
+components/
+├── ArticleClient.tsx
+├── ArticleEditor.tsx
+├── ArticlesClient.tsx
+├── ShareButton.tsx
+├── CachedSocialImage.tsx
+├── ExternalLinkModal.tsx       # NEW
+├── Footer.tsx
+├── Navigation.tsx
+├── ThemeProvider.tsx
+└── ThemeToggle.tsx
+
+lib/
+├── auth.ts                     # NextAuth config
+├── email-adapter.ts            # Custom adapter
+├── db.ts                       # Database utilities
+└── slug.ts                     # URL slug utilities
+
+docs/                           # NEW
+├── STREAMLINED_CARD_UPLOAD.md  # How to add cards (no code)
+└── VOLUNTEER_IMAGE_PROMPTS.md  # AI prompts for images
+
+next.config.ts                  # UPDATED - Blob domain
 ```
 
-Or visit: `https://america1stusa.vercel.app/api/init-db`
+---
 
-### Cover Image Column Fix
-If articles lose cover images, run:
+## Next.js Configuration
 
-`https://america1stusa.vercel.app/api/migrate-cover-image`
+### Image Optimization
 
-This changes `articles.cover_image` from `VARCHAR(1000)` to `TEXT`.
+`next.config.ts` includes Vercel Blob domain for Next.js Image component:
 
-### Add Slugs to Existing Articles
-After deployment, run once:
+```typescript
+export default {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.google.com',
+        pathname: '/s2/favicons/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'zvlofasbk97vnlui.public.blob.vercel-storage.com',
+        pathname: '/resources/**',
+      },
+    ],
+  },
+}
+```
 
-`https://america1stusa.vercel.app/api/migrate-slugs`
-
-This:
-1. Adds `slug` column to articles table (if not exists)
-2. Generates SEO-friendly slugs for all existing articles
-3. Format: `title-kebab-case-{id}`
+**Why:** Allows Next.js to optimize images from Vercel Blob CDN.
 
 ---
 
@@ -324,19 +485,41 @@ This:
 ### First-Time Setup
 
 1. **Connect GitHub repo** to Vercel
+
 2. **Add Neon Postgres:**
    - Dashboard → Storage → Create Database → Neon
-   - Auto-adds `POSTGRES_*` env vars
-3. **Add env vars** (see Environment Variables section)
-4. **Deploy** (auto-triggers on push to `main`)
-5. **Initialize database:**
-   - Visit `/api/init-db` after first deployment
-6. **Test authentication:**
+   - Auto-adds all `POSTGRES_*` env vars
+
+3. **Add Vercel Blob:**
+   - Dashboard → Storage → Create Database → Blob
+   - Auto-adds `BLOB_READ_WRITE_TOKEN`
+
+4. **Add manual env vars:**
+   - `NEXTAUTH_SECRET` (generate with `openssl rand -base64 32`)
+   - `EMAIL_SERVER` (Gmail SMTP)
+   - `EMAIL_FROM`
+
+5. **Deploy** (auto-triggers on push to `main`)
+
+6. **Initialize database:**
+   - Run SQL from `lib/db/resources.sql` in Neon console
+   - Or visit `/api/init-db` if it exists
+
+7. **Test authentication:**
    - Go to `/admin` → enter `americafirstusateam@gmail.com`
    - Check email for magic link
 
+8. **Add first resource card:**
+   - Sign in to `/admin/resources`
+   - Upload an image
+   - Fill out form
+   - Save → card is live!
+
 ### Subsequent Deploys
+
 Push to `main` branch → auto-deploys.
+
+**Important:** Resource cards and images are stored in database/Blob, so you can add new cards **without** deployments!
 
 ### Build Commands
 ```json
@@ -351,186 +534,188 @@ Push to `main` branch → auto-deploys.
 
 ---
 
-## File Structure
+## Common Tasks
 
-```
-app/
-├── admin/
-│   └── articles/
-│       ├── page.tsx          # Article list (grid view)
-│       ├── loading.tsx        # Skeleton
-│       ├── new/page.tsx       # Create article
-│       └── edit/[id]/page.tsx # Edit article
-├── articles/
-│   ├── page.tsx               # Public article list
-│   ├── loading.tsx            # Skeleton
-│   └── [slug]/
-│       ├── page.tsx           # Article detail
-│       └── loading.tsx        # Skeleton
-├── about/
-│   ├── page.tsx
-│   └── loading.tsx
-├── api/
-│   ├── auth/[...nextauth]/route.ts
-│   ├── articles/
-│   │   ├── route.ts           # GET, POST
-│   │   └── [id]/route.ts      # GET, PUT, DELETE
-│   ├── init-db/route.ts
-│   └── migrate-cover-image/route.ts
-└── page.tsx                   # Homepage (3D flag)
+### Adding a New Resource Card (The Easy Way)
 
-components/
-├── ArticleClient.tsx          # Client-side article display
-├── ArticleEditor.tsx          # Tiptap rich text editor
-├── ArticlesClient.tsx         # Client-side articles grid
-├── ShareButton.tsx            # Social media share popup
-├── Footer.tsx
-├── Navigation.tsx             # Floating pill navbar
-├── ThemeProvider.tsx          # Dark/light mode context
-└── ThemeToggle.tsx            # Gradient pill switch
+**See:** `docs/STREAMLINED_CARD_UPLOAD.md` for full guide.
 
-lib/
-├── auth.ts                    # NextAuth config
-├── email-adapter.ts           # Custom email adapter
-├── db.ts                      # Database init script
-└── slug.ts                    # URL slug generation utilities
+**Quick Steps:**
+1. Generate 1200x520px image with AI (use prompts from `VOLUNTEER_IMAGE_PROMPTS.md`)
+2. Go to `https://america1stusa.vercel.app/admin/resources`
+3. Drag & drop image to upload
+4. Fill out form (title, URL, description, domain, category)
+5. Click "Add Resource"
+6. **Done!** Live immediately, no code deployment.
 
-public/
-├── logo-transparent.png       # AFAmerica1st_no_background (used in navbar)
-├── logo-icon.png              # Old logo
-├── logo-full-transparent.png  # Full logo variant
-└── file.svg, globe.svg, etc.  # Next.js default assets
-```
+### Editing an Existing Resource Card
+
+1. Go to `/admin/resources`
+2. Find the card
+3. Click "Edit"
+4. Make changes (upload new image if needed)
+5. Click "Save Changes"
+6. Live immediately!
+
+### Migrating Hardcoded Cards to Database
+
+If you have hardcoded cards (like volunteer opportunities), see `docs/STREAMLINED_CARD_UPLOAD.md` section "Converting Hardcoded Cards to Database-Driven".
 
 ---
 
 ## Key Design Decisions
 
-### Why JWT Sessions?
-- Simpler than database sessions
-- No need for `sessions` or `accounts` tables
-- Scales better (stateless)
-- Magic links work without complex adapter
+### Why Vercel Blob Instead of Base64?
 
-### Why Custom Email Adapter?
-- `PostgresAdapter` required standard NextAuth schema
-- Our schema is custom (`users` table without `emailVerified`, etc.)
-- Only needed 6 methods: `createUser`, `getUser`, `getUserByEmail`, `updateUser`, `createVerificationToken`, `useVerificationToken`
+**Old approach (articles):** Base64-encoded images in database  
+**New approach (resources):** Vercel Blob CDN
 
-### Why Base64 Images?
-- No external storage (S3, Cloudinary) needed
-- Simple file upload flow
-- Works with free Neon Postgres
-- **Caveat:** Large images increase database size
-- **Note:** Requires TEXT column (not VARCHAR) for full base64 strings
+**Reasons:**
+- **Performance:** CDN is faster than database blobs
+- **Scalability:** No database size bloat
+- **Caching:** Automatic edge caching
+- **Image optimization:** Next.js Image component works better
+- **Simplicity:** Direct upload with `@vercel/blob` package
+- **Cost:** Free tier includes 100GB storage
 
 ### Why Neon Instead of Vercel Postgres?
-- User couldn't find Vercel Postgres in marketplace
+
+- Vercel Postgres deprecated/unavailable in some regions
 - Neon is free, serverless, and integrates seamlessly
 - Auto-adds env vars to Vercel
+- Better connection pooling for serverless functions
 
-### Why Loading Skeletons?
-- Instant visual feedback (perceived performance)
-- Better UX than blank screens or spinners
-- Matches final layout (reduces layout shift)
-- Theme-aware (dark/light mode)
+### Why Lazy Database Initialization?
+
+```typescript
+// ❌ Bad - runs at build time (no DATABASE_URL available)
+const sql = neon(process.env.POSTGRES_PRISMA_URL!);
+
+// ✅ Good - runs at request time (DATABASE_URL available)
+const getSql = () => neon(process.env.POSTGRES_PRISMA_URL!);
+```
+
+**Reason:** Environment variables aren't available at build time in Vercel, only at runtime.
+
+### Why JWT Sessions?
+
+- Simpler than database sessions
+- No `sessions` or `accounts` tables needed
+- Scales better (stateless)
+- Works seamlessly with magic links
 
 ---
 
 ## Common Issues & Solutions
 
-### Issue: Cover images not saving
+### Issue: "missing_connection_string" error in production
+
+**Cause:** Using `DATABASE_URL` but Neon provides `POSTGRES_PRISMA_URL`  
+**Fix:** Update code to use `process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL`
+
+### Issue: Images not showing in resource cards
+
+**Cause:** Blob domain not in `next.config.ts` remotePatterns  
+**Fix:** Add Blob hostname to `images.remotePatterns` array
+
+### Issue: Cover images not saving (articles)
+
 **Cause:** `VARCHAR(1000)` too small for base64 images  
 **Fix:** Visit `/api/migrate-cover-image` to change to `TEXT`
 
 ### Issue: Magic link doesn't work
+
 **Cause:** Gmail App Password incorrect or EMAIL_SERVER malformed  
 **Fix:** Regenerate App Password, ensure format: `smtp://email:password@smtp.gmail.com:587`
 
-### Issue: "Column emailVerified does not exist"
-**Cause:** Using PostgresAdapter with custom schema  
-**Fix:** Already fixed - using custom `EmailAdapter()` instead
+### Issue: Build fails with Next.js 16 params error
 
-### Issue: Build fails on TypeScript errors
-**Cause:** Missing type definitions (usually `cover_image` in interfaces)  
-**Fix:** Add `cover_image: string | null` to all Article interfaces
-
-### Issue: Articles page loads slowly
-**Fix:** Already optimized with:
-- `next: { revalidate: 60 }` caching
-- `generateStaticParams` for pre-rendering
-- Loading skeletons for perceived performance
+**Cause:** Next.js 16 changed route params to Promise-wrapped  
+**Fix:** Change `{ params }: { params: { id: string } }` to `{ params }: { params: Promise<{ id: string }> }` and await: `const { id } = await params;`
 
 ---
 
 ## Performance Optimizations
 
-1. **ISR Caching:** 60-second revalidation on article fetches (`next: { revalidate: 60 }`)
-2. **Static Generation:** `generateStaticParams` pre-renders article pages at build time
-3. **Loading Skeletons:** Instant visual feedback on all pages (articles, article detail, admin, about)
-4. **Image Optimization:** Next.js `<Image>` component for logo
-5. **Three.js:** Optimized particle count (800 particles at 0.015 size, opacity 0.3)
-6. **Code Splitting:** Next.js automatic code splitting per route
-7. **Client Components:** Only interactive components use 'use client' directive
+1. **ISR Caching:** 60-second revalidation on API fetches
+2. **Vercel Blob CDN:** Edge-cached images with automatic optimization
+3. **Next.js Image:** Automatic WebP conversion, responsive sizing
+4. **Loading Skeletons:** Instant visual feedback on all pages
+5. **Progressive Image Loading:** Show gradient while images load
+6. **Lazy Database Init:** Avoid build-time database calls
+7. **Three.js Optimization:** 800 particles, size 0.015, opacity 0.3
+8. **Code Splitting:** Automatic per-route splitting
 
 ---
 
-## Recent Updates (July 31, 2026)
+## Recent Updates (September 2026)
 
-✅ **Typography & Readability (Latest)**
-- Reduced article title size for better balance (text-3xl/4xl instead of text-6xl)
-- Improved paragraph spacing (1.5em between paragraphs)
-- Larger body text (1.125rem with 1.75 line-height)
-- Preserved blank lines and formatting from editor
-- Responsive typography across all devices
+✅ **Database-Driven Resource Cards (Latest)**
+- Migrated from hardcoded array to Neon Postgres
+- 10 initial resources with professional AI-generated images
+- Full CRUD admin interface at `/admin/resources`
+- Instant updates without deployment
 
-✅ **SEO-Friendly URLs (Latest)**
-- Article URLs now use slugs: `/articles/title-slug-123`
-- Auto-generated from article titles
-- Backward compatible with old `/articles/123` URLs
-- Unique slug generation with ID suffix
-- Migration API: `/api/migrate-slugs`
+✅ **Vercel Blob Integration (Latest)**
+- Image uploads directly to Vercel Blob CDN
+- Drag & drop interface in admin panel
+- 1200x520px professional images
+- Next.js Image optimization with edge caching
 
-✅ **Social Media Sharing**
-- Share button component with X, Facebook, LinkedIn
-- Copy link functionality
-- Open Graph meta tags for article previews
-- Twitter Card support (summary_large_image)
-- Cover images appear in social media shares
+✅ **Streamlined Card Upload Process (Latest)**
+- No manual code editing
+- No git commits for new cards
+- No deployments for content updates
+- From 9 steps to 5 steps, 10+ minutes to 2 minutes
 
-✅ **UI/UX Improvements**
-- Floating pill navigation bar (centered, rounded-full)
-- Gradient pill theme toggle with smooth animations
-- Loading skeletons on all pages
-- Transparent logo (AFAmerica1st_no_background)
-- Modern card-based article grids
+✅ **Neon Database Migration (Latest)**
+- Migrated from deprecated `@vercel/postgres` to `@neondatabase/serverless`
+- Lazy initialization pattern for serverless functions
+- Fixed environment variable issues (`POSTGRES_PRISMA_URL`)
 
-✅ **Performance**
-- ISR caching (60s revalidation)
-- `generateStaticParams` for article pre-rendering
-- Optimized Three.js particles (smaller, more subtle)
-- Background color changed to navy blue (#00164D)
+✅ **Next.js 16 Compatibility (Latest)**
+- Fixed Promise-wrapped route params
+- Updated all API routes to await params
+- No TypeScript errors, clean build
 
-✅ **Database**
-- Cover image column migrated from VARCHAR(1000) to TEXT
-- Base64 image support (up to ~1MB per image)
-- Slug column added (VARCHAR 200, UNIQUE)
+---
 
-## Future Enhancements (Suggestions)
+## Documentation Files
 
-- [ ] Add search functionality for articles
-- [ ] Add categories/tags for articles
+| File | Purpose |
+|------|---------|
+| `PROJECT_SETUP.md` | This file - complete setup guide |
+| `README.md` | Project overview and quick start |
+| `docs/STREAMLINED_CARD_UPLOAD.md` | Step-by-step: add cards without code |
+| `docs/VOLUNTEER_IMAGE_PROMPTS.md` | AI prompts for generating images |
+| `RESOURCES_ADMIN_GUIDE.md` | Admin panel usage guide |
+| `DEPLOYMENT.md` | Deployment checklist |
+| `SECURITY.md` | Security best practices |
+
+---
+
+## Future Enhancements
+
+### For Resources
+- [ ] Bulk CSV/JSON upload for multiple cards
+- [ ] Image cropping tool in admin
+- [ ] Draft mode for resources
+- [ ] Analytics on card clicks
+- [ ] Search and filter in admin
+
+### For Volunteers (Next Priority)
+- [ ] Create `volunteers` table (similar to `resources`)
+- [ ] Migrate hardcoded volunteer opportunities to database
+- [ ] Create `/admin/volunteers` CRUD interface
+- [ ] Generate AI images for 5 volunteer cards (prompts ready)
+- [ ] Update `/get-involved` page to fetch from database
+
+### For Articles
+- [ ] Add categories/tags
 - [ ] Add comments system
-- [ ] Switch to external image storage (S3/Cloudinary) for better performance
-- [ ] Add analytics (Vercel Analytics or Google Analytics)
-- [ ] Add sitemap generation
-- [ ] Add RSS feed
-- [ ] Add article preview before publishing
-- [ ] Add markdown support as alternative to HTML editor
-- [ ] Add user roles (admin, editor, viewer)
-- [ ] Add article scheduling (publish at future date)
-- [ ] Add article view counter
-- [ ] Add related articles section
+- [ ] Switch to Vercel Blob for cover images (currently base64)
+- [ ] Add search functionality
+- [ ] Add view counter
 
 ---
 
@@ -546,12 +731,18 @@ npx tsc --noEmit
 # View Vercel deployment logs
 vercel logs <deployment-url>
 
-# Reinitialize database (destructive!)
-# Visit: https://america1stusa.vercel.app/api/init-db
+# Test database connection
+node -e "const { neon } = require('@neondatabase/serverless'); const sql = neon(process.env.POSTGRES_PRISMA_URL); sql\`SELECT NOW()\`.then(console.log);"
 
 # Test authentication locally
 npm run dev
 # Visit: http://localhost:3000/admin
+
+# Check resources in database (Neon Console)
+SELECT * FROM resources ORDER BY created_at DESC;
+
+# Check Blob files (Vercel Dashboard)
+# Dashboard → Storage → Blob → browse files
 ```
 
 ---
@@ -560,35 +751,71 @@ npm run dev
 
 **Super Admin Email:** americafirstusateam@gmail.com  
 **GitHub:** https://github.com/america1storg  
-**Deployed Site:** https://america1stusa.vercel.app
+**Deployed Site:** https://america1stusa.vercel.app  
+**Admin Panel:** https://america1stusa.vercel.app/admin
 
 ---
 
 ## Last Updated
-July 31, 2026 (Evening)
+September 30, 2026
 
 ## Project Status
-✅ **Production Ready & Actively Enhanced**
-- ✅ Authentication working (Gmail magic links)
-- ✅ Article CRUD with cover images
-- ✅ Cover images persistent (TEXT column)
-- ✅ Loading skeletons on all pages
-- ✅ Social media sharing (X, Facebook, LinkedIn)
-- ✅ Open Graph meta tags
-- ✅ Theme toggle (gradient pill)
-- ✅ 3D homepage optimized (navy blue background)
-- ✅ Transparent logo in floating navbar
-- ✅ ISR caching for fast page loads
-- ✅ Card-based article grids with share buttons
+✅ **Production Ready & Feature-Rich**
 
-## Known Working Features
-- Magic link authentication via Gmail SMTP
-- Article creation with cover images and rich text
-- Draft/publish workflow
-- Article editing with persistent cover images
-- Social sharing with cover image previews
-- Dark/light theme with persistence
-- Loading skeletons across all routes
-- Responsive design (mobile, tablet, desktop)
-- Three.js 3D flag animation
-- Admin dashboard and article management
+### Working Features
+- ✅ Authentication (Gmail magic links)
+- ✅ Article CRUD with rich text editor
+- ✅ **Resource cards (database-driven, Blob images)**
+- ✅ **Admin resource management (drag & drop uploads)**
+- ✅ **Streamlined content workflow (no deployments)**
+- ✅ Social media sharing
+- ✅ SEO-friendly URLs
+- ✅ Theme toggle (dark/light)
+- ✅ Loading skeletons
+- ✅ 3D homepage animation
+- ✅ Responsive design
+- ✅ ISR caching
+- ✅ Next.js 16 compatible
+
+### New in September 2026
+- 🎉 Database-driven resource cards
+- 🎉 Vercel Blob image CDN
+- 🎉 Admin CRUD interface for resources
+- 🎉 Drag & drop image uploads
+- 🎉 No-code content management
+- 🎉 Professional AI-generated card images
+
+---
+
+## Quick Start Checklist
+
+For setting up on a new machine:
+
+- [ ] Clone repository
+- [ ] Run `npm install`
+- [ ] Create `.env.local` with all variables
+- [ ] Get Neon credentials from Vercel
+- [ ] Get Blob token from Vercel
+- [ ] Generate NEXTAUTH_SECRET
+- [ ] Set up Gmail App Password
+- [ ] Run `npm run dev`
+- [ ] Test `/admin` sign-in
+- [ ] Test `/admin/resources` upload
+- [ ] Verify `/resources` page loads
+- [ ] Push to main → auto-deploy
+- [ ] Done!
+
+**Estimated Setup Time:** 15-20 minutes (if all credentials are available)
+
+---
+
+## Need Help?
+
+1. Check `docs/STREAMLINED_CARD_UPLOAD.md` for adding cards
+2. Check `RESOURCES_ADMIN_GUIDE.md` for admin usage
+3. Check Vercel logs for deployment errors
+4. Check browser console for runtime errors
+5. Check Neon console for database queries
+6. Review this file for architecture decisions
+
+**Most common issue:** Environment variable missing or incorrect → Check Vercel dashboard → Environment Variables

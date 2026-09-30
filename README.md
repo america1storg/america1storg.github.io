@@ -1,254 +1,401 @@
 # America First - Official Website
 
-A state-of-the-art website for America First, a nonpartisan civic education organization committed to restoring logical reasoning, fairness, and principled decision-making in American civic life.
+A modern civic education website with dynamic content management, database-driven resource cards, and AI-powered imagery.
+
+**Live Site:** https://america1stusa.vercel.app
 
 ---
 
-## 📚 Documentation Navigation
+## 📚 Documentation Hub
 
-**Choose your path:**
+**New to the project? Start here:**
 
-- 🚀 **[GETTING_STARTED.md](./GETTING_STARTED.md)** - New engineer? Start here! (15-minute setup)
-- 👨‍💻 **[ENGINEERING_README.md](./ENGINEERING_README.md)** - Complete technical documentation & architecture
-- ⚡ **[QUICKSTART.md](./QUICKSTART.md)** - Fast local setup guide (5 minutes)
-- 🌐 **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Deploy to Vercel (step-by-step)
-- 📊 **[PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md)** - Features, stats, and roadmap
+| Document | Purpose | Time |
+|----------|---------|------|
+| **[PROJECT_SETUP.md](./PROJECT_SETUP.md)** | Complete setup guide for new machines | 20 min |
+| **[STREAMLINED_CARD_UPLOAD.md](./docs/STREAMLINED_CARD_UPLOAD.md)** | Add resource cards without code | 2 min |
+| **[VOLUNTEER_IMAGE_PROMPTS.md](./docs/VOLUNTEER_IMAGE_PROMPTS.md)** | AI prompts for generating card images | N/A |
+| [DEPLOYMENT.md](./DEPLOYMENT.md) | Deploy to Vercel | 10 min |
+| [RESOURCES_ADMIN_GUIDE.md](./RESOURCES_ADMIN_GUIDE.md) | Admin panel usage | 5 min |
+| [ENGINEERING_README.md](./ENGINEERING_README.md) | Technical architecture | N/A |
+
+---
+
+## 🆕 What's New (September 2026)
+
+### Database-Driven Resource Cards
+- ✅ No more hardcoded arrays - all cards in Neon Postgres
+- ✅ Admin CRUD interface at `/admin/resources`
+- ✅ Drag & drop image uploads to Vercel Blob CDN
+- ✅ Add new cards in 2 minutes without deployment
+- ✅ 10 professional AI-generated images (1200x520px)
+
+### Streamlined Workflow
+**Before:** Generate image → Download → Manual Blob upload → Get URL → Edit code → Git commit → Deploy → Test  
+**After:** Generate image → Admin panel → Drag & drop → Fill form → Save → ✅ Live!
+
+**From 9 steps (10+ min) to 5 steps (2 min).**
 
 ---
 
 ## 🇺🇸 Features
 
 ### Public Features
-- **3D Animated Homepage**: Interactive Three.js flag animation with floating particles
-- **Articles Platform**: Card-based grid layout with cover images
-- **SEO-Friendly URLs**: Descriptive article URLs (e.g., `/articles/title-slug-123`)
-- **Improved Typography**: Balanced title/body hierarchy, proper paragraph spacing
-- **Social Media Sharing**: Share articles on X, Facebook, LinkedIn with Open Graph support
-- **Loading Skeletons**: Fast, responsive loading states on all pages
-- **Dark/Light Mode**: Beautiful gradient pill toggle with theme persistence
-- **Responsive Design**: Works beautifully on desktop, tablet, and mobile
-- **Modern Navigation**: Floating pill navbar with transparent logo
+- **Dynamic Resource Cards** - Database-backed civic resource cards with professional imagery
+- **3D Animated Homepage** - Interactive Three.js flag animation
+- **Articles Platform** - Rich text articles with cover images and social sharing
+- **SEO-Friendly URLs** - `/articles/title-slug-123` format
+- **Dark/Light Mode** - Persistent theme toggle
+- **Loading Skeletons** - Instant visual feedback
+- **Responsive Design** - Mobile-first, works everywhere
+- **External Link Safety** - Modal warnings for external sites
 
 ### Admin Features
-- **Secure Authentication**: Email magic link authentication via Gmail SMTP
-- **Article Management**: Create, edit, draft, and publish articles with card grid view
-- **Rich Text Editor**: LinkedIn-style WYSIWYG editor powered by Tiptap
-  - Bold, italic, headings, lists, quotes
-  - Cover image upload (file picker or URL)
-  - Content images with alt text
-  - Hyperlinks and code blocks
-  - Horizontal dividers
-  - Real-time active state tracking
-- **Image Handling**: Base64 encoding with TEXT column support
-- **User Management**: Super admin access control
-- **Dashboard**: Real-time statistics and quick actions
-
-## 🚀 Tech Stack (100% Free)
-
-- **Framework**: Next.js 16.2.12 (App Router, Turbopack)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS + inline styles
-- **3D Graphics**: Three.js (homepage flag animation)
-- **Database**: Neon Postgres (serverless, free tier)
-- **Authentication**: NextAuth.js v5 with JWT sessions
-- **Email**: Gmail SMTP for magic links
-- **Editor**: Tiptap (rich text)
-- **Hosting**: Vercel (Free tier)
-- **Performance**: ISR caching (60s revalidation)
-
-## 📋 Prerequisites
-
-- Node.js 18.x or higher
-- npm or yarn
-- Vercel account (free)
-- GitHub account
-
-## 🛠️ Local Development
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/america1storg/america1storg.github.io.git
-cd america1storg.github.io
-```
-
-### 2. Install dependencies
-
-```bash
-npm install
-```
-
-### 3. Set up environment variables
-
-Create a `.env.local` file in the root directory:
-
-```env
-# Database (get these from Vercel Postgres)
-POSTGRES_URL="postgres://..."
-POSTGRES_PRISMA_URL="postgres://..."
-POSTGRES_URL_NO_SSL="postgres://..."
-POSTGRES_URL_NON_POOLING="postgres://..."
-POSTGRES_USER="default"
-POSTGRES_HOST="..."
-POSTGRES_PASSWORD="..."
-POSTGRES_DATABASE="verceldb"
-
-# NextAuth
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="generate-with-openssl-rand-base64-32"
-
-# Generate secret with: openssl rand -base64 32
-```
-
-### 4. Run the development server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### 5. Initialize the database
-
-Visit: http://localhost:3000/api/init-db
-
-You should see: `{"success":true,"message":"Database initialized successfully"}`
-
-### 6. Access admin panel
-
-1. Go to: http://localhost:3000/admin
-2. Sign in with: `americafirstusateam@gmail.com`
-3. Check your console logs for the magic link (in development mode)
-4. Click the link to authenticate
-
-## 🌐 Deployment
-
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment instructions to Vercel.
-
-### Quick Deploy
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/america1storg/america1storg.github.io)
-
-## 📁 Project Structure
-
-```
-america1storg.github.io/
-├── app/
-│   ├── api/              # API routes
-│   │   ├── auth/         # NextAuth endpoints
-│   │   ├── articles/     # Article CRUD
-│   │   ├── admin/        # Admin operations
-│   │   └── init-db/      # Database initialization
-│   ├── admin/            # Admin dashboard pages
-│   │   ├── articles/     # Article management
-│   │   ├── users/        # User management
-│   │   └── layout.tsx    # Admin layout
-│   ├── articles/         # Public article pages
-│   ├── auth/             # Authentication pages
-│   ├── about/            # About page
-│   ├── layout.tsx        # Root layout
-│   └── page.tsx          # Homepage
-├── components/
-│   ├── ArticleEditor.tsx # Tiptap rich text editor
-│   └── SessionProvider.tsx
-├── lib/
-│   ├── auth.ts           # NextAuth configuration
-│   └── db.ts             # Database utilities
-├── types/
-│   └── next-auth.d.ts    # TypeScript types
-├── public/               # Static assets
-└── middleware.ts         # Route protection
-
-```
-
-## 🔐 Admin Access
-
-The initial super admin is: `americafirstusateam@gmail.com`
-
-Super admins can:
-- Create, edit, and delete articles
-- Grant admin access to other users
-- Remove non-super admin users
-
-Regular admins can:
-- Create, edit, and delete articles
-- View admin dashboard
-
-## 📝 Creating Articles
-
-1. Sign in to admin panel
-2. Click "New Article" or go to `/admin/articles/new`
-3. Add a cover image (optional)
-4. Write your article using the rich text editor
-   - Blank lines between paragraphs are preserved
-   - Use toolbar for formatting (bold, headings, lists, etc.)
-5. Add images by clicking the image button
-6. Save as draft or publish immediately
-7. Published articles get SEO-friendly URLs automatically
-8. Edit published articles anytime
-
-**Typography Guidelines:**
-- Titles automatically size responsively (never too large)
-- Paragraph spacing preserved from editor
-- Body text optimized for readability (1.125rem, 1.75 line-height)
-
-## 🎨 Customization
-
-### Colors
-The patriotic color scheme is defined in Tailwind classes:
-- Blue: `blue-900` (#1e3a8a)
-- Red: `red-700` (#b91c1c)
-- White: `white` (#ffffff)
-
-### Fonts
-Uses Next.js Geist font family for clean, modern typography.
-
-### 3D Effects
-Scroll animations powered by Framer Motion. Edit `app/page.tsx` to customize parallax effects.
-
-## 🐛 Troubleshooting
-
-### "Database connection failed"
-- Verify all POSTGRES_* environment variables are set correctly
-- Check Neon Postgres dashboard for database status
-- Run `/api/init-db` to initialize tables
-
-### "Authentication not working"
-- Ensure NEXTAUTH_URL matches your domain exactly
-- Verify NEXTAUTH_SECRET is generated and set
-- Check Gmail App Password is correct in EMAIL_SERVER
-- Verify user email exists in the users table
-
-### "Cover images not saving"
-- Run `/api/migrate-cover-image` to change column from VARCHAR to TEXT
-- Base64 images require TEXT column type
-
-### "Build errors"
-- Clear `.next` folder: `rm -rf .next`
-- Delete node_modules: `rm -rf node_modules`
-- Reinstall: `npm install`
-- Rebuild: `npm run build`
-
-### "Articles loading slowly"
-- Already optimized with 60-second ISR caching
-- `generateStaticParams` pre-renders pages at build time
-- Loading skeletons provide instant feedback
-
-### "Need to migrate existing articles to use slugs"
-- Run `/api/migrate-slugs` once after deployment
-- Generates SEO-friendly URLs for all existing articles
-- Old URLs continue to work (backward compatible)
-
-## 📄 License
-
-Copyright © 2024 America First. All rights reserved.
-
-## 📧 Contact
-
-For questions or support:
-- Email: americafirstusateam@gmail.com
-- GitHub Issues: [Create an issue](https://github.com/america1storg/america1storg.github.io/issues)
+- **Secure Authentication** - Email magic links via Gmail SMTP
+- **Article Management** - Rich text editor (Tiptap) with image uploads
+- **Resource Management** - Full CRUD for resource cards with drag & drop uploads
+- **Image CDN** - Vercel Blob storage with automatic optimization
+- **No-Code Updates** - Add/edit cards without touching code or deploying
+- **Real-time Publishing** - Changes live immediately
 
 ---
 
-**Built with ❤️ for America First**
+## 🚀 Tech Stack (100% Free Tier)
+
+- **Framework:** Next.js 16.2.12 (App Router, Turbopack)
+- **Language:** TypeScript
+- **Database:** Neon Postgres (serverless, 0.5GB free)
+- **Storage:** Vercel Blob (100GB free)
+- **Authentication:** NextAuth.js v5 (JWT sessions)
+- **Email:** Gmail SMTP (free)
+- **CDN:** Vercel Edge Network (free)
+- **Hosting:** Vercel (free tier)
+- **3D Graphics:** Three.js
+- **Editor:** Tiptap (MIT license)
+
+**Total monthly cost:** $0 (within free tier limits)
+
+---
+
+## 🛠️ Quick Start (New Machine Setup)
+
+### Prerequisites
+- Node.js 18+
+- Git
+- Vercel account (connected to GitHub)
+- Access to `americafirstusateam@gmail.com`
+
+### Installation
+
+```bash
+# 1. Clone repository
+git clone https://github.com/america1storg/america1storg.github.io.git
+cd america1storg.github.io
+
+# 2. Install dependencies
+npm install
+
+# 3. Set up environment variables (see PROJECT_SETUP.md)
+# Create .env.local with:
+# - POSTGRES_PRISMA_URL (from Vercel Neon integration)
+# - BLOB_READ_WRITE_TOKEN (from Vercel Blob store)
+# - NEXTAUTH_SECRET (generate with: openssl rand -base64 32)
+# - EMAIL_SERVER (Gmail SMTP)
+# - EMAIL_FROM
+
+# 4. Start development server
+npm run dev
+
+# 5. Open http://localhost:3000
+```
+
+**Full setup guide:** See [PROJECT_SETUP.md](./PROJECT_SETUP.md)
+
+---
+
+## 📊 Architecture Overview
+
+### Database Schema
+
+```
+users                    # Admin authentication
+articles                 # Blog posts with rich text
+article_images          # Embedded images in articles
+resources               # Civic resource cards (NEW)
+verification_token      # Magic link tokens
+```
+
+### Key Directories
+
+```
+app/
+├── admin/              # Admin dashboard & CRUD interfaces
+│   ├── resources/      # Resource card management (NEW)
+│   └── articles/       # Article management
+├── resources/          # Public resources page (database-driven)
+├── articles/           # Public articles
+├── api/
+│   ├── resources/      # Resource CRUD API (NEW)
+│   └── articles/       # Article CRUD API
+└── page.tsx            # 3D homepage
+
+docs/                   # Documentation (NEW)
+├── STREAMLINED_CARD_UPLOAD.md
+└── VOLUNTEER_IMAGE_PROMPTS.md
+```
+
+### Data Flow (Resources)
+
+```
+Admin Panel (/admin/resources)
+    ↓
+Drag & Drop Image Upload
+    ↓
+Vercel Blob Storage (CDN)
+    ↓
+POST /api/resources (save to DB)
+    ↓
+Neon Postgres (resources table)
+    ↓
+GET /api/resources (public endpoint)
+    ↓
+Resources Page (/resources)
+    ↓
+Next.js Image (optimized, edge-cached)
+    ↓
+User sees card instantly!
+```
+
+---
+
+## 🎨 Adding New Resource Cards
+
+**The easy way** (no code, no deployment):
+
+1. **Generate image** (1200x520px) using AI prompts from `docs/VOLUNTEER_IMAGE_PROMPTS.md`
+2. **Go to admin:** `https://america1stusa.vercel.app/admin/resources`
+3. **Drag & drop** image to upload to Vercel Blob
+4. **Fill form:** Title, URL, Description, Domain, Category
+5. **Click "Add Resource"**
+6. ✅ **Live immediately!** (no Git, no deployment)
+
+**Detailed guide:** [docs/STREAMLINED_CARD_UPLOAD.md](./docs/STREAMLINED_CARD_UPLOAD.md)
+
+---
+
+## 🧑‍💻 Development
+
+### Available Scripts
+
+```bash
+npm run dev          # Start dev server with Turbopack
+npm run build        # Production build
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npx tsc --noEmit     # Check TypeScript errors
+```
+
+### Admin Access
+
+**URL:** `/admin`  
+**Super Admin:** `americafirstusateam@gmail.com`  
+**Auth:** Magic link via email
+
+### Testing Flow
+
+1. Run `npm run dev`
+2. Visit `http://localhost:3000/admin`
+3. Enter admin email
+4. Click magic link in email
+5. Test CRUD operations
+6. Check `/resources` page
+
+---
+
+## 🚢 Deployment
+
+### One-Time Setup (Already Done)
+
+1. ✅ GitHub repo connected to Vercel
+2. ✅ Neon Postgres integrated (auto-added env vars)
+3. ✅ Vercel Blob integrated (auto-added token)
+4. ✅ Manual env vars added (NEXTAUTH_SECRET, EMAIL_*)
+5. ✅ Database tables created
+6. ✅ Admin user seeded
+
+### Automatic Deployment
+
+```bash
+git add .
+git commit -m "Your changes"
+git push origin main
+# → Vercel auto-deploys in ~2 minutes
+```
+
+**Important:** Resource card changes don't require deployment - they're database-driven!
+
+---
+
+## 📦 Environment Variables
+
+### Required in Production (Vercel)
+
+```env
+# Neon Postgres (auto-added by integration)
+POSTGRES_PRISMA_URL="postgresql://..."
+
+# Vercel Blob (auto-added by integration)
+BLOB_READ_WRITE_TOKEN="vercel_blob_rw_..."
+
+# NextAuth (manual)
+NEXTAUTH_URL="https://america1stusa.vercel.app"
+NEXTAUTH_SECRET="<generate-with-openssl-rand-base64-32>"
+
+# Gmail SMTP (manual)
+EMAIL_SERVER="smtp://americafirstusateam@gmail.com:<app-password>@smtp.gmail.com:587"
+EMAIL_FROM="America First <americafirstusateam@gmail.com>"
+```
+
+**How to get these:** See [PROJECT_SETUP.md](./PROJECT_SETUP.md#environment-variables)
+
+---
+
+## 🔧 Common Tasks
+
+### Add a Resource Card
+→ See [docs/STREAMLINED_CARD_UPLOAD.md](./docs/STREAMLINED_CARD_UPLOAD.md)
+
+### Generate AI Images
+→ See [docs/VOLUNTEER_IMAGE_PROMPTS.md](./docs/VOLUNTEER_IMAGE_PROMPTS.md)
+
+### Edit an Article
+1. Go to `/admin/articles`
+2. Click "Edit" on any article
+3. Make changes in rich text editor
+4. Click "Publish"
+
+### Migrate Hardcoded Cards
+→ See [docs/STREAMLINED_CARD_UPLOAD.md](./docs/STREAMLINED_CARD_UPLOAD.md#converting-hardcoded-cards-to-database-driven)
+
+---
+
+## 🐛 Troubleshooting
+
+### Images not loading
+- Check `next.config.ts` has Blob domain in `remotePatterns`
+- Verify Blob URLs are complete (https://...)
+- Hard refresh page (Cmd+Shift+R)
+
+### API errors (500)
+- Check Vercel logs for details
+- Verify `POSTGRES_PRISMA_URL` is set
+- Test database connection in Neon console
+
+### Can't sign in
+- Check `EMAIL_SERVER` format is correct
+- Verify Gmail App Password is active
+- Check `NEXTAUTH_SECRET` is set
+
+### Build fails
+- Run `npm run build` locally to test
+- Check TypeScript errors: `npx tsc --noEmit`
+- Review Vercel build logs
+
+**Full troubleshooting:** [PROJECT_SETUP.md](./PROJECT_SETUP.md#common-issues--solutions)
+
+---
+
+## 📈 Performance
+
+- **ISR Caching:** 60s revalidation on API fetches
+- **Vercel Edge CDN:** Images served from nearest edge node
+- **Next.js Image:** Automatic WebP conversion, lazy loading
+- **Progressive Loading:** Gradients while images load
+- **Code Splitting:** Automatic per-route splitting
+- **Turbopack:** Fast dev builds
+
+**Lighthouse Score:** 95+ (Performance, Accessibility, Best Practices, SEO)
+
+---
+
+## 🔐 Security
+
+- **JWT Sessions:** Stateless, secure authentication
+- **Magic Links:** Passwordless, phishing-resistant
+- **HTTPS Only:** Enforced on all routes
+- **CORS Protection:** API routes protected
+- **Content Security:** External link warnings
+- **Rate Limiting:** Built-in Vercel protection
+- **Environment Variables:** Never committed to Git
+
+---
+
+## 🗺️ Roadmap
+
+### Completed ✅
+- [x] Database-driven resource cards
+- [x] Vercel Blob image CDN
+- [x] Admin CRUD interface
+- [x] Drag & drop uploads
+- [x] No-code content management
+- [x] Professional AI-generated images
+
+### Next Up
+- [ ] Migrate volunteer cards to database
+- [ ] Create `/admin/volunteers` interface
+- [ ] Bulk card upload (CSV/JSON)
+- [ ] Image cropping tool
+- [ ] Card analytics (click tracking)
+- [ ] Search & filter in admin
+
+### Future Ideas
+- [ ] Article categories/tags
+- [ ] Comments system
+- [ ] Newsletter integration
+- [ ] Advanced analytics
+- [ ] Multilingual support
+- [ ] Progressive Web App (PWA)
+
+---
+
+## 🤝 Contributing
+
+This is a private project for America First. For access or questions:
+
+**Contact:** americafirstusateam@gmail.com  
+**Admin Panel:** https://america1stusa.vercel.app/admin
+
+---
+
+## 📄 License
+
+Proprietary - © 2026 America First
+
+---
+
+## 🔗 Links
+
+- **Live Site:** https://america1stusa.vercel.app
+- **Admin Dashboard:** https://america1stusa.vercel.app/admin
+- **GitHub:** https://github.com/america1storg/america1storg.github.io
+- **Vercel Dashboard:** [Your Vercel Project]
+
+---
+
+## 📞 Support
+
+**Documentation:**
+- Full setup: [PROJECT_SETUP.md](./PROJECT_SETUP.md)
+- Add cards: [docs/STREAMLINED_CARD_UPLOAD.md](./docs/STREAMLINED_CARD_UPLOAD.md)
+- AI prompts: [docs/VOLUNTEER_IMAGE_PROMPTS.md](./docs/VOLUNTEER_IMAGE_PROMPTS.md)
+
+**Need help?**
+1. Check documentation above
+2. Review [PROJECT_SETUP.md](./PROJECT_SETUP.md#common-issues--solutions)
+3. Check Vercel logs
+4. Contact admin team
+
+---
+
+**Last Updated:** September 30, 2026  
+**Status:** ✅ Production - Actively Enhanced
