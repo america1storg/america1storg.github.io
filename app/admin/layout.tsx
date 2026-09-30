@@ -16,6 +16,7 @@ export default function AdminLayout({
 
   const canReview = session?.user?.role && ['god_mode', 'king', 'captain'].includes(session.user.role);
   const canManageUsers = session?.user?.role && ['god_mode', 'king'].includes(session.user.role);
+  const isGodMode = session?.user?.role === 'god_mode';
 
   const navigation = [
     { name: 'Dashboard', href: '/admin' },
@@ -24,6 +25,7 @@ export default function AdminLayout({
     ...(canReview ? [{ name: 'Review Queue', href: '/admin/review' }] : []),
     ...(canManageUsers ? [{ name: 'Manage Users', href: '/admin/users' }] : []),
     ...(canManageUsers ? [{ name: 'Feature Flags', href: '/admin/flags' }] : []),
+    ...(isGodMode ? [{ name: 'Migrate Images', href: '/admin/migrate-images' }] : []),
   ];
 
   return (
