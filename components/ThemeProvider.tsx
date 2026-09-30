@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { analytics } from '@/lib/analytics';
 
 type Theme = 'dark' | 'light';
 
@@ -36,7 +37,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [theme, mounted]);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    setTheme((prev) => {
+      const newTheme = prev === 'dark' ? 'light' : 'dark';
+      // Track theme change
+      analytics.themeToggle(newTheme);
+      return newTheme;
+    });
   };
 
   if (!mounted) {

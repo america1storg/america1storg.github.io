@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTheme } from './ThemeProvider';
+import { analytics } from '@/lib/analytics';
 
 interface ShareButtonProps {
   url: string;
@@ -23,6 +24,10 @@ export function ShareButton({ url, title, description }: ShareButtonProps) {
   };
 
   const handleShare = (platform: string) => {
+    // Track the share event
+    const articleId = url.split('/').pop() || 'unknown';
+    analytics.articleShare(articleId, title, platform);
+
     if (platform === 'copy') {
       navigator.clipboard.writeText(url);
       setIsOpen(false);

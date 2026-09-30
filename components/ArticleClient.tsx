@@ -1,11 +1,13 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { useTheme } from './ThemeProvider';
 import { Navigation } from './Navigation';
 import { Footer } from './Footer';
 import { ShareButton } from './ShareButton';
 import { ArticleSchema, BreadcrumbSchema } from './StructuredData';
+import { analytics } from '@/lib/analytics';
 
 interface Article {
   id: number;
@@ -23,6 +25,28 @@ export function ArticleClient({ article }: { article: Article }) {
 
   const excerpt = article.content.replace(/<[^>]*>/g, '').substring(0, 160);
   const articleUrl = `https://america1stusa.vercel.app/articles/${article.slug || article.id}`;
+
+  // Track article view and time spent
+  useEffect(() => {
+    const startTime = Date.now();
+
+    // Track article view
+    analytics.articleView(
+      article.slug || article.id.toString(),
+      article.title
+    );
+
+    // Track time spent when user leaves
+    return () => {
+      const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+      if (timeSpent > 5) { // Only track if spent more than 5 seconds
+        analytics.articleReadTime(
+          article.slug || article.id.toString(),
+          timeSpent
+        );
+      }
+    };
+  }, [article.id, article.slug, article.title]);
 
   return (
     <div className="min-h-screen" style={{ background: isDark ? '#000a2e' : '#f8f9fa', color: isDark ? '#fff' : '#000', fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
