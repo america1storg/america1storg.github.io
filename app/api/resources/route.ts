@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
+
+const sql = neon(process.env.DATABASE_URL!);
 
 // GET all resources (public)
 export async function GET() {
   try {
-    const { rows } = await sql`
+    const rows = await sql`
       SELECT * FROM resources
       ORDER BY created_at DESC
     `;
@@ -45,7 +47,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { rows } = await sql`
+    const rows = await sql`
       INSERT INTO resources (title, url, description, domain, category, image_url)
       VALUES (${title}, ${url}, ${description}, ${domain}, ${category}, ${image_url})
       RETURNING *

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
+
+const sql = neon(process.env.DATABASE_URL!);
 
 // PUT update resource (admin only)
 export async function PUT(
@@ -26,7 +28,7 @@ export async function PUT(
       );
     }
 
-    const { rows } = await sql`
+    const rows = await sql`
       UPDATE resources
       SET
         title = ${title},
@@ -68,7 +70,7 @@ export async function DELETE(
 
     const { id } = await params;
 
-    const { rows } = await sql`
+    const rows = await sql`
       DELETE FROM resources
       WHERE id = ${id}
       RETURNING *
