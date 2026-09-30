@@ -116,7 +116,13 @@ export function FeatureFlagProvider({ children }: { children: ReactNode }) {
 export function useFeatureFlags() {
   const context = useContext(FeatureFlagContext);
   if (context === undefined) {
-    throw new Error('useFeatureFlags must be used within FeatureFlagProvider');
+    // Return safe defaults for SSR/SSG
+    return {
+      flags: {},
+      availableFlags: [],
+      toggleFlag: () => {},
+      isEnabled: () => false,
+    };
   }
   return context;
 }
