@@ -2,81 +2,87 @@
 
 import { useEffect } from 'react';
 
-export type ToastType = 'success' | 'error' | 'warning' | 'info';
+export type ToastType = 'success' | 'error' | 'info' | 'warning';
 
 interface ToastProps {
   message: string;
-  type: ToastType;
+  type?: ToastType;
   onClose: () => void;
   duration?: number;
 }
 
-export default function Toast({ message, type, onClose, duration = 5000 }: ToastProps) {
+export default function Toast({ message, type = 'success', onClose, duration = 3000 }: ToastProps) {
   useEffect(() => {
-    if (duration > 0) {
-      const timer = setTimeout(onClose, duration);
-      return () => clearTimeout(timer);
-    }
+    const timer = setTimeout(() => {
+      onClose();
+    }, duration);
+
+    return () => clearTimeout(timer);
   }, [duration, onClose]);
 
-  const typeStyles = {
-    success: {
-      bg: 'bg-green-600',
-      text: 'text-white',
-      indicator: 'bg-green-400',
-    },
-    error: {
-      bg: 'bg-red-600',
-      text: 'text-white',
-      indicator: 'bg-red-400',
-    },
-    warning: {
-      bg: 'bg-yellow-600',
-      text: 'text-white',
-      indicator: 'bg-yellow-400',
-    },
-    info: {
-      bg: 'bg-blue-600',
-      text: 'text-white',
-      indicator: 'bg-blue-400',
-    },
-  };
+  const bgColor = {
+    success: '#10b981',
+    error: '#ef4444',
+    info: '#3b82f6',
+    warning: '#f59e0b',
+  }[type];
 
-  const style = typeStyles[type];
+  const icon = {
+    success: '✓',
+    error: '✕',
+    info: 'ℹ',
+    warning: '⚠',
+  }[type];
 
   return (
     <div
-      className={`fixed top-4 right-4 z-50 max-w-md w-full shadow-2xl rounded-xl overflow-hidden animate-slide-in ${style.bg}`}
-      role="alert"
+      className="fixed top-8 right-8 z-50 animate-slide-in"
+      style={{
+        animation: 'slideIn 0.3s ease-out',
+      }}
     >
-      <div className="flex items-center gap-3 p-4">
-        <div className={`flex-shrink-0 w-2 h-2 rounded-full ${style.indicator}`} />
+      <div
+        className="rounded-xl shadow-2xl px-6 py-4 flex items-center gap-4 min-w-[320px]"
+        style={{
+          background: bgColor,
+          color: '#fff',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
+        }}
+      >
+        <div
+          className="w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold"
+          style={{
+            background: 'rgba(255, 255, 255, 0.2)',
+          }}
+        >
+          {icon}
+        </div>
         <div className="flex-1">
-          <p className={`font-medium text-base ${style.text}`}>{message}</p>
+          <p className="font-semibold text-lg">{message}</p>
         </div>
         <button
           onClick={onClose}
-          className={`flex-shrink-0 ${style.text} hover:opacity-70 transition-opacity text-xl leading-none`}
-          aria-label="Close"
+          className="text-white hover:opacity-70 transition-opacity text-xl font-bold w-8 h-8 flex items-center justify-center"
         >
           ×
         </button>
       </div>
-      <style jsx>{`
-        @keyframes slide-in {
+      <style jsx global>{`
+        @keyframes slideIn {
           from {
-            transform: translateX(100%);
+            transform: translateY(-100px);
             opacity: 0;
           }
           to {
-            transform: translateX(0);
+            transform: translateY(0);
             opacity: 1;
           }
-        }
-        .animate-slide-in {
-          animation: slide-in 0.3s ease-out;
         }
       `}</style>
     </div>
   );
 }
+
+// Named export for compatibility
+export { Toast };

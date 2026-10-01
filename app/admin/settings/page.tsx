@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/components/ThemeProvider';
+import Toast from '@/components/Toast';
 import {
   DndContext,
   closestCenter,
@@ -104,6 +105,8 @@ export default function AdminSettingsPage() {
   const [sidebarOrder, setSidebarOrder] = useState<string[]>(DEFAULT_SIDEBAR_ITEMS);
   const [quickActions, setQuickActions] = useState<string[]>(DEFAULT_QUICK_ACTIONS);
 
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -152,14 +155,14 @@ export default function AdminSettingsPage() {
       });
 
       if (response.ok) {
-        alert('Settings saved successfully!');
+        setToast({ message: 'Settings saved successfully!', type: 'success' });
         await fetchPreferences();
       } else {
-        alert('Failed to save settings');
+        setToast({ message: 'Failed to save settings', type: 'error' });
       }
     } catch (error) {
       console.error('Error saving preferences:', error);
-      alert('Failed to save settings');
+      setToast({ message: 'Failed to save settings', type: 'error' });
     } finally {
       setSaving(false);
     }
@@ -408,6 +411,15 @@ export default function AdminSettingsPage() {
           </button>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }
