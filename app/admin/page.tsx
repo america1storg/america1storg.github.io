@@ -11,6 +11,21 @@ interface Stats {
   totalAdmins: number;
 }
 
+interface QuickAction {
+  name: string;
+  href: string;
+  icon: string;
+  emoji: string;
+}
+
+const QUICK_ACTION_MAP: Record<string, QuickAction> = {
+  'New Article': { name: 'New Article', href: '/admin/articles/new', icon: '✏️', emoji: '✏️' },
+  'View Articles': { name: 'View Articles', href: '/admin/articles', icon: '📄', emoji: '📄' },
+  'Manage Users': { name: 'Manage Users', href: '/admin/users', icon: '👥', emoji: '👥' },
+  'Resources': { name: 'Resources', href: '/admin/resources', icon: '📚', emoji: '📚' },
+  'Volunteers': { name: 'Volunteers', href: '/admin/volunteers', icon: '🤝', emoji: '🤝' },
+};
+
 export default function AdminDashboard() {
   const { data: session } = useSession();
   const [stats, setStats] = useState<Stats>({
@@ -21,6 +36,11 @@ export default function AdminDashboard() {
   });
   const [loading, setLoading] = useState(true);
   const [displayName, setDisplayName] = useState('');
+  const [quickActions, setQuickActions] = useState<QuickAction[]>([
+    QUICK_ACTION_MAP['New Article'],
+    QUICK_ACTION_MAP['View Articles'],
+    QUICK_ACTION_MAP['Manage Users'],
+  ]);
 
   useEffect(() => {
     if (session) {
@@ -55,6 +75,14 @@ export default function AdminDashboard() {
           setDisplayName(data.display_name || data.email);
         } else {
           setDisplayName(session?.user?.name || session?.user?.email || '');
+        }
+
+        // Load quick actions from preferences
+        if (data.quick_actions && data.quick_actions.length > 0) {
+          const actions = data.quick_actions
+            .map((name: string) => QUICK_ACTION_MAP[name])
+            .filter(Boolean);
+          setQuickActions(actions);
         }
       } else {
         // Fallback to session data
@@ -113,31 +141,16 @@ export default function AdminDashboard() {
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link
-            href="/admin/articles/new"
-            className="block p-4 border-2 border-blue-900 rounded-lg hover:bg-blue-50 transition-colors text-center"
-          >
-            <div className="text-2xl mb-2">✏️</div>
-            <div className="font-semibold text-blue-900">New Article</div>
-          </Link>
-
-          <Link
-            href="/admin/articles"
-            className="block p-4 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-center"
-          >
-            <div className="text-2xl mb-2">📄</div>
-            <div className="font-semibold text-gray-700">View Articles</div>
-          </Link>
-
-          {session?.user?.isSuperAdmin && (
+          {quickActions.map((action) => (
             <Link
-              href="/admin/users"
-              className="block p-4 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-center"
+              key={action.href}
+              href={action.href}
+              className="block p-4 border-2 border-gray-300 rounded-lg hover:bg-blue-50 hover:border-blue-900 transition-colors text-center"
             >
-              <div className="text-2xl mb-2">👥</div>
-              <div className="font-semibold text-gray-700">Manage Users</div>
+              <div className="text-2xl mb-2">{action.emoji}</div>
+              <div className="font-semibold text-gray-700">{action.name}</div>
             </Link>
-          )}
+          ))}
         </div>
       </div>
     </div>

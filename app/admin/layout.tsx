@@ -4,7 +4,20 @@ import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { ToastProvider } from '@/components/ToastProvider';
+
+const DEFAULT_NAVIGATION = [
+  { name: 'Dashboard', href: '/admin' },
+  { name: 'Articles', href: '/admin/articles' },
+  { name: 'New Article', href: '/admin/articles/new' },
+  { name: 'Resources', href: '/admin/resources' },
+  { name: 'Volunteers', href: '/admin/volunteers' },
+  { name: 'Review Queue', href: '/admin/review' },
+  { name: 'Manage Users', href: '/admin/users' },
+  { name: 'Feature Flags', href: '/admin/flags' },
+  { name: 'Settings', href: '/admin/settings' },
+];
 
 export default function AdminLayout({
   children,
@@ -13,21 +26,41 @@ export default function AdminLayout({
 }) {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const [navigation, setNavigation] = useState(DEFAULT_NAVIGATION);
 
   const canReview = session?.user?.role && ['god_mode', 'king', 'captain'].includes(session.user.role);
   const canManageUsers = session?.user?.role && ['god_mode', 'king'].includes(session.user.role);
 
-  const navigation = [
-    { name: 'Dashboard', href: '/admin' },
-    { name: 'Articles', href: '/admin/articles' },
-    { name: 'New Article', href: '/admin/articles/new' },
-    { name: 'Resources', href: '/admin/resources' },
-    { name: 'Volunteers', href: '/admin/volunteers' },
-    ...(canReview ? [{ name: 'Review Queue', href: '/admin/review' }] : []),
-    ...(canManageUsers ? [{ name: 'Manage Users', href: '/admin/users' }] : []),
-    ...(canManageUsers ? [{ name: 'Feature Flags', href: '/admin/flags' }] : []),
-    { name: 'Settings', href: '/admin/settings' },
-  ];
+  useEffect(() => {
+    if (session) {
+      fetchNavigationOrder();
+    }
+  }, [session]);
+
+  const fetchNavigationOrder = async () => {
+    try {
+      const response = await fetch('/api/user/preferences');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.sidebar_order && data.sidebar_order.length > 0) {
+          // Map saved order to navigation items
+          const orderedNav = data.sidebar_order
+            .map((name: string) => DEFAULT_NAVIGATION.find(item => item.name === name))
+            .filter(Boolean);
+          setNavigation(orderedNav as typeof DEFAULT_NAVIGATION);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching navigation order:', error);
+    }
+  };
+
+  // Filter navigation based on permissions
+  const filteredNavigation = navigation.filter(item => {
+    if (item.name === 'Review Queue' && !canReview) return false;
+    if ((item.name === 'Manage Users' || item.name === 'Feature Flags') && !canManageUsers) return false;
+    return true;
+  });
 
   return (
     <ToastProvider>
@@ -73,7 +106,7 @@ export default function AdminLayout({
       <div className="flex">
         <aside className="w-64 bg-white shadow-md min-h-screen">
           <nav className="p-4 space-y-2">
-            {navigation.map((item) => {
+            {filteredNavigation.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
