@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ToastProvider } from '@/components/ToastProvider';
 
-// Reorderable navigation items (Dashboard is always fixed at top)
+// Reorderable navigation items (Dashboard is always fixed at top, Settings is in Dashboard page)
 const REORDERABLE_NAVIGATION = [
   { name: 'Articles', href: '/admin/articles' },
   { name: 'New Article', href: '/admin/articles/new' },
@@ -16,7 +16,6 @@ const REORDERABLE_NAVIGATION = [
   { name: 'Review Queue', href: '/admin/review' },
   { name: 'Manage Users', href: '/admin/users' },
   { name: 'Feature Flags', href: '/admin/flags' },
-  { name: 'Settings', href: '/admin/settings' },
 ];
 
 // Dashboard is always first

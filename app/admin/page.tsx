@@ -138,7 +138,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-lg shadow p-6 mb-8">
         <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {quickActions.map((action) => (
@@ -152,6 +152,24 @@ export default function AdminDashboard() {
             </Link>
           ))}
         </div>
+      </div>
+
+      {/* Settings */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Dashboard Settings</h2>
+        <p className="text-gray-600 mb-4">
+          Customize your admin dashboard experience, change your display name, and reorder navigation items.
+        </p>
+        <Link
+          href="/admin/settings"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors font-semibold"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v6m0 6v6m9.22-9.22l-4.24 4.24m-5.96 0L6.78 9.78M23 12h-6m-6 0H1m20.22 2.22l-4.24-4.24m-5.96 0L6.78 14.22"/>
+          </svg>
+          Open Settings
+        </Link>
       </div>
     </div>
   );
