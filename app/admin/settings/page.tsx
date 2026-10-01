@@ -35,8 +35,8 @@ interface UserPreferences {
   role: string | null;
 }
 
+// Only reorderable items (Dashboard is always fixed at top)
 const DEFAULT_SIDEBAR_ITEMS = [
-  'Dashboard',
   'Articles',
   'New Article',
   'Resources',
@@ -44,6 +44,7 @@ const DEFAULT_SIDEBAR_ITEMS = [
   'Review Queue',
   'Manage Users',
   'Feature Flags',
+  'Settings',
 ];
 
 const DEFAULT_QUICK_ACTIONS = [

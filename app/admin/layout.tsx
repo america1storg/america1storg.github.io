@@ -7,8 +7,8 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ToastProvider } from '@/components/ToastProvider';
 
-const DEFAULT_NAVIGATION = [
-  { name: 'Dashboard', href: '/admin' },
+// Reorderable navigation items (Dashboard is always fixed at top)
+const REORDERABLE_NAVIGATION = [
   { name: 'Articles', href: '/admin/articles' },
   { name: 'New Article', href: '/admin/articles/new' },
   { name: 'Resources', href: '/admin/resources' },
@@ -19,6 +19,9 @@ const DEFAULT_NAVIGATION = [
   { name: 'Settings', href: '/admin/settings' },
 ];
 
+// Dashboard is always first
+const FIXED_DASHBOARD = { name: 'Dashboard', href: '/admin' };
+
 export default function AdminLayout({
   children,
 }: {
@@ -26,7 +29,7 @@ export default function AdminLayout({
 }) {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const [navigation, setNavigation] = useState(DEFAULT_NAVIGATION);
+  const [reorderableItems, setReorderableItems] = useState(REORDERABLE_NAVIGATION);
 
   const canReview = session?.user?.role && ['god_mode', 'king', 'captain'].includes(session.user.role);
   const canManageUsers = session?.user?.role && ['god_mode', 'king'].includes(session.user.role);
@@ -43,11 +46,11 @@ export default function AdminLayout({
       if (response.ok) {
         const data = await response.json();
         if (data.sidebar_order && data.sidebar_order.length > 0) {
-          // Map saved order to navigation items
+          // Map saved order to navigation items (excluding Dashboard which is always first)
           const orderedNav = data.sidebar_order
-            .map((name: string) => DEFAULT_NAVIGATION.find(item => item.name === name))
+            .map((name: string) => REORDERABLE_NAVIGATION.find(item => item.name === name))
             .filter(Boolean);
-          setNavigation(orderedNav as typeof DEFAULT_NAVIGATION);
+          setReorderableItems(orderedNav as typeof REORDERABLE_NAVIGATION);
         }
       }
     } catch (error) {
@@ -55,12 +58,15 @@ export default function AdminLayout({
     }
   };
 
-  // Filter navigation based on permissions
-  const filteredNavigation = navigation.filter(item => {
+  // Filter reorderable items based on permissions
+  const filteredReorderable = reorderableItems.filter(item => {
     if (item.name === 'Review Queue' && !canReview) return false;
     if ((item.name === 'Manage Users' || item.name === 'Feature Flags') && !canManageUsers) return false;
     return true;
   });
+
+  // Final navigation: Dashboard always first, then filtered reorderable items
+  const finalNavigation = [FIXED_DASHBOARD, ...filteredReorderable];
 
   return (
     <ToastProvider>
@@ -107,7 +113,7 @@ export default function AdminLayout({
         {/* Side Navigation - Fixed, independently scrollable */}
         <aside className="w-64 bg-white shadow-md flex-shrink-0 overflow-y-auto">
           <nav className="p-4 space-y-2">
-            {filteredNavigation.map((item) => {
+            {finalNavigation.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
