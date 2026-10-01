@@ -64,9 +64,9 @@ export default function AdminLayout({
 
   return (
     <ToastProvider>
-    <div className="min-h-screen bg-gray-100">
+    <div className="h-screen flex flex-col bg-gray-100">
       {/* Top Navigation */}
-      <nav className="bg-blue-900 text-white shadow-lg">
+      <nav className="bg-blue-900 text-white shadow-lg flex-shrink-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-3">
@@ -102,9 +102,10 @@ export default function AdminLayout({
         </div>
       </nav>
 
-      {/* Side Navigation */}
-      <div className="flex">
-        <aside className="w-64 bg-white shadow-md min-h-screen">
+      {/* Content Area with Independent Scrolling */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Side Navigation - Fixed, independently scrollable */}
+        <aside className="w-64 bg-white shadow-md flex-shrink-0 overflow-y-auto">
           <nav className="p-4 space-y-2">
             {filteredNavigation.map((item) => {
               const isActive = pathname === item.href;
@@ -125,8 +126,8 @@ export default function AdminLayout({
           </nav>
         </aside>
 
-        {/* Main Content */}
-        <main className="flex-1 p-8">{children}</main>
+        {/* Main Content - Independently scrollable */}
+        <main className="flex-1 overflow-y-auto p-8">{children}</main>
       </div>
     </div>
     </ToastProvider>
