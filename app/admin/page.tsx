@@ -23,8 +23,10 @@ export default function AdminDashboard() {
   const [displayName, setDisplayName] = useState('');
 
   useEffect(() => {
-    fetchStats();
-    fetchPreferences();
+    if (session) {
+      fetchStats();
+      fetchPreferences();
+    }
   }, [session]);
 
   const fetchStats = async () => {

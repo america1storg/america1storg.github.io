@@ -65,39 +65,7 @@ export async function PUT(request: NextRequest) {
 
     const sql = getSql();
 
-    const updates: string[] = [];
-    const values: any[] = [];
-
-    if (display_name !== undefined) {
-      updates.push(`display_name = $${values.length + 1}`);
-      values.push(display_name);
-    }
-
-    if (display_name_type !== undefined) {
-      updates.push(`display_name_type = $${values.length + 1}`);
-      values.push(display_name_type);
-    }
-
-    if (sidebar_order !== undefined) {
-      updates.push(`sidebar_order = $${values.length + 1}`);
-      values.push(JSON.stringify(sidebar_order));
-    }
-
-    if (quick_actions !== undefined) {
-      updates.push(`quick_actions = $${values.length + 1}`);
-      values.push(JSON.stringify(quick_actions));
-    }
-
-    if (preferences !== undefined) {
-      updates.push(`preferences = $${values.length + 1}`);
-      values.push(JSON.stringify(preferences));
-    }
-
-    if (updates.length === 0) {
-      return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
-    }
-
-    // Update using parameterized query
+    // Direct update - simplified and faster
     const result = await sql`
       UPDATE users
       SET
@@ -105,9 +73,10 @@ export async function PUT(request: NextRequest) {
         display_name_type = ${display_name_type || 'email'},
         sidebar_order = ${sidebar_order ? JSON.stringify(sidebar_order) : '[]'},
         quick_actions = ${quick_actions ? JSON.stringify(quick_actions) : '[]'},
-        preferences = ${preferences ? JSON.stringify(preferences) : '{}'}
+        preferences = ${preferences ? JSON.stringify(preferences || {}) : '{}'},
+        updated_at = NOW()
       WHERE email = ${session.user.email}
-      RETURNING *
+      RETURNING id, email, name, display_name, display_name_type, sidebar_order, quick_actions, preferences, is_super_admin, role
     `;
 
     if (result.length === 0) {

@@ -155,15 +155,19 @@ export default function AdminSettingsPage() {
       });
 
       if (response.ok) {
-        setToast({ message: 'Settings saved successfully!', type: 'success' });
-        await fetchPreferences();
+        setToast({ message: 'Settings saved! Redirecting to dashboard...', type: 'success' });
+        // Wait for toast to be visible, then redirect
+        setTimeout(() => {
+          router.push('/admin');
+          router.refresh(); // Force refresh to reload preferences
+        }, 1500);
       } else {
         setToast({ message: 'Failed to save settings', type: 'error' });
+        setSaving(false);
       }
     } catch (error) {
       console.error('Error saving preferences:', error);
       setToast({ message: 'Failed to save settings', type: 'error' });
-    } finally {
       setSaving(false);
     }
   };
